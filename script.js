@@ -17,6 +17,20 @@ let sidePanel;
 let createADTDiv;
 let activeNodeTitle;
 
+var example;
+let canvasElement;
+let canvasWidth;
+let canvasParentDiv;
+let scaleValue;
+let nodeTextChangeField;
+let nodeOutLineColor;
+let shapeColor = "black";
+let shapeRadious = 1;
+let fileName;
+var currNodeText;
+var newNodeText;
+let oldNodetext;
+
 function setup() {
   // noLoop();
   toDraw = true;
@@ -25,42 +39,105 @@ function setup() {
 
   sideFrameWidth = 400;
   var frameX = windowWidth - sideFrameWidth;
-  createCanvas(windowWidth, windowHeight);
+  // var canv = createCanvas(700, 700);
+  // canv.elt.style.border = "2px solid lightgray";
+  // canv.parent("canvasContainer");
+
+  // get element by id
+  var canvasParentDiv = document.getElementById('canvasContainer');
+  // set height and width for the canvas
+  canvasWidth = canvasParentDiv.offsetWidth;
+  // the main canvas area where the tree will go
+  canvasElement = createCanvas(canvasWidth,650);
+  canvasElement.background("lightgray");
+  // set parent div
+  canvasElement.parent("canvasContainer");
+  
+  /* styling canvas */
+  canvasElement.elt.style.border = "2px solid lightgray";
+
+  // zoom in and out buttons
+  var zoomInButton = select('#zoomInBtn');
+  zoomInButton.mousePressed(zoomInFunction);
+  var zoomOutButton = select('#zoomOutBtn');
+  zoomOutButton.mousePressed(zoomOutFunction);
+  scaleValue = 1;
+  var clearTreeButton = select("#deleteBtn");
+  clearTreeButton.mousePressed(clearCurrentTree);
+
+  // // instet new json text to generate new tree
+  // var jsonTextInput = select("#textAreaJsonContent").value();
+  // var gererateTreeButton = select("#generateTreeButton");
+  // gererateTreeButton.mousePressed(function(){buildFromMultiset(jsonTextInput.replace(/['"]+/g, ''))});
+
+  // show selected node text in the textbox
+  currNodeText = select('#nodeTextInput');
+  var changeNodeTextBtn = select("#btnChangeNodeText");
+  changeNodeTextBtn.mousePressed(btnChangeNodeText);
+ 
+  // change outline color and shape of the selected node
+  var nodeBlackCircle = select('#btnCircleBlackDiv');
+  nodeBlackCircle.mouseReleased(function(){ changeNodeOutlineColorShape(50,"black")});
+  var nodeGreenCircle = select('#btnCircleGreenDiv');
+  nodeGreenCircle.mouseReleased(function(){changeNodeOutlineColorShape(50,"green")});
+  var nodeRedCircle = select('#btnCircleRedDiv');
+  nodeRedCircle.mouseReleased(function(){changeNodeOutlineColorShape(50,"red")});
+  var nodeSquareBlack = select('#btnSquareBlackDiv');
+  nodeSquareBlack.mouseReleased(function(){changeNodeOutlineColorShape(1,"black")});
+  var nodeSquareGreen = select('#btnSquareGreenDiv');
+  nodeSquareGreen.mouseReleased(function(){changeNodeOutlineColorShape(1,"green")});
+  var nodeSquareRed = select('#btnSquareRedDiv');
+  nodeSquareRed.mouseReleased(function(){changeNodeOutlineColorShape(1,"red")});
+
+  // change the lines to dashed
+  var dashedLine = select('#btnLineDashedDiv');
+  dashedLine.mouseReleased(changeNodeLineToDashed);
+
+  var ContinuousLine = select('#btnLineContinueDiv');
+  ContinuousLine.mouseReleased(changeNodeLineToContinueLine);
+  
+  // save canvas
+  var shareBtn = select('#saveBtn');
+  var downloadBtn = select("#downloadBtn")
+  shareBtn.mousePressed(downloadCanvas);
+  downloadBtn.mousePressed(downloadCanvas);
+
+  // canvasElement.style("padding","3%")
+
+    // sketchCanvas.parent("canvasContainer");
+  // sidePanel = createDiv();
+  // sidePanel.position(frameX, 0);
+  // sidePanel.style('background-color', 'lightgray')
+  // sidePanel.style('width', sideFrameWidth)
+  // sidePanel.style('height', windowHeight)
+  // var titleDiv = createDiv();
+  // titleDiv.parent(sidePanel);
+  // titleDiv.style('text-align', 'center')
+  // let easyADT = createElement("h1", "Easy ADT")
+  // easyADT.parent(titleDiv);
 
 
-  sidePanel = createDiv();
-  sidePanel.position(frameX, 0);
-  sidePanel.style('background-color', 'lightgray')
-  sidePanel.style('width', sideFrameWidth)
-  sidePanel.style('height', windowHeight)
-  var titleDiv = createDiv();
-  titleDiv.parent(sidePanel);
-  titleDiv.style('text-align', 'center')
-  let easyADT = createElement("h1", "Easy ADT")
-  easyADT.parent(titleDiv);
-
-
-  createADTDiv = createDiv();
-  createADTDiv.parent(sidePanel);
-  createADTDiv.style('text-align', 'center')
-  let textArea = createElement("textarea", "");
-  textArea.style("width", sideFrameWidth - 40);
-  textArea.style("height", (sideFrameWidth - 40)/2.5);
-  textArea.parent(createADTDiv);
-  console.log(textArea);
+  // createADTDiv = createDiv();
+  // createADTDiv.parent(sidePanel);
+  // createADTDiv.style('text-align', 'center')
+  // let textArea = createElement("textarea", "");
+  // textArea.style("width", sideFrameWidth - 40);
+  // textArea.style("height", (sideFrameWidth - 40)/2.5);
+  // textArea.parent(createADTDiv);
   // console.log(textArea);
-  let createADTButton = createButton("Create ADT");
-  createADTButton.parent(createADTDiv)
-  createADTButton.style("width", sideFrameWidth - 80);
+  // console.log(textArea);
+  // let createADTButton = createButton("Create ADT");
+  // createADTButton.parent(createADTDiv)
+  // createADTButton.style("width", sideFrameWidth - 80);
 
 
 
 
 
-  var activeNodeTitleText = "";
-  activeNodeTitle = createElement("h2", activeNodeTitleText)
-  activeNodeTitle.style('text-align', 'center')
-  activeNodeTitle.parent(sidePanel);
+  // var activeNodeTitleText = "";
+  // activeNodeTitle = createElement("h2", activeNodeTitleText)
+  // activeNodeTitle.style('text-align', 'center')
+  // activeNodeTitle.parent(sidePanel);
 
 
 
@@ -102,7 +179,7 @@ function setup() {
   root.children[0].children[0].add_child(new Tree("CHEESE"))
   root.children[0].children[0].add_child(new Tree("CHEESE"))
   console.log(root.getMultiArray());
-  textArea.elt.defaultValue = root.getMultiArray()
+  canvasElement.elt.defaultValue = root.getMultiArray()
   // console.log("Depth: ", max_depth(root))
   // console.log("Width: ", max_width(root, 50))
   var example = ["Free Lunch", 0, [["Get Legit Customer to buy lunch for you", 0, [["Promise to Pay back later"], ["Man in the middle attack", 1, [["Tell customer you will pick up their bill"],["Go to counter tell waiter legit customer will pay for you"],["Wave at customer (will wave back in agreement)"]]]]], ["Eat and run", 1, [["Order meal and ask for bill"], ["Leave restaurant", 0, [["Sneak out through bathroom window"], ["Just run..."]]]]], ["Pretend to work at restaurant", 0, [["Ask chef to prepare meal for table n"], ["Salami attack", 1, [["Wait on customers"], ["Collect a little bit of food from each customer's plate"], ["Find place to eat"]]]]]]]
@@ -117,6 +194,44 @@ function setup() {
   // root.display();
 }
 
+function zoomInFunction(){
+  scaleValue = scaleValue + 1
+}
+function zoomOutFunction(){
+  if(scaleValue == 1)
+  scaleValue = 1;
+  else
+  scaleValue = scaleValue - 1;
+}
+
+function btnChangeNodeText(){
+  var newNodeText = select("#nodeTextInput").value();
+  // to be continued
+}
+function changeNodeOutlineColorShape(shapeRadious,shapeColor){
+    nodeOutLineColor = true;
+    activeNode.stroke = color(shapeColor);
+    activeNode.strokeWeight = 3;
+    activeNode.r = shapeRadious;
+}
+
+function changeNodeLineToContinueLine(){
+  activeNode.lineList = [0];
+}
+function changeNodeLineToDashed() {
+  activeNode.lineList = [10,10,10,10];
+}
+
+function downloadCanvas(){
+  fileName = select("#treeName").value();
+  console.log(fileName);
+  saveCanvas(canvasElement, fileName, 'png');
+}
+
+function clearCurrentTree(){
+  example = [[],0,[]];
+  buildFromMultiset(example);
+}
 function max_depth(n){
   if(n.children.length == 0){
     return n.level;
@@ -206,14 +321,15 @@ function draw(){
     }
 
     if(activeNode != null){
-      activeNodeTitle.elt.innerHTML = activeNode.t;
+      // activeNodeTitle.elt.innerHTML = activeNode.t;
+      oldNodetext = activeNode.t;
+      select("#nodeTextInput").attribute("value", activeNode.t);
       // console.log(activeNodeTitle.elt.innerHTML);
       // console.log("Check")
 
     }
-
-
-
+    // zoom in/out
+    scale(scaleValue);
 
     clear();
     root.display();
@@ -258,16 +374,18 @@ function mouseReleased(){
   if(clickedNode != null){
     clickedNode.active = true;
   }
-  activeNode = clickedNode
+  activeNode = clickedNode;
   toDraw = true;
   trackMouseStart = true;
   trackNode = null;
 }
 
 function windowResized() {
-  var frameX = (windowWidth - sideFrameWidth)
-  scaled = frameX/(root.width*1.2);
-  sidePanel.position(frameX, 0);
-  resizeCanvas(windowWidth, windowHeight);
+  // var frameX = (windowWidth - sideFrameWidth)
+  // scaled = frameX/(root.width*1.2);
+  // sidePanel.position(frameX, 0);
+  // resizeCanvas(windowWidth, windowHeight);
+  resizeCanvas(canvasWidth,650);
   toDraw  = true;
 }
+

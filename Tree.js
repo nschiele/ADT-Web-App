@@ -16,7 +16,10 @@ class Tree {
     this.dist = dist;//Distance of children
     this.active = false; //Checks if node is currently selected
     this.hover = false;
-    this.c = color(255, 255, 255)
+    this.c = color(255, 255, 255);
+    this.stroke = color("black");
+    this.strokeWeight = 2;
+    this.lineList = [1]; // dashed lines
     this.freeMove = false; //Tracks if the node is unlocked and can move freely
     // console.log(this.x)
 
@@ -198,9 +201,15 @@ class Tree {
   }
 
 
-
-
-
+  // reset the lines at the end of the draw
+  resetLines() {
+    stroke("black");
+    strokeWeight(1);
+  }
+  // dashed lines
+  setLineDash(list) {
+    drawingContext.setLineDash(list);
+  }
 
   display(){
 
@@ -209,25 +218,36 @@ class Tree {
     } else {
       textSize(16);
     }
-
+    
     // This node visualized
+
+    // draw the strokes/lines
+    this.setLineDash(this.lineList);
+    stroke(this.stroke);
+    strokeWeight(this.strokeWeight);
+
     fill(this.c)
     rect(this.x, this.y, this.x_range, this.y_range, this.r);
+    stroke("black"); // reset
+    strokeWeight(1); // reset
+
     fill(color(255 - this.c.levels[0], 255 - this.c.levels[1], 255 - this.c.levels[2]))
     text(this.t, this.x + this.t.length/5, this.y + this.y_range/this.lines -3);
     //Invert colors if clicked or hovered
     if(this.hover || this.active){
+      stroke(this.stroke);
+      strokeWeight(this.strokeWeight);
       fill(color(255 - this.c.levels[0], 255 - this.c.levels[1], 255 - this.c.levels[2]));
       rect(this.x, this.y, this.x_range, this.y_range, this.r);
+      stroke("black");
+      strokeWeight(1);
       fill(this.c);
       text(this.t, this.x + this.t.length/5, this.y + this.y_range/this.lines -3);
 
     }
 
 
-
-    fill(color(255, 255, 255))
-
+    fill("color(255, 255, 255)")
     // AND refinement
     if(this.refinement == 1 && this.children.length >= 2){
       var myX = this.x + this.x_range/2;
@@ -248,9 +268,9 @@ class Tree {
 
     //Visualize lines to children and then visualize children
     for (let i = 0; i < this.children.length; i++){
+      this.setLineDash(this.lineList);
       line(this.x+this.x_range/2, this.y+this.y_range, this.children[i].x+this.children[i].x_range/2,  this.children[i].y)
       this.children[i].display();
     }
-
   }
 }

@@ -1,0 +1,249 @@
+body {
+  font-size: .875rem;
+}
+
+.feather {
+  width: 16px;
+  height: 16px;
+}
+
+.container {
+  max-width: inherit !important;
+}
+/*
+ * Sidebar
+ */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  /* rtl:raw:
+  right: 0;
+  */
+  bottom: 0;
+  /* rtl:remove */
+  left: 0;
+  z-index: 100; /* Behind the navbar */
+  padding: 48px 0 0; /* Height of navbar */
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+}
+
+@media (max-width: 767.98px) {
+  .sidebar {
+    top: 5rem;
+  }
+}
+
+.sidebar-sticky {
+  height: calc(100vh - 48px);
+  overflow-x: hidden;
+  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+
+.sidebar .nav-link {
+  font-weight: 500;
+  color: #333;
+}
+
+.sidebar .nav-link .feather {
+  margin-right: 4px;
+  color: rgb(116, 116, 116);
+}
+
+/* .sidebar .nav-link.active {
+  color: #2470dc;
+} */
+
+#toolsTab[aria-expanded="true"] svg {
+  color:#ffc107;
+}
+
+.sidebar .nav-link:hover .feather,
+.sidebar .nav-link.active .feather {
+  /* color: inherit; */
+  stroke-width: 3px;
+  color:#daaa1cc9;
+}
+
+.sidebar-heading {
+  font-size: .75rem;
+}
+
+/*
+ * Navbar
+ */
+ .nav>li {
+  position: relative;
+  display: block;
+}
+
+
+
+.navbar-brand {
+  padding-top: .75rem;
+  padding-bottom: .75rem;
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
+}
+
+.navbar .navbar-toggler {
+  top: .25rem;
+  right: 1rem;
+}
+
+.sticky-top{
+  z-index: 1020;
+}
+.navbar .form-control {
+  padding: .75rem 1rem;
+}
+
+.form-control-dark {
+  color: #fff;
+  background-color: rgba(255, 255, 255, .1);
+  border-color: rgba(255, 255, 255, .1);
+}
+
+.form-control-dark:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
+}
+
+/* edited */
+
+#navIcon{
+  width: 100%;
+  height: 100%;
+  font-family: 'Gill Sans';
+  font-size:x-large;
+}
+#navIcon:hover{
+  color: #ffc107;
+}
+
+#navIconMain{
+  width: 100%;
+  height: 100%;
+}
+.insideNavLink{
+  margin:15px
+}
+
+
+textarea::placeholder {
+  color:rgba(51, 51, 51, 0.395);
+  font-style: italic;
+  font-size: small;
+}
+textarea:focus::placeholder {
+  color:rgba(51, 51, 51, 0);
+}
+
+.colorpallet{
+  margin-left:70px;
+  margin-right: 70px;
+  margin-bottom: 10px;
+  padding-top: 10px;
+  padding-bottom: 3px;
+  background-color: #e9e9e9;
+  border-radius: 5px;
+}
+.btn-circle {
+  width: 40px;
+  height: 40px;
+  padding: 6px 0px;
+  border-radius: 15px;
+  /* border-width: 2px; */
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.42857;
+}
+
+.btn-circle-color{
+  width: 40px;
+  height: 40px;
+  padding: 6px 0px;
+  border-radius: 30px;
+  border-width: 5px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.42857;
+}
+.btn-square-color{
+  width: 40px;
+  height: 38px;
+  padding: 6px 0px;
+  border-radius: 4px;
+  border-width: 5px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.42857;
+}
+.btn-circle.btn-xl {
+  width: 40px;
+  height: 40px;
+  padding: 10px 16px;
+  border-radius: 35px;
+  font-size: 24px;
+  line-height: 1.33;
+}
+
+.btn-square{
+  width: 40px;
+  height: 40px;
+  /* border-width: 2px; */
+}
+
+.btnColorShape:focus+.btn, .btnColorShape.active, .btn.show, .btnColorShape:first-child:active, :not(.btn-check)+.btnColorShape:active {
+
+  background-color: #ffc107 !important;
+  border-width: 3px !important;
+  }
+
+.btnLineSelect:focus+.btn, .btnLineSelect.active, .btn.show, .btnLineSelect:first-child:active, :not(.btn-check)+.btnLineSelect:active {
+/* #btnLineContinue{ */
+  /* background-color:#ffc10708 !important; */
+  background-color: #ffc107;
+  border-color: #ffc107 !important;
+  /* border-width: 3px; */
+}
+
+/* .btn-circle-color:checked+.btn, .btn-circle-color.active, .btn.show, .btn-circle-color:first-child:active, :not(.btn-check)+.btn-circle-color:active {
+    background-color: #ffc107 !important;
+    border-width: 3px !important;
+  } */
+
+  .checkBoxElement:hover {
+    background-color: #efcb6fed  !important;
+  }
+  .checkBoxElement{
+    background-color: #e8e6e6;
+  }
+#toolsTab{
+  background-color: #ececec;
+}
+
+#btnLineContinueIcon, #btnLineDashedIcon {
+  /* width: 25px;
+  height: 25px; */
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+#canvasContainer{
+  margin-right: 2%;
+  margin-left: 3%;
+  
+}
+
+canvas{
+  /* left: 50%;
+  top:50%; */
+  /* position: absolute; */
+  /* transform: translate(-50%,-50%); */
+  display: block;
+  background-color: #F4F4F4;
+}
+
