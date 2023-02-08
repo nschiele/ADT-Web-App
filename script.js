@@ -182,7 +182,9 @@ function setup() {
   canvasElement.elt.defaultValue = root.getMultiArray()
   // console.log("Depth: ", max_depth(root))
   // console.log("Width: ", max_width(root, 50))
-  var example = ["Free Lunch", 0, [["Get Legit Customer to buy lunch for you", 0, [["Promise to Pay back later"], ["Man in the middle attack", 1, [["Tell customer you will pick up their bill"],["Go to counter tell waiter legit customer will pay for you"],["Wave at customer (will wave back in agreement)"]]]]], ["Eat and run", 1, [["Order meal and ask for bill"], ["Leave restaurant", 0, [["Sneak out through bathroom window"], ["Just run..."]]]]], ["Pretend to work at restaurant", 0, [["Ask chef to prepare meal for table n"], ["Salami attack", 1, [["Wait on customers"], ["Collect a little bit of food from each customer's plate"], ["Find place to eat"]]]]]]]
+
+  var example = getJson(0); // Call json_junc.js
+  
   buildFromMultiset(example);
 
   // console.log(root);
@@ -285,27 +287,26 @@ function buildFromMultiset(toBuild, parent=null){
   console.log(root)
   // First Run of Function
   if(parent == null){
-    root = new Tree(toBuild[0], 0, 0, 2);
-    root.refinement = toBuild[1];
-    for(let i = 0; i < toBuild[2].length; i++){
-      buildFromMultiset(toBuild[2][i], root);
+    root = new Tree(toBuild.adtree.node.label, 0, 0, 2); // Get label of root
+    root.refinement = toBuild.adtree.node._refinement;
+    for(let i = 0; i < Object.keys(toBuild.adtree.node.node).length; i++){ // Loop through all children
+      buildFromMultiset(toBuild.adtree.node.node[i], root);
     }
   // Tree Exists, adding subtrees
   } else {
     //Intermediate Node
-    if(toBuild.length == 3){
-      var child = new Tree(toBuild[0], 0, 0, 2);
-      child.refinement = toBuild[1];
+    if(Object.keys(toBuild).length == 3){
+      var child = new Tree(toBuild.label, 0, 0, 2); // Get label of child
+      child.refinement = toBuild._refinement;
       parent.add_child(child);
-      for(let i = 0; i < toBuild[2].length; i++){
-        buildFromMultiset(toBuild[2][i], child);
+      for(let i = 0; i < Object.keys(toBuild.node).length; i++){ // Loop through all children
+        buildFromMultiset(toBuild.node[i], child);
       }
       //Leaf Node
     } else {
-      parent.add_child(new Tree(toBuild[0], 0, 0, 2));
+      parent.add_child(new Tree(toBuild.label, 0, 0, 2));
     }
   }
-
 }
 
 function draw(){
