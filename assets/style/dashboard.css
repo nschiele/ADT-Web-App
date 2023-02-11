@@ -77,8 +77,6 @@ body {
   display: block;
 }
 
-
-
 .navbar-brand {
   padding-top: .75rem;
   padding-bottom: .75rem;
@@ -93,6 +91,7 @@ body {
 .sticky-top{
   z-index: 1020;
 }
+
 .navbar .form-control {
   padding: .75rem 1rem;
 }
@@ -124,10 +123,10 @@ body {
   width: 100%;
   height: 100%;
 }
+
 .insideNavLink{
   margin:15px
 }
-
 
 textarea::placeholder {
   color:rgba(51, 51, 51, 0.395);
@@ -147,6 +146,7 @@ textarea:focus::placeholder {
   background-color: #e9e9e9;
   border-radius: 5px;
 }
+
 .btn-circle {
   width: 40px;
   height: 40px;
@@ -168,6 +168,7 @@ textarea:focus::placeholder {
   font-size: 12px;
   line-height: 1.42857;
 }
+
 .btn-square-color{
   width: 40px;
   height: 38px;
@@ -178,6 +179,7 @@ textarea:focus::placeholder {
   font-size: 12px;
   line-height: 1.42857;
 }
+
 .btn-circle.btn-xl {
   width: 40px;
   height: 40px;
@@ -196,28 +198,27 @@ textarea:focus::placeholder {
 .btnColorShape:focus+.btn, .btnColorShape.active, .btn.show, .btnColorShape:first-child:active, :not(.btn-check)+.btnColorShape:active {
 
   background-color: #ffc107 !important;
-  border-width: 3px !important;
+  /* border-width: 3px !important; */
   }
 
 .btnLineSelect:focus+.btn, .btnLineSelect.active, .btn.show, .btnLineSelect:first-child:active, :not(.btn-check)+.btnLineSelect:active {
-/* #btnLineContinue{ */
-  /* background-color:#ffc10708 !important; */
   background-color: #ffc107;
   border-color: #ffc107 !important;
-  /* border-width: 3px; */
 }
 
-/* .btn-circle-color:checked+.btn, .btn-circle-color.active, .btn.show, .btn-circle-color:first-child:active, :not(.btn-check)+.btn-circle-color:active {
-    background-color: #ffc107 !important;
-    border-width: 3px !important;
-  } */
+.btnCustom{
+  width: 70px !important;
+  /* height: 50px !important; */
+}
 
-  .checkBoxElement:hover {
-    background-color: #efcb6fed  !important;
-  }
-  .checkBoxElement{
-    background-color: #e8e6e6;
-  }
+.checkBoxElement:hover {
+  background-color: #efcb6fed  !important;
+}
+
+.checkBoxElement{
+  background-color: #e8e6e6;
+}
+
 #toolsTab{
   background-color: #ececec;
 }
@@ -232,10 +233,31 @@ textarea:focus::placeholder {
   fill: none;
 }
 
+/* .form-switch {
+  display: flex !important;
+  flex-direction: row-reverse !important;
+  justify-content: space-between !important;
+} */
+
+.newChildDiv{
+  margin-left:10%;
+  margin-right: 10%;
+  margin-bottom: 10px;
+  padding-top: 10px;
+  padding-bottom: 3px;
+}
+
+#addChildSymbol{
+  stroke: green;
+}
+
+#removeChildSymbol{
+  stroke: red;
+}
+
 #canvasContainer{
   margin-right: 2%;
   margin-left: 3%;
-  
 }
 
 canvas{

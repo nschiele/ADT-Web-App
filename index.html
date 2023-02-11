@@ -68,6 +68,48 @@
               </div>
           </li>
 
+           <!--Children Nodes-->
+           <li class="nav-item">
+            <a id="toolsTab" class="nav-link border" aria-current="page" href="#childDiv" aria-expanded="false" data-bs-toggle="collapse" onclick="changeActiveNavLinkColor();">
+              <span data-feather="layers" class="align-text-bottom"></span>
+              Child
+            </a>
+              <!--Input for ADT Tree-->
+              <div id="childDiv" class="collapsed insideNavLink collapse">
+                <!-- <label for="textAreaJsonContent" class="form-label">Contents</label> -->
+                <a class="nav-link" href="#">
+                  <span data-feather="plus-circle" class="align-text-bottom" id="addChildSymbol"></span>
+                  Add Child
+                </a>
+                <div class="mb-2 mt-2 border-bottom">
+                <div class="newChildDiv ">
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                    <label class="form-check-label" for="flexSwitchCheckDefault">Defense Child</label>
+                  </div>
+                  
+                  <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-2">
+                    <input type="text" class="form-control" placeholder="text.." id="nodeChildTextInput" value="new">
+                    <button type="submit" class="btn btn-sm me-md-2 mt-2 btn-warning" id="addChildBtn">Add</button>
+                  </div>
+                </div>
+              </div>
+              <div class="mb-2 mt-2">
+                <!-- <label for="textAreaJsonContent" class="form-label">Contents</label> -->
+                <a class="nav-link" href="#">
+                  <span data-feather="x-circle" class="align-text-bottom" id="removeChildSymbol"></span>
+                  Remove Child
+                </a>
+                <div class="newChildDiv">
+                <!-- <div class="d-grid gap-2 d-md-flex justify-content-md-center mb-2"> -->
+                  <button type="submit" class="btn btn-sm me-md-2 btn-warning" disabled id="RemoveChildBtn">Remove selected child</button>
+                </div>
+                <!-- </div> -->
+              </div>
+            </div>
+
+          </li>
+
           <li class="nav-item">
             <a id="toolsTab" class="nav-link border" aria-current="page" href="#customizeNodesDiv" aria-expanded="false" data-bs-toggle="collapse" onclick="changeActiveNavLinkColor();">
               <span data-feather="pen-tool" class="align-text-bottom"></span>
@@ -77,16 +119,16 @@
             <div id="customizeNodesDiv" class="collapsed insideNavLink collapse">
                 <!--Text-->
                 <div class="border-bottom mb-2 mt-2">
-                <div class="col-auto">
-                  <label for="nodeTextLabel" class="visually-hidden">Text</label>
-                  <input type="text" readonly class="form-control-plaintext" id="nodeTextLabel" value="Text">
+                  <div class="col-auto">
+                    <label for="nodeTextLabel" class="visually-hidden">Text</label>
+                    <input type="text" readonly class="form-control-plaintext" id="nodeTextLabel" value="Text">
+                  </div>
+                  <div class="input-group mb-3 mb-2">
+                    <input type="text" class="form-control" placeholder="Node text.." id="nodeTextInput" value="node text">
+                    <button class="btn btn-warning" type="submit" id="btnChangeNodeText">
+                      <span data-feather="refresh-cw" class="align-text-bottom"></span></button>
+                  </div>
                 </div>
-                <div class="input-group mb-3 mb-2">
-                  <input type="text" class="form-control" placeholder="Node text.." id="nodeTextInput" value="node text">
-                  <button class="btn btn-warning" type="submit" id="btnChangeNodeText">
-                    <span data-feather="refresh-cw" class="align-text-bottom"></span></button>
-                </div>
-              </div>
                 <!--Shape-->
                 <!-- <div class="border-bottom mb-2 mt-2 ">
                 <label for="shapeTools" class="form-label">Shape</label>
@@ -103,9 +145,9 @@
               </div> -->
 
                 <!--circles-->
-              <div class="border-bottom mb-2 ">
+              <div class="border-bottom mb-3">
                <label for="colorTools" class="form-label">Shape & Color</label>
-               <div class="row border colorpallet">
+               <div class="row border colorpallet mb-3">
                 <div class="d-grid gap-3 d-md-flex justify-content-md-center mb-2">
                   <div class="btn-group checkBoxElement" role="group" aria-label="radio btn for color black" id="btnCircleBlackDiv">
                     <button type="radio" class="btn-check btn-outline-dark btn-circle-color btnColorShape" name="btnColor" id="btnRadioBlack" autocomplete="off"></button>
@@ -139,26 +181,46 @@
               </div>
 
                <!--lines-->
-               <label for="colorTools" class="form-label">Connector</label>
-               <div class="d-grid gap-2 d-md-flex justify-content-md-center mb-2">
-                <div class="btn-group checkBoxElement" role="group" aria-label="radio btn for line continuous" id="btnLineContinueDiv">
-                  <button type="button" class="btn-check btnLineSelect" name="btnLine" id="btnLineContinue" autocomplete="off"></button>
-                  <label class="btn" for="btnLineContinue">
-                    <span data-feather="minus" id="btnLineContinueIcon"></span>
+               <div class="border-bottom mb-2">
+                <label for="colorTools" class="form-label">Connector</label>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center mb-3">
+                  <div class="btn-group checkBoxElement" role="group" aria-label="radio btn for line continuous" id="btnLineContinueDiv">
+                    <button type="button" class="btn-check btnLineSelect" name="btnLine" id="btnLineContinue" autocomplete="off"></button>
+                    <label class="btn btnCustom" for="btnLineContinue">
+                      <span data-feather="minus" id="btnLineContinueIcon"></span>
+                    </label>
+                  </div>
+                  <div class="btn-group checkBoxElement" role="group" aria-label="radio btn for line dashed" id="btnLineDashedDiv">
+                  <button type="button" class="btn-check btnLineSelect" name="btnLine" id="btnLineDashed" autocomplete="off"></button>
+                  <label class="btn btnCustom" for="btnLineDashed">
+                    <span data-feather="more-horizontal" id="btnLineDashedIcon"></span>
                   </label>
                 </div>
-                <div class="btn-group checkBoxElement" role="group" aria-label="radio btn for line dashed" id="btnLineDashedDiv">
-                 <button type="button" class="btn-check btnLineSelect" name="btnLine" id="btnLineDashed" autocomplete="off"></button>
-                 <label class="btn" for="btnLineDashed">
-                  <span data-feather="more-horizontal" id="btnLineDashedIcon"></span>
+                </div>
+              </div>
+
+              <!--And/Or-->
+              <label for="colorTools" class="form-label">Operator</label>
+              <div class="d-grid gap-2 d-md-flex justify-content-md-center mb-3">
+               <div class="btn-group checkBoxElement" role="group" aria-label="radio btn for AND refiner" id="btnAndDiv">
+                 <button type="button" class="btn-check btnLineSelect" name="btnAnd" id="btnAnd" autocomplete="off"></button>
+                 <label class="btn btnCustom" for="btnAnd">
+                   <!-- <span data-feather="minus" id="btnLineContinueIcon"></span> --> AND
                  </label>
                </div>
+               <div class="btn-group checkBoxElement" role="group" aria-label="radio btn OR refiner" id="btnOrDiv">
+                <button type="button" class="btn-check btnLineSelect" name="btnLine" id="btnOr" autocomplete="off"></button>
+                <label class="btn btnCustom" for="btnOr">
+                 <!-- <span data-feather="more-horizontal" id="btnLineDashedIcon"></span> -->OR
+                </label>
               </div>
+             </div>
 
             </div>
               
           </li>
 
+          <!--data section-->
           <li class="nav-item">
             <a id="toolsTab" class="nav-link border" aria-current="page" href="#reportDiv" aria-expanded="false" data-bs-toggle="collapse" onclick="changeActiveNavLinkColor();">
               <span data-feather="file-text" class="align-text-bottom"></span>
@@ -219,15 +281,41 @@
         </div>
         <div class="btn-toolbar mb-2 mb-md-0">
           <div class="btn-group me-2">
-            <button type="button" class="btn btn-sm btn-outline-secondary" id="deleteBtn">
-              <span data-feather="trash" class="align-text-bottom"></span>
-            </button>
-            <button type="button" class="btn btn-sm btn-outline-secondary" id="saveBtn">
-              <span data-feather="save" class="align-text-bottom"></span>
-            </button>
-            <button type="button" class="btn btn-sm btn-outline-secondary" id="refreshBtn" onClick="history.go(0);">
-              <span data-feather="refresh-cw" class="align-text-bottom"></span>
-            </button>
+            <!-- <div> -->
+              <span data-bs-toggle="tooltip" data-bs-title="Upload">
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="uploadBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                  <span data-feather="upload" class="align-text-bottom"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li><button class="dropdown-item" type="button" id="xmlBtn">xml</button></li>
+                  <li><button class="dropdown-item" type="button" id="jsonBtn">json</button></li>
+                </ul>
+            </span>
+            <!-- </div> -->
+            <!-- <div> -->
+              <span data-bs-toggle="tooltip" data-bs-title="Download">
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="saveBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                  <span data-feather="download" class="align-text-bottom"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li><button class="dropdown-item" type="button" id="pngBtn">png</button></li>
+                  <li><button class="dropdown-item" type="button" id="jpgBtn">jpg</button></li>
+                </ul>
+              </span>
+            <!-- </div> -->
+          </div>
+
+          <div class="btn-group me-2">
+            <span data-bs-toggle="tooltip" data-bs-title="Delete">
+              <button type="button" class="btn btn-sm btn-outline-secondary" id="deleteBtn">
+                <span data-feather="trash" class="align-text-bottom"></span>
+              </button>
+            </span>
+            <span data-bs-toggle="tooltip" data-bs-title="Reset">
+              <button type="button" class="btn btn-sm btn-outline-secondary" id="refreshBtn" onClick="history.go(0);">
+                <span data-feather="refresh-cw" class="align-text-bottom"></span>
+              </button>
+          </span>
           </div>
           <div class="btn-group me-2">
             <button type="button" class="btn btn-sm btn-outline-secondary" id="zoomOutBtn">
