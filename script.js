@@ -97,10 +97,12 @@ function setup() {
   ContinuousLine.mouseReleased(changeNodeLineToContinueLine);
   
   // save canvas
-  var shareBtn = select('#saveBtn');
+  var saveBtnPng = select('#pngBtn');
+  var saveBtnJpg = select('#jpgBtn');
   var downloadBtn = select("#downloadBtn")
-  shareBtn.mousePressed(downloadCanvas);
-  downloadBtn.mousePressed(downloadCanvas);
+  saveBtnPng.mousePressed(downloadCanvasPng);
+  saveBtnJpg.mousePressed(downloadCanvasJpg);
+  downloadBtn.mousePressed(downloadCanvasJpg);
 
   // canvasElement.style("padding","3%")
 
@@ -224,10 +226,15 @@ function changeNodeLineToDashed() {
   activeNode.lineList = [10,10,10,10];
 }
 
-function downloadCanvas(){
+function downloadCanvasPng(){
   fileName = select("#treeName").value();
   console.log(fileName);
   saveCanvas(canvasElement, fileName, 'png');
+}
+function downloadCanvasJpg(){
+  fileName = select("#treeName").value();
+  console.log(fileName);
+  saveCanvas(canvasElement, fileName, 'jpg');
 }
 
 function clearCurrentTree(){
