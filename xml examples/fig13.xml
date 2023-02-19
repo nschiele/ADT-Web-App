@@ -37,12 +37,12 @@
             <parameter domainId="ProbSucc2">0.25</parameter>
         </node>
     </node>
-    <domain id="MinTimeSeq1">
+    <!--<domain id="MinTimeSeq1">
         <class>lu.uni.adtool.domains.predefined.MinTimeSeq</class>
         <tool>ADTool</tool>
     </domain>
     <domain id="ProbSucc2">
         <class>lu.uni.adtool.domains.predefined.ProbSucc</class>
         <tool>ADTool</tool>
-    </domain>
+    </domain>-->
 </adtree>
