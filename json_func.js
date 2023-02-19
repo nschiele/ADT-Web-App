@@ -1,6 +1,5 @@
 
 function getJson(temp) { //Function for returning JSON
-    console.log("tof1");
     if (temp == 0){
         var example = {
             "adtree": {
@@ -85,7 +84,26 @@ function getJson(temp) { //Function for returning JSON
         return example;
     }
     else if(temp == 1){
-        const xml = [ // Declare XML as list of strings
+        convert(0);
+    }
+    else{
+        
+        convert(1);
+    }
+}
+
+/*async function getXML(){
+    let url = "https://raw.githubusercontent.com/nschiele/ADT-Web-App/main/xml%20examples/fig13.xml";
+    let resp = await fetch(url);
+    let xml = await resp.text();
+    return xml;
+}*/
+
+async function convert(XorJ){
+    var input_text
+    if (XorJ == 0){ // XorJ == 0 gives that input_file contains a XML
+        //input_text = await getXML();
+        input_text = [ // Declare XML as list of strings
             '<?xml version="1.0" encoding="UTF-8"?>',
             '<adtree>',
             '    <node refinement="conjunctive">',
@@ -135,16 +153,6 @@ function getJson(temp) { //Function for returning JSON
             '    </domain>',
             '</adtree>',
         ]
-        convert(xml, 0)
-    }
-    else{
-        
-        convert(json, 1)
-    }
-}
-
-function convert(input_text, XorJ){
-    if (XorJ == 0){ // XorJ == 0 gives that input_file contains a XML
         var json = {
             "adtree":{
 
