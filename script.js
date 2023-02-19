@@ -31,7 +31,7 @@ var currNodeText;
 var newNodeText;
 let oldNodetext;
 
-function setup() {
+async function setup() {
   // noLoop();
   toDraw = true;
   trackMouseStart = true;
@@ -144,7 +144,7 @@ function setup() {
 
 
 
-
+/*
   root = new Tree("Rob first Bank", 800, 400, 2);
 
 
@@ -184,8 +184,8 @@ function setup() {
   canvasElement.elt.defaultValue = root.getMultiArray()
   // console.log("Depth: ", max_depth(root))
   // console.log("Width: ", max_width(root, 50))
-
-  var example = getJson(0); // Call json_junc.js
+  */
+  var example = await getJson(0); // Call json_junc.js
   
   buildFromMultiset(example);
 
@@ -289,7 +289,7 @@ function max_width(n, dist){
   return toReturn;
 }
 
-function buildFromMultiset(toBuild, parent=null){
+async function buildFromMultiset(toBuild, parent=null){
   console.log(toBuild)
   console.log(root)
   // First Run of Function

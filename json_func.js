@@ -1,5 +1,5 @@
-
-function getJson(temp) { //Function for returning JSON
+// Function for returning JSON
+function getJson(temp) { 
     if (temp == 0){
         var example = {
             "adtree": {
@@ -84,25 +84,110 @@ function getJson(temp) { //Function for returning JSON
         return example;
     }
     else if(temp == 1){
-        convert(0);
+        return convert(0);
     }
     else{
         
-        convert(1);
+        return convert(1);
     }
 }
 
-/*async function getXML(){
+// Open the XML testfile
+async function getXML(){
     let url = "https://raw.githubusercontent.com/nschiele/ADT-Web-App/main/xml%20examples/fig13.xml";
     let resp = await fetch(url);
     let xml = await resp.text();
     return xml;
-}*/
+}
 
+// Builds the json object as a string
+async function build_json(input_text){
+    const items = input_text.split("\n"); // Put the XML lines into a list of strings
+    var json = "{"; // String where in the json object will be build
+    var item; // Single line of the XML file
+    var temp = ""; // Temporary variable to save label names
+    var j, k; // Counting variables
+    var depth = 0; // Keeping track of the depth of the json
+    var last = 0; // Did we close the last node? 0 means yes, 1 means no
+    for (var i = 1; i < items.length; i++){ // Loop through all lines
+        item = items[i];
+        j = 0;
+        while (item[j] != "<"){ // Find the first useful character
+            j++
+        }
+        switch(item[j + 1]){ // Every tag has to be treated differently
+            case "/": // Closing tag
+                depth--;
+                if (item[j + 2] == "n"){ // Node closing tag? (nodes and parameters use [ & ] and need a different closing tag in json)
+                    json += '}]';
+                    last = 0;
+                }
+                else{
+                    json += '}';
+                }
+                break;
+            case "a": // Adtree tag
+                depth++;
+                json += '"adtree": {';
+                break;
+            case "n": // Node tag
+                depth++;
+                if (depth > 2){
+                    json += ", ";
+                }
+                if (last == 0){
+                    json += '"node": [ {';
+                    last = 1;
+                }
+                else{
+                    json += '{'
+                }
+                json += await ref_swi(item, j); // Add refinement and switchroles
+                break;
+            case "l": // Label tag
+                temp = "";
+                k = j + 7; // Position of label
+                while (item[k] != "<"){ // Retrieve the label
+                    temp += item[k];
+                    k++;
+                }
+                json += '"label": ' + '"' + temp + '"';
+                break;
+            case "p": // Parameter tag
+                break;
+            default: // Do nothing
+        }
+    }
+    json += "}"
+    console.log(json);
+    return json;
+}
+
+// Add refinement and switchroles
+async function ref_swi(item, j){
+    var temp;
+    while (item[j] != "r"){ // Find the refinement
+        j++;
+    }
+    j += 12; // Position of refinement
+    if (item[j] == "c"){
+        temp = '"refinement": "conjunctive",'
+    }
+    else{
+        temp = '"refinement": "disjunctive",'
+    }
+    j += 13 // Position of switchRole
+    if (item[j] == "s"){
+        temp += '"switchRole": "yes",';
+    }
+    return temp;
+}
+
+//Converts XML to JSON and JSON to XML
 async function convert(XorJ){
     var input_text
     if (XorJ == 0){ // XorJ == 0 gives that input_file contains a XML
-        //input_text = await getXML();
+        /*
         input_text = [ // Declare XML as list of strings
             '<?xml version="1.0" encoding="UTF-8"?>',
             '<adtree>',
@@ -152,24 +237,9 @@ async function convert(XorJ){
             '        <tool>ADTool</tool>',
             '    </domain>',
             '</adtree>',
-        ]
-        var json = {
-            "adtree":{
-
-            }
-        };
-        var item
-        for (var i = 1; i < input_text.length; i++){
-            item = input_text[i];
-            for (var j = 0; j < item.length; j++){
-                switch(item[j]){
-                    case "n":
-                        
-                        break;
-                    default:
-                }
-            }
-        }
+        ]*/
+        input_text = await getXML(); // Get XML string
+        var json = JSON.parse(await build_json(input_text)); // Get JSON string and parse to JSON object
         return json;
     }
     //else{ // else gives that input_file contains a JSON
