@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "ohm-js": "^16.6.0",
+    "xmlbuilder2": "^3.0.2"
+  }
+}
