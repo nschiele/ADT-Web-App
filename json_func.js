@@ -3,9 +3,8 @@ class Node {
         this.key = 0;
         this.label = null;
         this.refinement = null;
-        this.parent = null;
-        this.children = [];
-        this.amount = 0;
+        this.code = null;
+       this.depth = null;
     }
 }
 
@@ -213,43 +212,75 @@ async function getXML(){
 //     printInorder(root);
 // }
 
-async function add_Node(key, label, refinement){
+// async function add_Node(key, label, refinement, depth){
+//     var node = new Node();
+//     node.key = key;
+//     node.label = label;
+//     node.refinement = refinement;
+//     node.depth = depth;
+
+//     return node;
+// }
+
+async function insert(root, key, label, refinement, depth, lastNode, seen){ // assign code to nodes without building tree example: 0-0-1
+ 
+    var order = null;
     var node = new Node();
     node.key = key;
     node.label = label;
     node.refinement = refinement;
+    node.depth = depth;
 
-    return node;
-}
-
-async function insert(root, key, label, refinement, depth, last_node){
-    var child = add_Node(key, label, refinement);
-    var x = root;
-    var y = null;
-
-    while (x != null){
-        y = x;
-        if (key % depth*2 == 0)
-            x = x.children[];
-        else
-            x = x.left;
+    if (root == null){
+        node.code = "0";
     }
+    else{
+        //console.log("last node: ", await lastNode.code[lastNode.code.length - 1])
+        if (lastNode.depth > depth){
+            node.code = lastNode.code + "-0";
+        }
+        else if (lastNode.depth < depth){
+            var i = 0;
+            while (seen[i].depth != depth){
+                i++;
+            }
+            order = toString(seen[i].code[seen[i].code.length - 1]) + 1;
+            node.code = seen[i].code;
+            node.code[node.code.length - 1] = toString(order);
+        }
+        else{
+            order = int(lastNode.code[lastNode.code.length - 1]) + 1;
+            node.code = lastNode.code;
+            node.code[node.code.length - 1] = toString(order);
+        }
+    }
+    // var x = root;
+    // var y = null;
+
+    // while (x != null){
+    //     y = x;
+    //     if (key % depth*2 == 0)
+    //         x = x.children[];
+    //     else
+    //         x = x.left;
+    // }
 
     // root = null tree is empty
     // new node is root node
-    if (y == null)
-        y = child; 
+    // if (y == null)
+    //     y = child; 
     // If new key is less than leaf node key
     // Assign new node as its left child
-    else if (key % 2 == 0){
-        y.right = child;
-    }
+    // else if (key % 2 == 0){
+    //     y.right = child;
+    // }
     // else assign new node as its  right child
-    else{
-        y.left = child;
-    }
+    // else{
+    //     y.left = child;
+    // }
 
-    return y;
+    console.log(node);
+    return node;
 }
 
 async function find_label(item, j){
@@ -281,20 +312,9 @@ async function find_refinement(item, j){
     return refinement;
 }
 
-function Inorder(root)
-{
-    if (root == null)
-        return;
-    else
-    {
-        Inorder(root.left);
-        console.log(root.key +" ");
-        Inorder(root.right);
-    }
-}
-
 // Builds the json object as a string
 async function build_json(input_text){
+    // wanneer var en wanneer const (variabelen)
     const items = input_text.split("\n"); // Put the XML lines into a list of strings
     var item; // Single line of the XML file
     var temp = ""; // Temporary variable to save label names
@@ -303,13 +323,13 @@ async function build_json(input_text){
     var last = 0; // Did we close the last node? 0 means yes, 1 means no
     var root = null; // Root of ADT init
     var key = 0;
-    var seen = [];
-    var last_node = null;
+    var seen = []; // erase array after going back in depth
+    var lastNode = null;
 
     for (var i = 1; i < items.length; i++){ // Loop through all lines
         item = items[i];
-        console.log(depth);
-        console.log(item);
+        //console.log(depth);
+        //console.log(item);
         j = 0;
         while (item[j] != "<"){ // Find the first useful character
             j++
@@ -321,21 +341,26 @@ async function build_json(input_text){
             case "a": // Adtree tag
                 break;
             case "n": // Node tag
-                depth++;
-                k = 1
-                while (seen[depth*k] != null){
-                    k++
-                }
-                seen[depth*k] = 1;
-                key = depth*k;
                 label = find_label(items[i+1], j);
                 refinement = find_refinement(item, j);
                 if (root == null){
-                    root = insert(root, key, label, refinement, depth, null);
-                    //console.log(root);
+                    root = insert(root, key, label, refinement, depth, null, seen);
+                    lastNode = root;
+                    seen[0] = root;
+                    console.log(root);
                 }
-                else
-                    last_node = insert(root, key, label, refinement, depth, last_node);
+                else{
+                    depth++;
+                    var i = 0;
+                    while (seen[i] != null){
+                        i++
+                    }
+                    console.log("depth before insert: ", depth);
+                    console.log(lastNode);
+                    lastNode = insert(root, key, label, refinement, depth, lastNode, seen);
+                    seen[i] = lastNode;
+                    //console.log(lastNode);
+                }
                 break;
             case "p": // Parameter tag
                 break;
