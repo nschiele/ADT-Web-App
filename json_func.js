@@ -223,7 +223,6 @@ async function getXML(){
 // }
 
 async function insert(root, key, label, refinement, depth, lastNode, seen){ // assign code to nodes without building tree example: 0-0-1
- 
     var order = null;
     var node = new Node();
     node.key = key;
@@ -236,22 +235,24 @@ async function insert(root, key, label, refinement, depth, lastNode, seen){ // a
     }
     else{
         //console.log("last node: ", await lastNode.code[lastNode.code.length - 1])
-        if (lastNode.depth > depth){
+        if (lastNode.depth < depth){
+            console.log("0");
             node.code = lastNode.code + "-0";
         }
-        else if (lastNode.depth < depth){
+        else if (lastNode.depth > depth){
+            console.log("1");
             var i = 0;
             while (seen[i].depth != depth){
                 i++;
             }
-            order = toString(seen[i].code[seen[i].code.length - 1]) + 1;
+            order = Number(seen[i].code[seen[i].code.length - 1]) + 1;
             node.code = seen[i].code;
             node.code[node.code.length - 1] = toString(order);
         }
         else{
-            order = int(lastNode.code[lastNode.code.length - 1]) + 1;
-            node.code = lastNode.code;
-            node.code[node.code.length - 1] = toString(order);
+            console.log("2");
+            order = Number(lastNode.code[lastNode.code.length - 1]) + 1;
+            node.code = lastNode.code..substr(lastNode.code.length - 2) + toString(order);
         }
     }
     // var x = root;
@@ -329,7 +330,7 @@ async function build_json(input_text){
     for (var i = 1; i < items.length; i++){ // Loop through all lines
         item = items[i];
         //console.log(depth);
-        //console.log(item);
+        // console.log(item, " item: ",i);
         j = 0;
         while (item[j] != "<"){ // Find the first useful character
             j++
@@ -341,27 +342,27 @@ async function build_json(input_text){
             case "a": // Adtree tag
                 break;
             case "n": // Node tag
-                label = find_label(items[i+1], j);
-                refinement = find_refinement(item, j);
+                label = await find_label(items[i+1], j);
+                //console.log(label)
+                refinement = await find_refinement(item, j);
                 if (root == null){
-                    root = insert(root, key, label, refinement, depth, null, seen);
+                    root = await insert(root, key, label, refinement, depth, null, seen);
                     lastNode = root;
                     seen[0] = root;
-                    console.log(root);
                 }
                 else{
                     depth++;
-                    var i = 0;
+                    var k = 0;
                     while (seen[i] != null){
-                        i++
+                        k++
                     }
-                    console.log("depth before insert: ", depth);
-                    console.log(lastNode);
-                    lastNode = insert(root, key, label, refinement, depth, lastNode, seen);
-                    seen[i] = lastNode;
+                    lastNode = await insert(root, key, label, refinement, depth, lastNode, seen);
+                    seen[k] = lastNode;
                     //console.log(lastNode);
                 }
                 break;
+            case "l":
+                break; // Label tag
             case "p": // Parameter tag
                 break;
             default: // Do nothing
