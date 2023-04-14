@@ -110,23 +110,40 @@ async function getXML(){
     return xml;
 }
 
-// async function to_json(seen){
-//     var json = {
-//         "adtree":{
-//         }
-//     }
-//     json["adtree"]["node"]["label"] = seen[0].label;
-//     json["adtree"]["node"]["refinement"] = seen[0].refinement;
-//     console.log(json);
-//     /*
-//     for (var i = 0; i < seen.length; i++){
-//         json["adtree"] = 
-//         seen[i].code 
-//     }
-//     */
-//    return json;
-// }
+async function to_json(seen){
+    var json = {
+        "adtree": {
+            "node": {
+            }
+        }
+    }
+    var i = 0;
+    var depth = 0;
+    var lastNode = 0;
+    for (var i = 0; i < seen.length; i++){
+        if (seen[i].code == "0"){
+            lastNode = seen[i].code;
+            json.adtree.node["label"] = seen[i].label;
+            json.adtree.node["refinement"] = seen[i].refinement;
+            json.adtree.node["node"] = [];
+        }
+        // else{
 
+        // }
+    }
+   return json;
+}
+
+// test codes in order:
+// 0
+// 0-0
+// 0-0-0
+// 0-0-1
+// 0-0-2
+// 0-0-2-0
+// 0-0-2-1
+// 0-0-2-1-0
+// 0-1
 async function insert(root, key, label, refinement, depth, lastNode, seen){ // assign code to nodes without building tree example: 0-0-1
     var order = null;
     var node = new Node();
@@ -144,21 +161,21 @@ async function insert(root, key, label, refinement, depth, lastNode, seen){ // a
         }
         else if (lastNode.depth > depth){
             var i = 0;
-            while (seen[i].depth != depth){
-                i++;
-                if (i == seen.length){
-                    i = 0;
-                    break;
+            var j = null;
+            order = 0;
+            while (seen[i] != null){
+                if (seen[i].depth == depth){
+                    order++;
+                    j = i;
                 }
+                i++;
+                
             }
-            order = i;
-            if (i == 0){
-                node.code = lastNode.code;
-                node.code[node.code.length - 1] = '' + order;
+            if (j !=null){
+                node.code = seen[j].code.substr(0, seen[j].code.length - 1) + '' + order;
             }
             else{
-                node.code = seen[i].code;
-                node.code[node.code.length - 1] = '' + order;
+                node.code = lastNode.code + "-0";
             }
         }
         else{
@@ -246,12 +263,9 @@ async function build_json(input_text){
             default: // Do nothing
         }
     }
-    // json = to_jSson(seen);
-    console.log(seen);
-    // for (var q = 0; q < seen.length; q++){
-    //     console.log(seen[q]);
-    // }
-    return ;
+    json = await to_json(seen);
+    console.log(json);
+    return json;
 }
 
 //Converts XML to JSON and JSON to XML
