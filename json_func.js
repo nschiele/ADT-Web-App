@@ -231,7 +231,7 @@ async function build_json(input_text){
                 else{
                     depth++;
                     var k = 0;
-                    while (seen[i] != null){
+                    while (seen[k] != null){
                         k++
                     }
                     lastNode = await insert(root, key, label, refinement, depth, lastNode, seen);
