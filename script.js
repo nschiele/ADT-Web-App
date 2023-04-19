@@ -185,9 +185,10 @@ async function setup() {
   // console.log("Depth: ", max_depth(root))
   // console.log("Width: ", max_width(root, 50))
   */
-  var example = await getJson(0); // Call json_junc.js
+  var example = await getJson(0, null); // Call json_junc.js
   
   buildFromMultiset(example);
+  console.log(getJson(1, example));
 
   // console.log(root);
   scaled = frameX/(root.width*1.2);
@@ -290,24 +291,23 @@ function max_width(n, dist){
 }
 
 async function buildFromMultiset(toBuild, parent=null){
-  console.log(toBuild)
-  console.log(root)
+  // console.log(root)
   // First Run of Function
   if(parent == null){
-    root = new Tree(toBuild.adtree.node.label, 0, 0, 2); // Get label of root
-    root.refinement = toBuild.adtree.node._refinement;
-    for(let i = 0; i < Object.keys(toBuild.adtree.node.node).length; i++){ // Loop through all children
-      buildFromMultiset(toBuild.adtree.node.node[i], root);
+    root = new Tree(toBuild[0].label/*adtree.node.label*/, 0, 0, 2); // Get label of root
+    root.refinement = toBuild[0].refinement;
+    for(let i = 0; i < Object.keys(toBuild[0]).length-5; i++){ // Loop through all children
+      buildFromMultiset(toBuild[0][i], root);
     }
   // Tree Exists, adding subtrees
   } else {
     //Intermediate Node
-    if(Object.keys(toBuild).length == 3){
+    if(Object.keys(toBuild).length-5 != 0){
       var child = new Tree(toBuild.label, 0, 0, 2); // Get label of child
-      child.refinement = toBuild._refinement;
+      child.refinement = toBuild.refinement;
       parent.add_child(child);
-      for(let i = 0; i < Object.keys(toBuild.node).length; i++){ // Loop through all children
-        buildFromMultiset(toBuild.node[i], child);
+      for(let i = 0; i < (Object.keys(toBuild).length-5); i++){ // Loop through all children
+        buildFromMultiset(toBuild[i], child);
       }
       //Leaf Node
     } else {
