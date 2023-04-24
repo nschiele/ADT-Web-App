@@ -1,40 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <adtree>
-    <node refinement="conjunctive">
-        <label>Bank Account</label>
-        <node refinement="disjunctive">
-            <label>learn PIN</label>
-            <node refinement="disjunctive">
-                <label>eavesdrop PIN</label>
-                <parameter domainId="MinTimeSeq1">10.0</parameter>
-                <parameter domainId="ProbSucc2">0.5</parameter>
-            </node>
-            <node refinement="disjunctive">
-                <label>find PIN</label>
-                <parameter domainId="MinTimeSeq1">100.0</parameter>
-                <parameter domainId="ProbSucc2">0.1</parameter>
-            </node>
-            <node refinement="conjunctive" switchRole="yes">
-                <label>security training</label>
-                <node refinement="disjunctive">
-                    <label>learn rules</label>
-                    <parameter domainId="ProbSucc2">0.7</parameter>
-                </node>
-                <node refinement="disjunctive">
-                    <label>adhere to rules</label>
-                    <parameter domainId="ProbSucc2">0.3</parameter>
-                    <node refinement="disjunctive" switchRole="yes">
-                        <label>threaten victim</label>
-                        <parameter domainId="MinTimeSeq1">5.0</parameter>
-                        <parameter domainId="ProbSucc2">0.9</parameter>
-                    </node>
-                </node>
-            </node>
-        </node>
-        <node refinement="disjunctive">
-            <label>get card</label>
-            <parameter domainId="MinTimeSeq1">20.0</parameter>
-            <parameter domainId="ProbSucc2">0.25</parameter>
-        </node>
-    </node>
+  <node refinement="disjunctive">
+    <label>Hack into server</label>
+      <node refinement="disjunctive">
+        <label>using buffer overflow</label>
+      </node>
+      <node refinement="disjunctive">
+        <label>pay someone</label>
+      </node>
+  </node>
 </adtree>
