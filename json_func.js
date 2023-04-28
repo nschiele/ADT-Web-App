@@ -91,6 +91,7 @@ async function insert(root, label, refinement, swith_role, depth, lastNode, seen
     return node;
 }
 
+// Don't hardcode positions
 async function find_label(item, j){
     label = "";
     j = j + 11;
@@ -128,6 +129,7 @@ async function find_ref_rol(item, j, r){
     return ref_swi;
 }
 
+// Add parameters as elements of the json
 // Builds the json object as a string
 async function build_json(input_text){
     // wanneer var en wanneer const (variabelen)
