@@ -57,6 +57,8 @@ async function insert(root, label, refinement, swith_role, depth, lastNode, seen
     node.depth = depth;
     node.swith_role = swith_role;
 
+    // 4e kind ipv 0e todo
+
     if (root == null){
         node.code = "0";
     }
@@ -121,7 +123,7 @@ async function find_ref_rol(item, j, r){
             ref_swi = 0;
         }
     }
-    else{
+    else{ // todo
         j += 13 // Position of switchRole
         if (item[j] == "s"){
            ref_swi = 1;
@@ -191,6 +193,7 @@ async function build_json(input_text){
     seen.forEach(item => {
         to_json(item, json);
       });
+    console.log(json);
     return json;
 }
 
