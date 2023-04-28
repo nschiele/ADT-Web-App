@@ -1,12 +1,51 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0'?>
 <adtree>
   <node refinement="disjunctive">
-    <label>Hack into server</label>
-      <node refinement="disjunctive">
-        <label>using buffer overflow</label>
+    <label>Bank Account</label>
+      <node refinement="conjuctive">
+        <label>ATM</label>
+          <node refinement="disjunctive">
+            <label>Card</label>
+          </node>
+          <node refinement="disjunctive">
+            <label>PIN</label>
+              <node refinement="disjunctive">
+                <label>Find Node</label>
+                  <node refinement="disjunctive" switchRole="yes">
+                    <label>Memorize</label>
+                  </node>
+              </node>
+              <node refinement="disjunctive">
+                <label>Force</label>
+              </node>
+          </node>
       </node>
-      <node refinement="disjunctive">
-        <label>pay someone</label>
+      <node refinement="conjuctive">
+        <label>Online</label>
+          <node refinement="disjunctive">
+            <label>Username</label>
+          </node>
+          <node refinement="disjunctive" switchRole="yes">
+            <label>2FA</label>
+              <node refinement="disjunctive" switchRole="yes">
+                <label>malware</label>
+                  <node refinement="disjunctive">
+                    <label>Dekstop</label>
+                  </node>
+                  <node refinement="disjunctive">
+                    <label>Mobile</label>
+                  </node>
+              </node>
+          </node>
+          <node refinement="disjunctive">
+            <label>Password</label>
+              <node refinement="disjunctive">
+                <label>Phishing</label>
+              </node>
+              <node refinement="disjunctive">
+                <label>Key Logger</label>
+              </node>
+          </node>
       </node>
   </node>
 </adtree>

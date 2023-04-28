@@ -92,22 +92,27 @@ async function insert(root, label, refinement, swith_role, depth, lastNode, seen
 }
 
 // Don't hardcode positions
-async function find_label(item, j){
-    label = "";
-    j = j + 11;
-    while (item[j] != "<"){ // Retrieve the label
-        label += item[j];
+async function find_label(item){
+    var label = "";
+    var j = 0;
+    // Retrieve the label
+    while (item[j] != ">"){
         j++;
+    }
+    j++;
+    while (item[j] != '<'){
+        label += item[j];
+        j++
     }
     return label;
 }
 
 async function find_ref_rol(item, j, r){
     var ref_swi;
-    while (item[j] != "r"){ // Find the refinement
+    while (item[j] != "="){ // Find the refinement
         j++;
     }
-    j += 12; // Position of refinement
+    j += 2;
     if (r == 0){
         if (item[j] == "c"){
             ref_swi = 1;
@@ -156,7 +161,7 @@ async function build_json(input_text){
             case "a": // Adtree tag
                 break;
             case "n": // Node tag
-                label = await find_label(items[i+1], j);
+                label = await find_label(items[i+1]);
                 refinement = await find_ref_rol(item, j, r);
                 r = 1;
                 swith_role = await find_ref_rol(item, j, r);
