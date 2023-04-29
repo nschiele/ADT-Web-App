@@ -12,9 +12,16 @@ function checkInput() {
     }
 }
 
+// show alert when submitting the text of the tree
+const toggleBtn = document.getElementById("generateTreeButton");
+const smallText = document.getElementById("alert");
+
+toggleBtn.addEventListener("click", function() {
+  smallText.classList.toggle("hiddenAlert");
+});
+
 (() => {
   'use strict'
-
   feather.replace({ 'aria-hidden': 'true' })
 })()
 

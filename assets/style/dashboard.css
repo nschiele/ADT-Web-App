@@ -354,3 +354,10 @@ border-top:0.5px solid #1e202e;
 hr{
   color: lightgray;
 }
+.hiddenAlert{
+  display: none;
+}
+
+#alert{
+  color: green !important;
+}
