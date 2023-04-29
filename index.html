@@ -16,24 +16,29 @@
   </head>
   <body>
     
-<header class="navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-  <div class="px-3 text-bg-dark">
+<header class="navbar-custom sticky-top  flex-md-nowrap p-0">
+  <div class="px-3">
     <div class="container">
       <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-        <a href="/" class="d-flex align-items-center my-2 my-lg-0 me-lg-auto text-white text-decoration-none">
-          <span id="navIconMain"data-feather="share-2" fill="#ffc107"class="bi d-block mx-auto mb-1 mr-2"></span> 
-          <span id="navIcon">&nbsp;A.D.T </span>
+        <a href="index.html" class="d-inline-block d-flex align-items-center my-2 my-lg-0 me-lg-auto text-white text-decoration-none">
+          <span id="navIconMain"data-feather="share-2" fill="#ffc107"class="bi d-inline-block mx-auto mb-1 mr-2"></span> 
+          <span id="navIcon">&nbsp;<span id="navText">ADT</span>app</span>
         </a>
 
         <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
-          <li>
-            <a href="#" class="nav-link text-white">
-              <span id="navIcon"data-feather="home" class="bi d-block mx-auto mb-1"></span>
+          <li id="navLi">
+            <a href="#" class="nav-link text-white ">
+              <span  class="bi d-block mx-auto mb-1">HOME</span>
             </a>
           </li>
-          <li>
-            <a href="#" class="nav-link text-white">
-              <span id="navIcon"data-feather="info" class="bi d-block mx-auto mb-1"></span>
+          <li id="navLi">
+            <a href="index.html" class="nav-link text-white active">
+              <span  class="bi d-block mx-auto mb-1">ADT</span>
+            </a>
+          </li>
+          <li id="navLi">
+            <a href="#" class="nav-link text-white ">
+              <span  class="bi d-block mx-auto mb-1">DOCS</span>
             </a>
           </li>
         </ul>
@@ -44,22 +49,22 @@
 
 <div class="container-fluid">
   <div class="row">
-    <nav id="sidebarMenu" class="col-md-4 col-lg-3 d-md-block bg-light sidebar collapse">
+    <nav id="sidebarMenu" class="col-md-4 col-lg-3 d-md-block sidebar collapse">
       <div class="position-sticky pt-3 sidebar-sticky" id="leftSideBar">
-        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-2 mb-1 text-muted text-uppercase">
+        <h5 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-2 mb-1 text-muted text-uppercase">
           <span>Tools</span>
           <a class="link-secondary" href="#" aria-label="Add a new report">
           </a>
-        </h6>
+        </h5>
 
         <ul class="nav flex-column">
           <li class="nav-item">
-            <a id="toolsTab" class="nav-link border" aria-current="page" href="#submitNewTreeDiv" aria-expanded="false" data-bs-toggle="collapse" onclick="changeActiveNavLinkColor();">
+            <a id="toolsTab" class="nav-link" aria-current="page" href="#submitNewTreeDiv" aria-expanded="false" data-bs-toggle="collapse" onclick="changeActiveNavLinkColor();">
               <span data-feather="plus-circle" class="align-text-bottom"></span>
               Create
             </a>
               <!--Input for ADT Tree-->
-              <div id="submitNewTreeDiv" class="collapsed insideNavLink collapse show">
+              <div id="submitNewTreeDiv" class="collapsed insideNavLink collapse">
                 <label for="textAreaJsonContent" class="form-label">Contents</label>
                 <textarea class="form-control" id="textAreaJsonContent" onkeyup="checkInput()" rows="3" placeholder="Example: Data Confidality,1,Physical Attack,1,Network Attack,0,Employee Attack,Social Engineering,Fairwall,Training"></textarea>
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-2">
@@ -70,17 +75,16 @@
 
            <!--Children Nodes-->
            <li class="nav-item">
-            <a id="toolsTab" class="nav-link border" aria-current="page" href="#childDiv" aria-expanded="false" data-bs-toggle="collapse" onclick="changeActiveNavLinkColor();">
+            <a id="toolsTab" class="nav-link " aria-current="page" href="#childDiv" aria-expanded="false" data-bs-toggle="collapse" onclick="changeActiveNavLinkColor();">
               <span data-feather="layers" class="align-text-bottom"></span>
               Child
             </a>
               <!--Input for ADT Tree-->
               <div id="childDiv" class="collapsed insideNavLink collapse">
                 <!-- <label for="textAreaJsonContent" class="form-label">Contents</label> -->
-                <a class="nav-link" href="#">
+                
                   <span data-feather="plus-circle" class="align-text-bottom" id="addChildSymbol"></span>
-                  Add Child
-                </a>
+                  <span class="nav-item">Add Child</span>
                 <div class="mb-2 mt-2 border-bottom">
                 <div class="newChildDiv ">
                   <div class="form-check form-switch">
@@ -88,22 +92,26 @@
                     <label class="form-check-label" for="flexSwitchCheckDefault">Defense Child</label>
                   </div>
                   
-                  <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-2">
+                  <div class="input-group mb-4">
                     <input type="text" class="form-control" placeholder="text.." id="nodeChildTextInput" value="new">
-                    <button type="submit" class="btn btn-sm me-md-2 mt-2 btn-warning" id="addChildBtn">Add</button>
+                    <button type="submit" class="btn btn-warning" id="addChildBtn"> 
+                      <span data-feather="plus" class="align-text-bottom"></span></button>
                   </div>
                 </div>
               </div>
               <div class="mb-2 mt-2">
                 <!-- <label for="textAreaJsonContent" class="form-label">Contents</label> -->
-                <a class="nav-link" href="#">
                   <span data-feather="x-circle" class="align-text-bottom" id="removeChildSymbol"></span>
-                  Remove Child
-                </a>
+                  <span class="nav-item">Remove Child</span>
                 <div class="newChildDiv">
-                <!-- <div class="d-grid gap-2 d-md-flex justify-content-md-center mb-2"> -->
-                  <button type="submit" class="btn btn-sm me-md-2 btn-warning" disabled id="RemoveChildBtn">Remove selected child</button>
+                  <div class="input-group mb-4 mt-2">
+                    <input type="text" class="form-control" placeholder="text.." id="nodeTextInput" value="select node to remove">
+                    <button type="submit" class="btn btn-danger" id="RemoveChildBtn"> 
+                      <span data-feather="trash" class="align-text-bottom"></span></button>
+                  </div>
                 </div>
+                
+                
                 <!-- </div> -->
               </div>
             </div>
@@ -111,7 +119,7 @@
           </li>
 
           <li class="nav-item">
-            <a id="toolsTab" class="nav-link border" aria-current="page" href="#customizeNodesDiv" aria-expanded="false" data-bs-toggle="collapse" onclick="changeActiveNavLinkColor();">
+            <a id="toolsTab" class="nav-link " aria-current="page" href="#customizeNodesDiv" aria-expanded="false" data-bs-toggle="collapse" onclick="changeActiveNavLinkColor();">
               <span data-feather="pen-tool" class="align-text-bottom"></span>
               Customize
             </a>
@@ -222,48 +230,42 @@
 
           <!--data section-->
           <li class="nav-item">
-            <a id="toolsTab" class="nav-link border" aria-current="page" href="#reportDiv" aria-expanded="false" data-bs-toggle="collapse" onclick="changeActiveNavLinkColor();">
+            <a id="toolsTab" class="nav-link " aria-current="page" href="#reportDiv" aria-expanded="false" data-bs-toggle="collapse" onclick="changeActiveNavLinkColor();">
               <span data-feather="file-text" class="align-text-bottom"></span>
               Data
             </a>
               <!--Input for ADT Tree-->
               <div id="reportDiv" class="collapsed insideNavLink collapse">
                 <!-- <label for="textAreaJsonContent" class="form-label">Contents</label> -->
-                <a class="nav-link" href="#">
                   <span data-feather="file-text" class="align-text-bottom"></span>
-                  Statstics
-                </a>
-                <a class="nav-link" href="#">
-                  <span data-feather="file-text" class="align-text-bottom"></span>
-                  Probability
-                </a>
-                <a class="nav-link" href="#">
-                  <span data-feather="file-text" class="align-text-bottom"></span>
-                  Risk Estimation
-                </a>
+                  <span class="nav-item mt-3"> Statstics </span><br>
+                  <span data-feather="file-text" class="align-text-bottom mt-3"></span>
+                  <span class="nav-item mt-3">Probability</span><br>
+                  <span data-feather="file-text" class="align-text-bottom mt-3"></span>
+                  <span class="nav-item mt-3">Risk Estimation</span><br>
               </div>
           </li>
         </ul>
         
         <hr>
-        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
+        <h5 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
           <span>Other Tools</span>
-        </h6>
+        </h5>
         <ul class="nav flex-column mb-2">
           <li class="nav-item">
-            <a class="nav-link" href="#" id="downloadBtn">
+            <a class="nav-link otherToolTab" href="#" id="downloadBtn">
               <span data-feather="download" class="align-text-bottom"></span>
               Download ADT
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a  class="nav-link otherToolTab" href="#">
               <span data-feather="printer" class="align-text-bottom"></span>
               Print ADT
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link otherToolTab" href="#">
               <span data-feather="help-circle" class="align-text-bottom"></span>
               Support
             </a>

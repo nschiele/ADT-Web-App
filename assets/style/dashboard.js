@@ -11,19 +11,6 @@ function checkInput() {
         document.getElementById('generateTreeButton').disabled = true;
     }
 }
-      
-
-function changeActiveNavLinkColor(){
-  var clickedNav = document.getElementById("toolsTab");
-  if(clickedNav.classList.contains("collapsed")){
-    console.log(clickedNav.classList.contains("collapsed"));
-    clickedNav.classList.remove("active");
-    // clickedNav.className += "collapsed Active";
-  }
-  else{
-    clickedNav.className += " active";
-  }
-}
 
 (() => {
   'use strict'
