@@ -56,7 +56,7 @@ body {
 
 /* .sidebar #reportDiv .nav-link .feather {
   margin: 10px;
-  color: #313348;
+  color: #272837;
 } */
 
 /* .sidebar .nav-link.active {
@@ -72,7 +72,7 @@ body {
   /* color: inherit; */
   /* stroke-width: 3px; */
   /* color:#daaa1cc9; */
-  color: #313348;
+  color: #272837;
 }
 
 .sidebar-heading {
@@ -119,7 +119,7 @@ body {
 
 /* edited */
 #sidebarMenu{
-  background-color: #313348;
+  background-color: #272837;
 }
 #submitNewTreeDiv{
   background-color: whitesmoke;
@@ -130,7 +130,7 @@ body {
 }
 
 .navbar-custom {
-  background-color: #313348;
+  background-color: #272837;
 }
 /* change the brand and text color */
 .navbar-custom .navbar-brand,
@@ -181,7 +181,7 @@ body {
 
 .insideNavLink{
   margin:15px;
-  color: #313348;
+  color: #272837;
   margin-bottom: 30px;
 
 }
@@ -280,21 +280,21 @@ textarea:focus::placeholder {
 
 /*TOOLS TABS*/
 .otherToolTab, #toolsTab{
-  background-color: #313348;
+  background-color: #272837;
   padding: 13px;
   /* border-bottom: 0.3px solid whitesmoke; */
   color: whitesmoke;
 }
 /* #toolsTab[aria-expanded="true"]{
-  background-color: #313348;
+  background-color: #272837;
   color: #e8e6e6;
 } */
 #toolsTab[aria-expanded="true"]:hover .feather{
-  color: #313348;
+  color: #272837;
 }
 .otherToolTab:hover, #toolsTab:hover{
   background-color: #FFCE76;
-  color: #313348;
+  color: #272837;
 }
 #btnLineContinueIcon, #btnLineDashedIcon {
   /* width: 25px;
@@ -348,5 +348,9 @@ h5 span{
 }
 
 #leftSideBar{
-border-top:0.5px solid #212333;
+border-top:0.5px solid #1e202e;
+}
+
+hr{
+  color: lightgray;
 }
