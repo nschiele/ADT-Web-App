@@ -1,7 +1,7 @@
 body {
   font-size: .875rem;
+  height: 100%;
 }
-
 .feather {
   width: 16px;
   height: 16px;
@@ -54,14 +54,6 @@ body {
   color: whitesmoke;
 }
 
-/* .sidebar #reportDiv .nav-link .feather {
-  margin: 10px;
-  color: #272837;
-} */
-
-/* .sidebar .nav-link.active {
-  color: #2470dc;
-} */
 
 #toolsTab[aria-expanded="true"] svg {
   color:#FFCE76;
@@ -69,9 +61,6 @@ body {
 
 .sidebar .nav-link:hover .feather,
 .sidebar .nav-link.active .feather {
-  /* color: inherit; */
-  /* stroke-width: 3px; */
-  /* color:#daaa1cc9; */
   color: #272837;
 }
 
@@ -105,17 +94,6 @@ body {
 .navbar .form-control {
   padding: .75rem 1rem;
 }
-
-/* .form-control-dark {
-  color: #fff;
-  background-color: rgba(255, 255, 255, .1);
-  border-color: rgba(255, 255, 255, .1);
-} */
-
-/* .form-control-dark:focus {
-  border-color: transparent;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
-} */
 
 /* edited */
 #sidebarMenu{
@@ -306,12 +284,6 @@ textarea:focus::placeholder {
   fill: none;
 }
 
-/* .form-switch {
-  display: flex !important;
-  flex-direction: row-reverse !important;
-  justify-content: space-between !important;
-} */
-
 /* .newChildDiv{
   margin-left:10%;
   margin-right: 10%;
@@ -331,6 +303,7 @@ textarea:focus::placeholder {
 #canvasContainer{
   margin-right: 2%;
   margin-left: 3%;
+  min-height: 80vh;
 }
 
 canvas{
@@ -360,4 +333,90 @@ hr{
 
 #alert{
   color: green !important;
+}
+
+.adt-page{
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh - 50px;
+  margin-bottom: 50px;
+}
+
+/*Home page CSS*/
+
+.cover-page {
+  background-size: cover;
+  background-position: center;
+  background-color: #272837;
+  min-height: 100vh;
+  padding-top: 155px;
+}
+
+.cover-page h1 {
+  color: #fff;
+}
+
+.cover-page p {
+  color: #fff;
+  font-size: 1.2rem;
+}
+
+.cover-page a {
+  font-size: 1.2rem;
+}
+
+.cover-page a:hover {
+  color: #fff;
+  background-color: #007bff;
+}
+
+.cover-page a:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+
+/*Footer CSS*/
+footer {
+    background-color: #1b1b25;
+    padding: 10px;
+    margin-top: -105px;
+    color: whitesmoke;
+    position: fixed;
+    bottom: 0;
+    z-index: 101;
+}
+
+footer p {
+  font-size: 14px;
+  margin-bottom: 0;
+}
+
+@media only screen and (max-width: 767px) {
+  footer p {
+    margin-bottom: 20px;
+  }
+}
+
+
+/*DOCS page CSS*/
+.docs-page{
+  padding-bottom:50px;
+  background-color:#272837 ;
+}
+
+.docs-first ,.docs-title{
+  background-color: #efefef;
+  padding: 70px;
+}
+
+.docs-second{
+  background-color:whitesmoke;
+  padding: 70px;
+}
+
+.docs-third{
+  background-color:#272837;
+  padding: 70px;
+  color: whitesmoke;
 }
