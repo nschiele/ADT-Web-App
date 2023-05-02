@@ -20,6 +20,7 @@ let activeNodeTitle;
 var example;
 let canvasElement;
 let canvasWidth;
+let canvasHeight;
 let canvasParentDiv;
 let scaleValue;
 let nodeTextChangeField;
@@ -47,8 +48,9 @@ async function setup() {
   var canvasParentDiv = document.getElementById('canvasContainer');
   // set height and width for the canvas
   canvasWidth = canvasParentDiv.offsetWidth;
+  canvasHeight = canvasParentDiv.offsetHeight;
   // the main canvas area where the tree will go
-  canvasElement = createCanvas(canvasWidth,650);
+  canvasElement = createCanvas(canvasWidth,canvasHeight);
   canvasElement.background("lightgray");
   // set parent div
   canvasElement.parent("canvasContainer");
@@ -389,11 +391,11 @@ function mouseReleased(){
 }
 
 function windowResized() {
-  // var frameX = (windowWidth - sideFrameWidth)
-  // scaled = frameX/(root.width*1.2);
-  // sidePanel.position(frameX, 0);
-  // resizeCanvas(windowWidth, windowHeight);
-  resizeCanvas(canvasWidth,650);
+  var frameX = (windowWidth - sideFrameWidth)
+  scaled = frameX/(root.width*1.2);
+  sidePanel.position(frameX, 0);
+  resizeCanvas(windowWidth, windowHeight);
+  // resizeCanvas(canvasWidth,canvasHeight);
   toDraw  = true;
 }
 

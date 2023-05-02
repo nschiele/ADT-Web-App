@@ -303,7 +303,7 @@ textarea:focus::placeholder {
 #canvasContainer{
   margin-right: 2%;
   margin-left: 3%;
-  min-height: 80vh;
+  min-height: 75vh;
 }
 
 canvas{
