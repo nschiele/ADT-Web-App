@@ -93,8 +93,8 @@
                   </div>
                   
                   <div class="input-group mb-4">
-                    <input type="text" class="form-control" placeholder="text.." id="nodeChildTextInput" value="new">
-                    <button type="submit" class="btn btn-warning" id="addChildBtn"> 
+                    <input type="text" class="form-control" placeholder="text.." id="nodeChildTextInput" value="" onkeyup="checkInputChild()">
+                    <button type="submit" class="btn btn-warning" id="addChildBtn" disabled> 
                       <span data-feather="plus" class="align-text-bottom"></span></button>
                   </div>
                 </div>
@@ -105,8 +105,8 @@
                   <span class="nav-item">Remove Child</span>
                 <div class="newChildDiv">
                   <div class="input-group mb-4 mt-2">
-                    <input type="text" class="form-control" placeholder="text.." id="nodeTextInput" value="select node to remove">
-                    <button type="submit" class="btn btn-danger" id="RemoveChildBtn"> 
+                    <input type="text" class="form-control" placeholder="select node to remove.." id="nodeChildInputRemove" value="" onkeyup="checkRemoveChild()">
+                    <button type="submit" class="btn btn-danger" id="RemoveChildBtn" disabled> 
                       <span data-feather="trash" class="align-text-bottom"></span></button>
                   </div>
                 </div>
@@ -132,7 +132,7 @@
                     <input type="text" readonly class="form-control-plaintext" id="nodeTextLabel" value="Text">
                   </div>
                   <div class="input-group mb-4">
-                    <input type="text" class="form-control" placeholder="Node text.." id="nodeTextInput" value="node text">
+                    <input type="text" class="form-control" placeholder="Node text.." id="nodeTextInput" value="">
                     <button class="btn btn-warning" type="submit" id="btnChangeNodeText">
                       <span data-feather="refresh-cw" class="align-text-bottom"></span></button>
                   </div>

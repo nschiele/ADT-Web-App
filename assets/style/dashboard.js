@@ -12,6 +12,24 @@ function checkInput() {
     }
 }
 
+function checkInputChild() {
+  var textboxValues = document.getElementById("nodeChildTextInput").value;
+  if(textboxValues == "") {
+    document.getElementById('addChildBtn').disabled = true; 
+    } else { 
+        document.getElementById('addChildBtn').disabled = false;
+    }
+}
+
+function checkRemoveChild() {
+  var textboxValues = document.getElementById("nodeChildInputRemove").value;
+  if(textboxValues == "") {
+    document.getElementById('RemoveChildBtn').disabled = true; 
+    } else { 
+        document.getElementById('RemoveChildBtn').disabled = false;
+    }
+}
+
 // show alert when submitting the text of the tree
 const toggleBtn = document.getElementById("generateTreeButton");
 const smallText = document.getElementById("alert");
