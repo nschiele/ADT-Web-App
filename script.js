@@ -298,17 +298,17 @@ async function buildFromMultiset(toBuild, parent=null){
   if(parent == null){
     root = new Tree(toBuild[0].label/*adtree.node.label*/, 0, 0, 2); // Get label of root
     root.refinement = toBuild[0].refinement;
-    for(let i = 0; i < Object.keys(toBuild[0]).length-5; i++){ // Loop through all children
+    for(let i = 0; i < Object.keys(toBuild[0]).length-6; i++){ // Loop through all children
       buildFromMultiset(toBuild[0][i], root);
     }
   // Tree Exists, adding subtrees
   } else {
     //Intermediate Node
-    if(Object.keys(toBuild).length-5 != 0){
+    if(Object.keys(toBuild).length-6 != 0){
       var child = new Tree(toBuild.label, 0, 0, 2); // Get label of child
       child.refinement = toBuild.refinement;
       parent.add_child(child);
-      for(let i = 0; i < (Object.keys(toBuild).length-5); i++){ // Loop through all children
+      for(let i = 0; i < (Object.keys(toBuild).length-6); i++){ // Loop through all children
         buildFromMultiset(toBuild[i], child);
       }
       //Leaf Node
