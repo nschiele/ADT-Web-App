@@ -106,6 +106,9 @@ async function setup() {
   saveBtnJpg.mousePressed(downloadCanvasJpg);
   downloadBtn.mousePressed(downloadCanvasJpg);
 
+  // print 
+  var printBtn = select('#printBtn');
+  printBtn.mousePressed(printCanvas);
   // canvasElement.style("padding","3%")
 
     // sketchCanvas.parent("canvasContainer");
@@ -238,6 +241,21 @@ function downloadCanvasJpg(){
   fileName = select("#treeName").value();
   console.log(fileName);
   saveCanvas(canvasElement, fileName, 'jpg');
+}
+
+function printCanvas(){
+  let printWindow = window.open('', '_blank');
+  printWindow.location.reload();
+  printWindow.document.open();
+  printWindow.document.write('<html><head><title>Print ADT</title>');
+  printWindow.document.write('<style>@media print { #printContent { display: block;} #printElement{width:210mm; height:auto}}</style>');
+  printWindow.document.write('</head><body>');
+  printWindow.document.write('<img id="printElement"src="' + canvasElement.elt.toDataURL() + '">');
+  printWindow.document.write('</body></html>');
+  printWindow.document.close();
+  setTimeout(function() {
+    printWindow.print();
+  }, 500);
 }
 
 function clearCurrentTree(){
