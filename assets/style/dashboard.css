@@ -270,6 +270,10 @@ textarea:focus::placeholder {
 #toolsTab[aria-expanded="true"]:hover .feather{
   color: #272837;
 }
+
+#reportDiv span, #reportDiv svg {
+  color: rgb(185, 185, 185) !important;
+}
 .otherToolTab:hover, #toolsTab:hover{
   background-color: #FFCE76;
   color: #272837;
@@ -322,6 +326,7 @@ h5 span{
 
 #leftSideBar{
 border-top:0.5px solid #1e202e;
+padding-bottom: 5rem;
 }
 
 hr{
@@ -342,6 +347,10 @@ hr{
   margin-bottom: 50px;
 }
 
+#printContent{
+  width:210mm; 
+  height:297mm;
+}
 /*Home page CSS*/
 
 .cover-page {
