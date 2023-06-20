@@ -6,6 +6,7 @@ class Node {
         this.code = null;
         this.depth = null;
         this.swith_role = null;
+        this.parent = null;
     }
 }
 
@@ -61,22 +62,29 @@ async function insert(root, label, refinement, swith_role, depth, lastNode, seen
 
     if (root == null){
         node.code = "0";
+        node.parent = node;
     }
     else{
         if (lastNode.depth < depth){
             node.code = lastNode.code + "-0";
+            node.parent = lastNode;
         }
         else if (lastNode.depth > depth){
-            var i = 0;
+            var i = seen.length-1;
             var j = null;
             order = 0;
             while (seen[i] != null){
                 if (seen[i].depth == depth){
-                    order++;
-                    j = i;
+                    if (j == null){
+                        order++;
+                        j = i;
+                        node.parent = seen[i].parent;
+                    }
+                    else if (node.parent == seen[i].parent){
+                        order++;
+                    }
                 }
-                i++;
-                
+                i--;
             }
             if (j !=null){
                 node.code = seen[j].code.substr(0, seen[j].code.length - 1) + '' + order;
@@ -88,6 +96,7 @@ async function insert(root, label, refinement, swith_role, depth, lastNode, seen
         else{
             order = Number(lastNode.code[lastNode.code.length - 1]) + 1;
             node.code = lastNode.code.substr(0, lastNode.code.length - 1) + '' + order;
+            node.parent = lastNode.parent;
         }
     }
     return node;
@@ -122,15 +131,22 @@ async function find_ref_rol(item, j, r){
         else{
             ref_swi = 0;
         }
+        return ref_swi;
     }
-    else{ // todo
-        j += 13 // Position of switchRole
-        if (item[j] == "s"){
+    else{
+        while (item[j] != "="){ // Find switchRole
+            j++;
+            if (item[j] == ">"){
+                ref_swi = 0;
+                return ref_swi;
+            }
+        }
+        j += 2;
+        if (item[j] == "y"){
            ref_swi = 1;
         }
         else{
             ref_swi = 0;
-
         }
     }
     return ref_swi;
@@ -205,7 +221,6 @@ function add_child(node, temp_string){
     else{
         temp_string += '"conjunctive"';
     }
-
     if (node.swith_role == 1){
         temp_string += ' switchRole="yes"';
     }
@@ -215,7 +230,7 @@ function add_child(node, temp_string){
     temp_string += node.label;
     temp_string += '</label>';
 
-    for (var i = 0; i < Object.keys(node).length-5; i++){
+    for (var i = 0; i < Object.keys(node).length-6; i++){
         temp_string = add_child(node[i], temp_string);
     }
 
@@ -225,8 +240,6 @@ function add_child(node, temp_string){
 }
 
 function build_xml(input_text){
-    console.log(Object.keys(input_text[0]).length);
-    console.log(input_text);
     var parser = new DOMParser();
     var temp_string = '<?xml version="1.0" encoding="UTF-8"?><adtree>';
     var xml = null;
@@ -248,7 +261,7 @@ async function convert(XorJ, input){
         return json;
     }
     else{ // else gives that input_file contains a JSON
-        input_text = input;//JSON.stringify(input);
+        input_text = input;
         var xml = build_xml(input_text); // Get JSON string and parse to JSON object
         return xml;
     }

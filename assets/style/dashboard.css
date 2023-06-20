@@ -1,7 +1,7 @@
 body {
   font-size: .875rem;
+  height: 100%;
 }
-
 .feather {
   width: 16px;
   height: 16px;
@@ -24,16 +24,19 @@ body {
   /* rtl:remove */
   left: 0;
   z-index: 100; /* Behind the navbar */
-  padding: 48px 0 0; /* Height of navbar */
+  padding: 44px 0 0; /* Height of navbar */
   box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
 }
 
 @media (max-width: 767.98px) {
   .sidebar {
     top: 5rem;
+    width: auto;
+  }
+  .nav-item{
+    width: -webkit-fill-available; 
   }
 }
-
 .sidebar-sticky {
   height: calc(100vh - 48px);
   overflow-x: hidden;
@@ -42,27 +45,23 @@ body {
 
 .sidebar .nav-link {
   font-weight: 500;
-  color: #333;
+  color: whitesmoke;
 }
 
 .sidebar .nav-link .feather {
-  margin-right: 4px;
-  color: rgb(116, 116, 116);
+  margin-right: 10px;
+  margin-left: 10px;
+  color: whitesmoke;
 }
 
-/* .sidebar .nav-link.active {
-  color: #2470dc;
-} */
 
 #toolsTab[aria-expanded="true"] svg {
-  color:#ffc107;
+  color:#FFCE76;
 }
 
 .sidebar .nav-link:hover .feather,
 .sidebar .nav-link.active .feather {
-  /* color: inherit; */
-  stroke-width: 3px;
-  color:#daaa1cc9;
+  color: #272837;
 }
 
 .sidebar-heading {
@@ -96,18 +95,35 @@ body {
   padding: .75rem 1rem;
 }
 
-.form-control-dark {
-  color: #fff;
-  background-color: rgba(255, 255, 255, .1);
-  border-color: rgba(255, 255, 255, .1);
-}
-
-.form-control-dark:focus {
-  border-color: transparent;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
-}
-
 /* edited */
+#sidebarMenu{
+  background-color: #272837;
+}
+#submitNewTreeDiv{
+  background-color: whitesmoke;
+}
+.nav-item{
+  background-color: whitesmoke;
+  width: -webkit-fill-available; 
+}
+
+.navbar-custom {
+  background-color: #272837;
+}
+/* change the brand and text color */
+.navbar-custom .navbar-brand,
+.navbar-custom .navbar-text {
+  color: rgba(255,255,255,.8);
+}
+/* change the link color */
+.navbar-custom .navbar-nav .nav-link {
+  color: rgba(255,255,255,.5);
+}
+/* change the color of active or hovered links */
+.navbar-custom .nav-item.active .nav-link,
+.navbar-custom .nav-item:hover .nav-link {
+  color: #ffffff;
+}
 
 #navIcon{
   width: 100%;
@@ -115,17 +131,37 @@ body {
   font-family: 'Gill Sans';
   font-size:x-large;
 }
+#navLi{
+  font-size: medium;
+}
+#navLi:hover, #navLi:hover span{
+  /* background-color: #FFCE76; */
+  color: #FFCE76 !important;
+}
+#navLi a.active{
+  /* background-color: #FFCE76; */
+  color: #FFCE76 !important;
+}
+#navText{
+  color: #FFCE76;
+}
 #navIcon:hover{
-  color: #ffc107;
+  color: #FFCE76;
 }
 
 #navIconMain{
-  width: 100%;
-  height: 100%;
+  /* width: auto;
+  height: auto; */
+  width: 40px;
+  height: 40px;
+  transform: rotate(90deg);
 }
 
 .insideNavLink{
-  margin:15px
+  margin:15px;
+  color: #272837;
+  margin-bottom: 30px;
+
 }
 
 textarea::placeholder {
@@ -138,13 +174,14 @@ textarea:focus::placeholder {
 }
 
 .colorpallet{
-  margin-left:70px;
+  margin-left:45px;
   margin-right: 70px;
   margin-bottom: 10px;
   padding-top: 10px;
   padding-bottom: 3px;
   background-color: #e9e9e9;
   border-radius: 5px;
+  width: fit-content;
 }
 
 .btn-circle {
@@ -197,13 +234,13 @@ textarea:focus::placeholder {
 
 .btnColorShape:focus+.btn, .btnColorShape.active, .btn.show, .btnColorShape:first-child:active, :not(.btn-check)+.btnColorShape:active {
 
-  background-color: #ffc107 !important;
+  background-color: #FFCE76 !important;
   /* border-width: 3px !important; */
   }
 
 .btnLineSelect:focus+.btn, .btnLineSelect.active, .btn.show, .btnLineSelect:first-child:active, :not(.btn-check)+.btnLineSelect:active {
-  background-color: #ffc107;
-  border-color: #ffc107 !important;
+  background-color: #FFCE76;
+  border-color: #FFCE76 !important;
 }
 
 .btnCustom{
@@ -219,10 +256,28 @@ textarea:focus::placeholder {
   background-color: #e8e6e6;
 }
 
-#toolsTab{
-  background-color: #ececec;
+/*TOOLS TABS*/
+.otherToolTab, #toolsTab{
+  background-color: #272837;
+  padding: 13px;
+  /* border-bottom: 0.3px solid whitesmoke; */
+  color: whitesmoke;
+}
+/* #toolsTab[aria-expanded="true"]{
+  background-color: #272837;
+  color: #e8e6e6;
+} */
+#toolsTab[aria-expanded="true"]:hover .feather{
+  color: #272837;
 }
 
+#reportDiv span, #reportDiv svg {
+  color: rgb(185, 185, 185) !important;
+}
+.otherToolTab:hover, #toolsTab:hover{
+  background-color: #FFCE76;
+  color: #272837;
+}
 #btnLineContinueIcon, #btnLineDashedIcon {
   /* width: 25px;
   height: 25px; */
@@ -233,19 +288,13 @@ textarea:focus::placeholder {
   fill: none;
 }
 
-/* .form-switch {
-  display: flex !important;
-  flex-direction: row-reverse !important;
-  justify-content: space-between !important;
-} */
-
-.newChildDiv{
+/* .newChildDiv{
   margin-left:10%;
   margin-right: 10%;
   margin-bottom: 10px;
   padding-top: 10px;
   padding-bottom: 3px;
-}
+} */
 
 #addChildSymbol{
   stroke: green;
@@ -258,6 +307,7 @@ textarea:focus::placeholder {
 #canvasContainer{
   margin-right: 2%;
   margin-left: 3%;
+  min-height: 75vh;
 }
 
 canvas{
@@ -267,5 +317,115 @@ canvas{
   /* transform: translate(-50%,-50%); */
   display: block;
   background-color: #F4F4F4;
+  border-radius: 0.5%;
 }
 
+h5 span{
+  color: #FFCE76;
+}
+
+#leftSideBar{
+border-top:0.5px solid #1e202e;
+padding-bottom: 5rem;
+}
+
+hr{
+  color: lightgray;
+}
+.hiddenAlert{
+  display: none;
+}
+
+#alert{
+  color: green !important;
+}
+
+.adt-page{
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh - 50px;
+  margin-bottom: 50px;
+}
+
+#printContent{
+  width:210mm; 
+  height:297mm;
+}
+/*Home page CSS*/
+
+.cover-page {
+  background-size: cover;
+  background-position: center;
+  background-color: #272837;
+  min-height: 100vh;
+  padding-top: 155px;
+}
+
+.cover-page h1 {
+  color: #fff;
+}
+
+.cover-page p {
+  color: #fff;
+  font-size: 1.2rem;
+}
+
+.cover-page a {
+  font-size: 1.2rem;
+}
+
+.cover-page a:hover {
+  color: #fff;
+  background-color: #007bff;
+}
+
+.cover-page a:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+
+/*Footer CSS*/
+footer {
+    background-color: #1b1b25;
+    padding: 10px;
+    margin-top: -105px;
+    color: whitesmoke;
+    position: fixed;
+    bottom: 0;
+    z-index: 101;
+}
+
+footer p {
+  font-size: 14px;
+  margin-bottom: 0;
+}
+
+@media only screen and (max-width: 767px) {
+  footer p {
+    margin-bottom: 20px;
+  }
+}
+
+
+/*DOCS page CSS*/
+.docs-page{
+  padding-bottom:50px;
+  background-color:#272837 ;
+}
+
+.docs-first ,.docs-title{
+  background-color: #efefef;
+  padding: 70px;
+}
+
+.docs-second{
+  background-color:whitesmoke;
+  padding: 70px;
+}
+
+.docs-third{
+  background-color:#272837;
+  padding: 70px;
+  color: whitesmoke;
+}

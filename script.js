@@ -20,6 +20,7 @@ let activeNodeTitle;
 var example;
 let canvasElement;
 let canvasWidth;
+let canvasHeight;
 let canvasParentDiv;
 let scaleValue;
 let nodeTextChangeField;
@@ -47,8 +48,9 @@ async function setup() {
   var canvasParentDiv = document.getElementById('canvasContainer');
   // set height and width for the canvas
   canvasWidth = canvasParentDiv.offsetWidth;
+  canvasHeight = canvasParentDiv.offsetHeight;
   // the main canvas area where the tree will go
-  canvasElement = createCanvas(canvasWidth,650);
+  canvasElement = createCanvas(canvasWidth,canvasHeight);
   canvasElement.background("lightgray");
   // set parent div
   canvasElement.parent("canvasContainer");
@@ -104,6 +106,9 @@ async function setup() {
   saveBtnJpg.mousePressed(downloadCanvasJpg);
   downloadBtn.mousePressed(downloadCanvasJpg);
 
+  // print 
+  var printBtn = select('#printBtn');
+  printBtn.mousePressed(printCanvas);
   // canvasElement.style("padding","3%")
 
     // sketchCanvas.parent("canvasContainer");
@@ -238,6 +243,21 @@ function downloadCanvasJpg(){
   saveCanvas(canvasElement, fileName, 'jpg');
 }
 
+function printCanvas(){
+  let printWindow = window.open('', '_blank');
+  printWindow.location.reload();
+  printWindow.document.open();
+  printWindow.document.write('<html><head><title>Print ADT</title>');
+  printWindow.document.write('<style>@media print { #printContent { display: block;} #printElement{width:210mm; height:auto}}</style>');
+  printWindow.document.write('</head><body>');
+  printWindow.document.write('<img id="printElement"src="' + canvasElement.elt.toDataURL() + '">');
+  printWindow.document.write('</body></html>');
+  printWindow.document.close();
+  setTimeout(function() {
+    printWindow.print();
+  }, 500);
+}
+
 function clearCurrentTree(){
   example = [[],0,[]];
   buildFromMultiset(example);
@@ -296,17 +316,17 @@ async function buildFromMultiset(toBuild, parent=null){
   if(parent == null){
     root = new Tree(toBuild[0].label/*adtree.node.label*/, 0, 0, 2); // Get label of root
     root.refinement = toBuild[0].refinement;
-    for(let i = 0; i < Object.keys(toBuild[0]).length-5; i++){ // Loop through all children
+    for(let i = 0; i < Object.keys(toBuild[0]).length-6; i++){ // Loop through all children
       buildFromMultiset(toBuild[0][i], root);
     }
   // Tree Exists, adding subtrees
   } else {
     //Intermediate Node
-    if(Object.keys(toBuild).length-5 != 0){
+    if(Object.keys(toBuild).length-6 != 0){
       var child = new Tree(toBuild.label, 0, 0, 2); // Get label of child
       child.refinement = toBuild.refinement;
       parent.add_child(child);
-      for(let i = 0; i < (Object.keys(toBuild).length-5); i++){ // Loop through all children
+      for(let i = 0; i < (Object.keys(toBuild).length-6); i++){ // Loop through all children
         buildFromMultiset(toBuild[i], child);
       }
       //Leaf Node
@@ -389,11 +409,11 @@ function mouseReleased(){
 }
 
 function windowResized() {
-  // var frameX = (windowWidth - sideFrameWidth)
-  // scaled = frameX/(root.width*1.2);
-  // sidePanel.position(frameX, 0);
-  // resizeCanvas(windowWidth, windowHeight);
-  resizeCanvas(canvasWidth,650);
+  var frameX = (windowWidth - sideFrameWidth)
+  scaled = frameX/(root.width*1.2);
+  sidePanel.position(frameX, 0);
+  resizeCanvas(windowWidth, windowHeight);
+  // resizeCanvas(canvasWidth,canvasHeight);
   toDraw  = true;
 }
 

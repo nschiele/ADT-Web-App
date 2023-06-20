@@ -11,23 +11,35 @@ function checkInput() {
         document.getElementById('generateTreeButton').disabled = true;
     }
 }
-      
 
-function changeActiveNavLinkColor(){
-  var clickedNav = document.getElementById("toolsTab");
-  if(clickedNav.classList.contains("collapsed")){
-    console.log(clickedNav.classList.contains("collapsed"));
-    clickedNav.classList.remove("active");
-    // clickedNav.className += "collapsed Active";
-  }
-  else{
-    clickedNav.className += " active";
-  }
+function checkInputChild() {
+  var textboxValues = document.getElementById("nodeChildTextInput").value;
+  if(textboxValues == "") {
+    document.getElementById('addChildBtn').disabled = true; 
+    } else { 
+        document.getElementById('addChildBtn').disabled = false;
+    }
 }
+
+function checkRemoveChild() {
+  var textboxValues = document.getElementById("nodeChildInputRemove").value;
+  if(textboxValues == "") {
+    document.getElementById('RemoveChildBtn').disabled = true; 
+    } else { 
+        document.getElementById('RemoveChildBtn').disabled = false;
+    }
+}
+
+// show alert when submitting the text of the tree
+const toggleBtn = document.getElementById("generateTreeButton");
+const smallText = document.getElementById("alert");
+
+toggleBtn.addEventListener("click", function() {
+  smallText.classList.toggle("hiddenAlert");
+});
 
 (() => {
   'use strict'
-
   feather.replace({ 'aria-hidden': 'true' })
 })()
 
