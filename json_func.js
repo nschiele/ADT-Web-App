@@ -7,6 +7,7 @@ class Node {
         this.depth = null;
         this.swith_role = null;
         this.parent = null;
+        this.parameters = {};
     }
 }
 
@@ -50,15 +51,16 @@ async function to_json(item, adtree){
 // 0-0-2-1
 // 0-0-2-1-0
 // 0-1
-async function insert(root, label, refinement, swith_role, depth, lastNode, seen){ // assign code to nodes without building tree example: 0-0-1
+async function insert(root, label, refinement, swith_role, parameters, depth, lastNode, seen){ // assign code to nodes without building tree example: 0-0-1
     var order = null;
     var node = new Node();
     node.label = label;
     node.refinement = refinement;
     node.depth = depth;
     node.swith_role = swith_role;
+    node.parameters = parameters; 
 
-    // 4e kind ipv 0e todo
+    // 4e kind ipv 0e todo opgelost?
 
     if (root == null){
         node.code = "0";
@@ -152,6 +154,42 @@ async function find_ref_rol(item, j, r){
     return ref_swi;
 }
 
+async function find_par(item){ // todo category
+    var j = 0;
+    // console.log(item);
+    var parameters = {};
+    var parameter = {
+        parameter_name: null,
+        parameter_value: null
+    }
+    j++
+    //console.log(item[j]);
+    while (item[j] == "p"){
+        parameter.parameter_name = "";
+        parameter.parameter_value = "";
+        // Retrieve the name
+        while (item[j] != "="){ // Find the refinement
+            j++;
+        }
+        j += 2;
+        while (item[j] != '"'){
+            parameter.parameter_name += item[j];
+            j++
+        }
+        while (item[j] != ">"){
+            j++;
+        }
+        j++;
+        while (item[j] != '<'){
+            label += item[j];
+            j++
+        }
+        j = 0;
+        parameters.push(parameter);
+    }
+    return parameters;
+}
+
 // Add parameters as elements of the json
 // Builds the json object as a string
 async function build_json(input_text){
@@ -166,26 +204,29 @@ async function build_json(input_text){
     var json = {};
     var r = 0; // find refinement or if role is switched
 
+
     for (var i = 1; i < items.length; i++){ // Loop through all lines
         item = items[i];
         j = 0;
         while (item[j] != "<"){ // Find the first useful character
             j++
         }
-        switch(item[j + 1]){ // Every tag has to be treated differently
+        switch (item[j + 1]){ // Every tag has to be treated differently
             case "/": // Closing tag
                 depth--;
                 break;
             case "a": // Adtree tag
                 break;
             case "n": // Node tag
+                // todo hardcoden van variable locaties wegwerken
                 label = await find_label(items[i+1]);
                 refinement = await find_ref_rol(item, j, r);
                 r = 1;
                 swith_role = await find_ref_rol(item, j, r);
                 r = 0;
+                parameters = await find_par(items[i+2]);
                 if (root == null){
-                    root = await insert(root, label, refinement, swith_role, depth, null, seen);
+                    root = await insert(root, label, refinement, swith_role, parameters, depth, null, seen);
                     lastNode = root;
                     seen[0] = root;
                 }
@@ -195,14 +236,14 @@ async function build_json(input_text){
                     while (seen[k] != null){
                         k++
                     }
-                    lastNode = await insert(root, label, refinement, swith_role, depth, lastNode, seen);
+                    lastNode = await insert(root, label, refinement, swith_role, parameters, depth, lastNode, seen);
                     seen[k] = lastNode;
                 }
                 break;
             case "l":
-                break; // Label tag
-            case "p": // Parameter tag
-                break;
+                break; // Label tag, skip
+            case "p": 
+                break; // Parameter tag, skip
             default: // Do nothing
         }
     }
