@@ -52,6 +52,9 @@ async function to_json(item, adtree){
 // 0-0-2-1-0
 // 0-1
 async function insert(root, label, refinement, swith_role, parameters, depth, lastNode, seen){ // assign code to nodes without building tree example: 0-0-1
+    // console.log("insert");
+    // console.log(parameters[0].parameter_name);
+    // console.log(parameters[0].parameter_value);
     var order = null;
     var node = new Node();
     node.label = label;
@@ -154,26 +157,27 @@ async function find_ref_rol(item, j, r){
     return ref_swi;
 }
 
-async function find_par(item){ // todo category
+async function find_par(items, i){ // todo category
     var j = 0;
-    // console.log(item);
-    var parameters = {};
-    var parameter = {
-        parameter_name: null,
-        parameter_value: null
+    var parameters = [];
+    var parameter = new Array(2).fill(0);
+    var parameter_name = null;
+    var parameter_value = null;
+    var item = items[i];
+
+    while (item[j] != "<"){ // kan crashen
+        j++;
     }
-    j++
-    //console.log(item[j]);
-    while (item[j] == "p"){
-        parameter.parameter_name = "";
-        parameter.parameter_value = "";
+    while (item[j+1] == "p"){
+        parameter_name = "";
+        parameter_value = "";
         // Retrieve the name
         while (item[j] != "="){ // Find the refinement
             j++;
         }
         j += 2;
         while (item[j] != '"'){
-            parameter.parameter_name += item[j];
+            parameter_name += item[j];
             j++
         }
         while (item[j] != ">"){
@@ -181,12 +185,24 @@ async function find_par(item){ // todo category
         }
         j++;
         while (item[j] != '<'){
-            label += item[j];
+            parameter_value += item[j];
             j++
         }
-        j = 0;
+
+        parameter[0] = parameter_name;
+        parameter[1] = parameter_value;
         parameters.push(parameter);
+
+        j = 0;
+        i++;
+        item = items[i];
+        while (item[j] != "<"){ // kan crashen
+            j++;
+        }
+        parameter.delete;
+        parameter = new Array(2).fill(0);
     }
+    parameter.delete;
     return parameters;
 }
 
@@ -224,7 +240,7 @@ async function build_json(input_text){
                 r = 1;
                 swith_role = await find_ref_rol(item, j, r);
                 r = 0;
-                parameters = await find_par(items[i+2]);
+                parameters = await find_par(items, i+2);
                 if (root == null){
                     root = await insert(root, label, refinement, swith_role, parameters, depth, null, seen);
                     lastNode = root;
@@ -255,6 +271,7 @@ async function build_json(input_text){
 }
 
 function add_child(node, temp_string){
+    console.log(node);
     temp_string += '<node refinement=';
     if (node.refinement == 0){
         temp_string += '"disjunctive"';
@@ -271,7 +288,17 @@ function add_child(node, temp_string){
     temp_string += node.label;
     temp_string += '</label>';
 
-    for (var i = 0; i < Object.keys(node).length-6; i++){
+    if (node.parameters.length != 0){
+        for (var i = 0; i < node.parameters.length; i++){
+            temp_string += '<parameter domainId="';
+            temp_string += node.parameters[i][0];
+            temp_string += '">';
+            temp_string += node.parameters[i][1];
+            temp_string += '</parameter>';
+        }
+    }
+
+    for (var i = 0; i < Object.keys(node).length-7; i++){ // keys komen niet overeen met volgorde
         temp_string = add_child(node[i], temp_string);
     }
 
