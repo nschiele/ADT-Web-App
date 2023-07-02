@@ -160,7 +160,7 @@ async function find_ref_rol(item, j, r){
 async function find_par(items, i){ // todo category
     var j = 0;
     var parameters = [];
-    var parameter = new Array(2).fill(0);
+    var parameter = new Array(2).fill(0); // make dict
     var parameter_name = null;
     var parameter_value = null;
     var item = items[i];
