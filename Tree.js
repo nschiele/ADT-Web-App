@@ -136,7 +136,7 @@ class Tree {
 
 
   checkCoordinates(x, y){
-    if(x >= this.x && x <= this.x + this.x_range && y >= this.y && y <= this.y + this.y_range){
+    if(x >= this.x && x <= this.x + this.x_range && y >= this.y && y <= this.y+  this.y_range ){
       this.hover = true;
       return this;
     } else {

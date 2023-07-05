@@ -10,7 +10,8 @@ class ADTree{
         // Parent & Root?
         this.parent = null;
         this.root = this;
-        this.dis = new Display(label, 0, 0, 2);
+        this.dis = new Display(label, this.id, 0, 0, 2);
+        this.dis.tree = this;
     }
 
 
@@ -67,8 +68,30 @@ class ADTree{
     }
 
     getActive(){
-        this.dis.getActive(this);
+        console.log("ran: ", this);
+        if (this.dis.getActive(this) == true){
+            return this;
+        }
+        // return this;
     }
+
+    getID(ID) { // Currently not used, probably not necessary and will be removed in future push!
+        if (this.id == ID) {
+            // console.log("party!", this.id, ID);
+            return this;
+        } else {
+            for (var i = 0; i < this.children.length; i++) {
+                var result = this.children[i].getID(ID);  // Pass ID instead of this.children[i].id
+                // console.log("party ugh", this, this.id, ID);
+                if (this.id == ID) {
+                    // console.log("party maar: ", this);
+                    return this;  // Return the result if found
+                }
+            }
+        }
+        return null;  // Return null if ID is not found
+    }
+    
 
 }
 
@@ -83,15 +106,3 @@ class ADTree{
  */
 
 
-/**
- * Code for list for children:
- * 
- * const children = [];
- * 
- * When child is added
- * this.children.push[name]
- * 
- * this.
- * 
- * 
- */

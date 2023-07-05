@@ -1,5 +1,5 @@
 class Display {
-    constructor(text, x = 0, y = 0, radius = 2, dist = 50){
+    constructor(text, treeID, x = 0, y = 0, radius = 2, dist = 50){
         this.x = x; // x pos
         this.x_range; // range of x
         this.y = y; // y pos
@@ -19,6 +19,8 @@ class Display {
         this.lineList = [1]; // dashed lines
         this.lines = 1;
         this.freeMove = false; // tracks if node is unlocked and can move freely
+        // this.treeID = treeID;
+        this.tree;
 
         var let_width;
         var let_height;
@@ -93,18 +95,21 @@ class Display {
     }
 
     checkCoordinates(treeObject, x, y){
-        if(x >= this.x && x <= this.x + this.x_range && y >= this.y && y <= this.y+  this.y_range ){
+        if(x >= this.x && x <= this.x + this.x_range && y >= this.y && y <= this.y + this.y_range){
             this.hover = true;
+            treeObject.hover = true; // Solves the issue! By J.
+            // console.log("hoovah: ", this);
             return this;
         } else {
             this.hover = false;
+            treeObject.hover = false;
             for(let i = 0; i < treeObject.children.length; i++){
-                var toReturn = treeObject.children[i].checkCoordinates(x, y);
+                var toReturn = treeObject.children[i].dis.checkCoordinates(this.tree, x, y);
                 if(toReturn != null){
                     return toReturn;
                 }
             }
-            return null;
+            // return null;
         }
     }
 
@@ -116,17 +121,37 @@ class Display {
     }
 
     getActive(treeObject){
-        if(this.active == true){
-            return true;
-        } else {
-            for(let i = 0; i < treeObject.children.length; i++){
-                var toReturn = treeObject.children[i].getActive();
-                if(toReturn != null){
-                    return toReturn;
+        // This old getActive function was nut functioning properly anymore, will be removed in future push!
+        // if(this.active == true){
+        //     console.log("this is active: ", treeObject);
+        //     return true;
+        // } else {
+        //     for(var i = 0; i < treeObject.children.length; i++){
+        //         console.log("kut lengte: ", treeObject.children.length, " and i: ", i);
+        //         var toReturn = treeObject.children[i].getActive();
+        //         console.log("kut kind: ", treeObject.children[i]);
+        //         if(toReturn != null){
+        //             console.log("kut wat: ", treeObject);
+        //             // return toReturn;
+        //         } else {
+        //             console.log("kut niks: ", treeObject);
+        //             // return null;
+        //         }
+        //     }
+            // console.log("kut niks: ", treeObject);
+            // return null;
+        if (treeObject.dis.active === true) {
+            return this;
+        }
+        if (treeObject.children && treeObject.children.length > 0) {
+            for (let i = 0; i < treeObject.children.length; i++) {
+                const result = this.getActive(treeObject.children[i]);
+                if (result) {
+                    return result;
                 }
             }
-            return null;
         }
+        return null;
     }
 
     adjust_children(treeObject){
@@ -143,7 +168,6 @@ class Display {
             //Handling Child Y Location
             treeObject.children[i].dis.y = this.y + 100;
             treeObject.children[i].dis.level = this.level + 1;
-            console.log("AAA", treeObject.children[i].dis.y);
         }
         for(let i = 0; i < treeObject.children.length; i++){
             treeObject.children[i].adjust_children();
@@ -174,13 +198,13 @@ class Display {
         strokeWeight(this.strokeWeight);
         fill(this.c)
         rect(this.x, this.y, this.x_range, this.y_range, this.r);
-        console.log("boxxie: ", this.x, this.y, this.x_range, this.y_range, this.r);
         stroke("black"); // reset
         strokeWeight(1); // reset
         fill(color(255 - this.c.levels[0], 255 - this.c.levels[1], 255 - this.c.levels[2]))
         text(this.t, this.x + this.t.length/5, this.y + this.y_range/this.lines -3);
         //Invert colors if clicked or hovered
-        if(this.hover || this.active){
+        // if(this.hover || this.active){
+        if(this.active){
             stroke(this.stroke);
             strokeWeight(this.strokeWeight);
             fill(color(255 - this.c.levels[0], 255 - this.c.levels[1], 255 - this.c.levels[2]));
@@ -189,6 +213,7 @@ class Display {
             strokeWeight(1);
             fill(this.c);
             text(this.t, this.x + this.t.length/5, this.y + this.y_range/this.lines -3);
+            this.active = true;
         }
     
         fill("color(255, 255, 255)")
@@ -214,7 +239,6 @@ class Display {
             this.setLineDash(this.lineList);
             line(this.x+this.x_range/2, this.y+this.y_range, treeObject.children[i].dis.x+treeObject.children[i].dis.x_range/2,  treeObject.children[i].dis.y)
             treeObject.children[i].display();
-            console.log("YA: ", treeObject.children[i].dis.x);
         }
     }
     

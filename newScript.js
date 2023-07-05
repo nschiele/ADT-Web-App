@@ -6,6 +6,7 @@ let sideFrameWidth;
 
 
 let activeNode;
+let activeDis;
 let hoverNode;
 let trackNode;
 let trackNodeX;
@@ -161,6 +162,18 @@ function downloadCanvasJpg(){
     saveCanvas(canvasElement, fileName, 'jpg');
 }
 
+function manAddChild(){
+    var input = document.getElementById("nodeChildTextInput").value;
+    console.log("child added: ", activeNode);
+    var newNodeText = select("#nodeTextInput");
+    var theSelectedNode = new ADTree("tijdelijk", -1);
+    theSelectedNode = root.getID(newNodeText.treeID);  // Call getID() directly on theSelectedNode
+    activeNode.add_child(new ADTree(input, IDnumber), new Display(input, 0, 0, 2));
+    draw();
+    console.log("new tree: ", activeNode);
+    IDnumber++;
+}
+
 function printCanvas(){
     let printWindow = window.open('', '_blank');
     printWindow.location.reload();
@@ -193,7 +206,6 @@ function max_depth(n){
                 toReturn = child_level;
             }
         }
-        console.log("diepte: ", toReturn);
         return toReturn;
     }
 }
@@ -274,41 +286,36 @@ async function buildFromMultiset(toBuild, parent=null){
 function draw(){
     // If ADT is larger than the canvas, shrink ADT and place in center
     if(toDraw){
-        console.log("schaalmonster: ", scaled);
         if(scaled < 1){
             scale(scaled);
             root.dis.x = root.dis.width/2;
             root.adjust_children();
         } else {
-            print("mama mia", width);
             root.dis.x = (width - root.dis.width)/2 + root.dis.width/2;
-            print("oh god", root.dis.x);
             root.adjust_children();
         }
+
+
     
         if(activeNode != null){
             // activeNodeTitle.elt.innerHTML = activeNode.t;
-            oldNodetext = activeNode.t;
-            select("#nodeTextInput").attribute("value", activeNode.t);
-            // console.log(activeNodeTitle.elt.innerHTML);
-            // console.log("Check")
+            // oldNodetext = activeNode.t;
+            // select("#nodeTextInput").attribute("value", activeNode.t);
+            // currNodeText.active = true;
   
         }
         // zoom in/out
-        console.log("scale: ", scaleValue);
+        // console.log("scale: ", scaleValue);
         scale(scaleValue);
   
         clear();
         root.display();
         toDraw =false;
     }
-    // console.log(root.getActive())
     //What node is the mouse currently over
-    var mouseNode = root.checkCoordinates(mouseX/scaled, mouseY/scaled);
-  
+    var mouseNode = root.dis.checkCoordinates(root, mouseX/scaled, mouseY/scaled);
     //If the mouse is hoving over a node
     if(mouseNode != null && mouseNode != hoverNode){
-        // console.log(root.checkCoordinates(mouseX/scaled, mouseY/scaled))
         hoverNode = mouseNode;
         toDraw = true;
     } else if (mouseNode == null && hoverNode != null){
@@ -329,33 +336,42 @@ function draw(){
       // trackNode.x = (-1* startMouseX + mouseX)/scaled;
       // trackNode.y = (-1*startMouseY + mouseY)/scaled;
         toDraw = true;
-      // console.log("Registering Mouse Press", startMouseX - mouseX, startMouseY - mouseY, trackNode.x, trackNode.y);
+    //   console.log("Registering Mouse Press", startMouseX - mouseX, startMouseY - mouseY, trackNode.x, trackNode.y);
     }
 }
 
 function mouseReleased(){
     var clickedNode = trackNode;
-    root.clearActive();
-    // console.log(clickedNode);
-    // console.log(clickedNode, mouseX/scaled, mouseY/scaled);
-    if(clickedNode != null){
-      clickedNode.active = true;
+    // root.clearActive();
+    // var theactive = root.getActive();
+
+    if (clickedNode != null && activeNode == null) {
+        console.log("clicky: ", clickedNode);
+        clickedNode.active = true;
+        activeDis = clickedNode;
+        activeNode = activeDis.tree;
     }
-    activeNode = clickedNode;
+    if (activeDis != null && clickedNode != null) {
+        activeDis.active = false;
+        clickedNode.active = true;
+        activeDis = clickedNode;
+        activeNode = activeDis.tree;
+    }
+    console.log("click: ", activeDis, activeNode);
     toDraw = true;
     trackMouseStart = true;
     trackNode = null;
-  }
+}
   
-  function windowResized() {
+function windowResized() {
     var frameX = (windowWidth - sideFrameWidth)
     scaled = frameX/(root.dis.width*1.2);
     sidePanel.position(frameX, 0);
-    console.log("size: ", windowWidth, windowHeight);
+    // console.log("size: ", windowWidth, windowHeight);
     resizeCanvas(windowWidth, windowHeight);
     // resizeCanvas(canvasWidth,canvasHeight);
     toDraw  = true;
-  }
+}
   
   
   
