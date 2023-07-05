@@ -166,9 +166,25 @@ function manAddChild(){
     var input = document.getElementById("nodeChildTextInput").value;
     console.log("child added: ", activeNode);
     activeNode.add_child(new ADTree(input, IDnumber), new Display(input, 0, 0, 2));
+    windowResized(); // Resizes window so it correctly displays all of tree.
     draw();
     console.log("new tree: ", activeNode);
     IDnumber++;
+}
+
+function manDeleteChild(){
+    var input = document.getElementById("nodeChildInputRemove").value;
+    var nodeToDelete = root.compareNames(input);
+    console.log("child removed: ", input, nodeToDelete);
+    if (nodeToDelete == null) {
+        console.log("Node does not exist.");
+    } else {
+        root.removeSubTree(nodeToDelete);
+        // nodeToDelete = null;
+        console.log("Node removed successfully.");
+    }
+    windowResized();
+    draw();
 }
 
 function printCanvas(){
@@ -369,6 +385,7 @@ function windowResized() {
     // resizeCanvas(canvasWidth,canvasHeight);
     toDraw  = true;
 }
+
   
   
   

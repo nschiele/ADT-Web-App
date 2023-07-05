@@ -91,9 +91,69 @@ class ADTree{
         }
         return null;  // Return null if ID is not found
     }
+
+    compareNames(label){
+        if (this.label === label) {
+            return this;
+        }
+        if (this.children && this.children.length > 0) {
+            for (let i = 0; i < this.children.length; i++) {
+                const result = this.children[i].compareNames(label);
+                if (result) {
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
+
+    removeSubTree(node){
+        if (this === node) {
+            console.log("Root is tried to be deleted.");
+        }
+        if (this.children && this.children.length > 0) {
+            for (let i = 0; i < this.children.length; i++) {
+                if (this.children[i] === node) {
+                    this.children.splice(i, 1);
+                }
+                const result = this.children[i].removeSubTree(node);
+                if (result) {
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
     
 
 }
+
+/**
+ * function removeNode(tree, value) {
+  if (tree.value === value) {
+    // If the root node is the node to remove, set the tree to null
+    return null;
+  }
+
+  if (tree.children && tree.children.length > 0) {
+    // Find the index of the child node to remove
+    const index = tree.children.findIndex(child => child.value === value);
+
+    if (index !== -1) {
+      // Remove the child node from the parent's children array
+      tree.children.splice(index, 1);
+    } else {
+      // Recursively search for the node to remove in the child nodes
+      for (let i = 0; i < tree.children.length; i++) {
+        removeNode(tree.children[i], value);
+      }
+    }
+  }
+
+  return tree;
+}
+
+ */
 
 /**
  * Node

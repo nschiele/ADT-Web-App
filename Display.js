@@ -154,6 +154,23 @@ class Display {
         return null;
     }
 
+    compareNames(label, treeObject){
+        console.log("labels: ", treeObject.label, label);
+        if (treeObject.label === label) {
+            return treeObject;
+        }
+        if (treeObject.children && treeObject.children.length > 0) {
+            for (let i = 0; i < treeObject.children.length; i++) {
+                console.log("Childs: ", treeObject.children[i]);
+                const result = this.compareNames(label, treeObject.children[i]);
+                if (result) {
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
+
     adjust_children(treeObject){
         var curr_x = this.x + this.x_range/2 - this.width/2;
         // console.log(this.child_width(dist))
