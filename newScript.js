@@ -165,9 +165,6 @@ function downloadCanvasJpg(){
 function manAddChild(){
     var input = document.getElementById("nodeChildTextInput").value;
     console.log("child added: ", activeNode);
-    var newNodeText = select("#nodeTextInput");
-    var theSelectedNode = new ADTree("tijdelijk", -1);
-    theSelectedNode = root.getID(newNodeText.treeID);  // Call getID() directly on theSelectedNode
     activeNode.add_child(new ADTree(input, IDnumber), new Display(input, 0, 0, 2));
     draw();
     console.log("new tree: ", activeNode);
