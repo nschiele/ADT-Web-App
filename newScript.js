@@ -101,6 +101,15 @@ async function setup() {
   
     var ContinuousLine = select('#btnLineContinueDiv');
     ContinuousLine.mouseReleased(changeNodeLineToContinueLine);
+
+    var ANDoperator = select('#btnAndDiv');
+    ANDoperator.mouseReleased(changeRefinementToAND);
+
+    var ORoperator = select('#btnOrDiv');
+    ORoperator.mouseReleased(changeRefinementToOR);
+
+    // windowResized(); // Resizes window so it correctly displays all of tree.
+    // draw();
     
     // save canvas
     var saveBtnPng = select('#pngBtn');
@@ -148,6 +157,14 @@ function changeNodeLineToContinueLine(){
 
 function changeNodeLineToDashed() {
     activeNode.dis.lineList = [10,10,10,10];
+}
+
+function changeRefinementToAND() {
+    activeNode.refinement = 1;
+}
+
+function changeRefinementToOR() {
+    activeNode.refinement = 0;
 }
 
 function downloadCanvasPng(){
@@ -315,7 +332,7 @@ function draw(){
             root.adjust_children();
         } else {
             // root.dis.x = (width - root.dis.width)/2 + root.dis.width/2;
-            root.dis.x = canvasWidth/2 - root.dis.x_range/2;
+            root.dis.x = canvasWidth/2 - root.dis.x_range/2; // Fixed this issue.
             root.adjust_children();
         }
 
@@ -390,8 +407,9 @@ function mouseReleased(){
   
 function windowResized() {
     var frameX = (windowWidth - sideFrameWidth);
-    // scaled = frameX/(root.dis.width*1.2);
-    scaled = frameX/(root.dis.width*1/2);
+    console.log("frame x: ", frameX);
+    scaled = frameX/(root.dis.width*1.2 + (root.dis.x_range)); // Fixed scaling when resizing window.
+    // scaled = frameX/(root.dis.width*1/2);
     sidePanel.position(frameX, 0);
     // console.log("size: ", windowWidth, windowHeight);
     resizeCanvas(windowWidth, windowHeight);
