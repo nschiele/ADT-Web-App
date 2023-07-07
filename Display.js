@@ -21,7 +21,12 @@ class Display {
         this.freeMove = false; // tracks if node is unlocked and can move freely
         // this.treeID = treeID;
         this.tree;
+        this.adjust_textbox();
+        
+    
+    }
 
+    adjust_textbox(){
         var let_width;
         var let_height;
         var text_space;
@@ -34,10 +39,11 @@ class Display {
           let_height = 20;
           text_space = this.t.length/2;
         }
+        console.log("Alleen const");
         if(this.t.length > 40){
           console.log(this.t)
           for(let i = parseInt(this.t.length/2 - 10); i<parseInt(this.t.length/2 + 10); i++){
-            console.log(i, this.t[i])
+            console.log("excusez-moi: ", i, this.t[i])
               //First space in the middle of the text
               if(this.t[i] == ' '){
                 var newString = this.t.slice(0, i) + '\n' + this.t.slice(i+1, this.t.length);
@@ -65,7 +71,6 @@ class Display {
         }
         this.y_range = let_height * this.lines;
         this.width = this.x_range;
-    
     }
 
     adjust_text(){

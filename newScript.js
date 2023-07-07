@@ -187,6 +187,16 @@ function manDeleteChild(){
     draw();
 }
 
+function manChangeChild(){
+    var input = document.getElementById("nodeTextInput").value;
+    activeNode.label = input;
+    activeNode.dis.t = input;
+    activeNode.dis.adjust_textbox();
+    activeNode.update_width();
+    windowResized();
+    draw();
+}
+
 function printCanvas(){
     let printWindow = window.open('', '_blank');
     printWindow.location.reload();
@@ -378,7 +388,8 @@ function mouseReleased(){
   
 function windowResized() {
     var frameX = (windowWidth - sideFrameWidth)
-    scaled = frameX/(root.dis.width*1.2);
+    // scaled = frameX/(root.dis.width*1.2);
+    scaled = frameX/(root.dis.width*1/2);
     sidePanel.position(frameX, 0);
     // console.log("size: ", windowWidth, windowHeight);
     resizeCanvas(windowWidth, windowHeight);
