@@ -314,7 +314,8 @@ function draw(){
             root.dis.x = root.dis.width/2;
             root.adjust_children();
         } else {
-            root.dis.x = (width - root.dis.width)/2 + root.dis.width/2;
+            // root.dis.x = (width - root.dis.width)/2 + root.dis.width/2;
+            root.dis.x = canvasWidth/2 - root.dis.x_range/2;
             root.adjust_children();
         }
 
@@ -367,6 +368,7 @@ function mouseReleased(){
     var clickedNode = trackNode;
     // root.clearActive();
     // var theactive = root.getActive();
+    console.log("Coords: ", mouseX, mouseY);
 
     if (clickedNode != null && activeNode == null) {
         console.log("clicky: ", clickedNode);
@@ -387,7 +389,7 @@ function mouseReleased(){
 }
   
 function windowResized() {
-    var frameX = (windowWidth - sideFrameWidth)
+    var frameX = (windowWidth - sideFrameWidth);
     // scaled = frameX/(root.dis.width*1.2);
     scaled = frameX/(root.dis.width*1/2);
     sidePanel.position(frameX, 0);

@@ -100,7 +100,7 @@ class Display {
     }
 
     checkCoordinates(treeObject, x, y){
-        if(x >= this.x && x <= this.x + this.x_range && y >= this.y && y <= this.y + this.y_range){
+        if((x >= this.x) && (x <= (this.x + this.x_range)) && (y >= this.y) && (y <= (this.y + this.y_range))){
             this.hover = true;
             treeObject.hover = true; // Solves the issue! By J.
             // console.log("hoovah: ", this);
