@@ -183,6 +183,9 @@ function manAddChild(){
     var input = document.getElementById("nodeChildTextInput").value;
     console.log("child added: ", activeNode);
     activeNode.add_child(new ADTree(input, IDnumber), new Display(input, 0, 0, 2));
+    // if (document.getElementById("flexSwitchCheckDefault").value == 1) {
+    //     console.log("DEFENSE");
+    // }
     windowResized(); // Resizes window so it correctly displays all of tree.
     draw();
     console.log("new tree: ", activeNode);
@@ -354,9 +357,10 @@ function draw(){
         toDraw =false;
     }
     //What node is the mouse currently over
-    var mouseNode = root.dis.checkCoordinates(root, mouseX/scaled, mouseY/scaled);
+    var mouseNode = root.dis.checkCoordinates(root, mouseX, mouseY);
     //If the mouse is hoving over a node
     if(mouseNode != null && mouseNode != hoverNode){
+        console.log("HOVAH: ", mouseNode);
         hoverNode = mouseNode;
         toDraw = true;
     } else if (mouseNode == null && hoverNode != null){
