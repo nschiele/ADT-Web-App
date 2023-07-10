@@ -126,25 +126,6 @@ class Display {
     }
 
     getActive(treeObject){
-        // This old getActive function was nut functioning properly anymore, will be removed in future push!
-        // if(this.active == true){
-        //     console.log("this is active: ", treeObject);
-        //     return true;
-        // } else {
-        //     for(var i = 0; i < treeObject.children.length; i++){
-        //         console.log("kut lengte: ", treeObject.children.length, " and i: ", i);
-        //         var toReturn = treeObject.children[i].getActive();
-        //         console.log("kut kind: ", treeObject.children[i]);
-        //         if(toReturn != null){
-        //             console.log("kut wat: ", treeObject);
-        //             // return toReturn;
-        //         } else {
-        //             console.log("kut niks: ", treeObject);
-        //             // return null;
-        //         }
-        //     }
-            // console.log("kut niks: ", treeObject);
-            // return null;
         if (treeObject.dis.active === true) {
             return this;
         }
@@ -160,13 +141,11 @@ class Display {
     }
 
     compareNames(label, treeObject){
-        console.log("labels: ", treeObject.label, label);
         if (treeObject.label === label) {
             return treeObject;
         }
         if (treeObject.children && treeObject.children.length > 0) {
             for (let i = 0; i < treeObject.children.length; i++) {
-                console.log("Childs: ", treeObject.children[i]);
                 const result = this.compareNames(label, treeObject.children[i]);
                 if (result) {
                     return result;

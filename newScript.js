@@ -181,29 +181,24 @@ function downloadCanvasJpg(){
 
 function manAddChild(){
     var input = document.getElementById("nodeChildTextInput").value;
-    console.log("child added: ", activeNode);
     activeNode.add_child(new ADTree(input, IDnumber), new Display(input, 0, 0, 2));
     if (document.getElementById("flexSwitchCheckDefault").checked == 1) {
-        console.log("KINDJEEE: ", activeNode.children.at(-1));
         activeNode.children.at(-1).dis.lineList = [10,10,10,10];
     }
     activeNode.dis.adjust_textbox();
     activeNode.update_width();
     windowResized();
     draw();
-    console.log("new tree: ", activeNode);
     IDnumber++;
 }
 
 function manDeleteChild(){
     var input = document.getElementById("nodeChildInputRemove").value;
     var nodeToDelete = root.compareNames(input);
-    console.log("child removed: ", input, nodeToDelete);
     if (nodeToDelete == null) {
         console.log("Node does not exist.");
     } else {
         root.removeSubTree(nodeToDelete);
-        // nodeToDelete = null;
         console.log("Node removed successfully.");
     }
     windowResized();
