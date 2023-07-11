@@ -37,17 +37,18 @@ let oldNodetext;
 var IDnumber = 1; // Added by J
 
 async function setup() {
+    console.log("[*] In setup()");
     // noLoop();
     toDraw = true;
     trackMouseStart = true;
     frameRate(60);
-  
+
     sideFrameWidth = 400;
     var frameX = windowWidth - sideFrameWidth;
     // var canv = createCanvas(700, 700);
     // canv.elt.style.border = "2px solid lightgray";
     // canv.parent("canvasContainer");
-  
+
     // get element by id
     var canvasParentDiv = document.getElementById('canvasContainer');
     // set height and width for the canvas
@@ -58,10 +59,10 @@ async function setup() {
     canvasElement.background("lightgray");
     // set parent div
     canvasElement.parent("canvasContainer");
-    
+
     /* styling canvas */
     canvasElement.elt.style.border = "2px solid lightgray";
-  
+
     // zoom in and out buttons
     var zoomInButton = select('#zoomInBtn');
     zoomInButton.mousePressed(zoomInFunction);
@@ -70,17 +71,17 @@ async function setup() {
     scaleValue = 1;
     var clearTreeButton = select("#deleteBtn");
     clearTreeButton.mousePressed(clearCurrentTree);
-  
+
     // // instet new json text to generate new tree
     // var jsonTextInput = select("#textAreaJsonContent").value();
     // var gererateTreeButton = select("#generateTreeButton");
     // gererateTreeButton.mousePressed(function(){buildFromMultiset(jsonTextInput.replace(/['"]+/g, ''))});
-  
+
     // show selected node text in the textbox
     currNodeText = select('#nodeTextInput');
     var changeNodeTextBtn = select("#btnChangeNodeText");
     changeNodeTextBtn.mousePressed(btnChangeNodeText);
-   
+
     // change outline color and shape of the selected node
     var nodeBlackCircle = select('#btnCircleBlackDiv');
     nodeBlackCircle.mouseReleased(function(){ changeNodeOutlineColorShape(50,"black")});
@@ -94,11 +95,11 @@ async function setup() {
     nodeSquareGreen.mouseReleased(function(){changeNodeOutlineColorShape(1,"green")});
     var nodeSquareRed = select('#btnSquareRedDiv');
     nodeSquareRed.mouseReleased(function(){changeNodeOutlineColorShape(1,"red")});
-  
+
     // change the lines to dashed
     var dashedLine = select('#btnLineDashedDiv');
     dashedLine.mouseReleased(changeNodeLineToDashed);
-  
+
     var ContinuousLine = select('#btnLineContinueDiv');
     ContinuousLine.mouseReleased(changeNodeLineToContinueLine);
 
@@ -110,7 +111,7 @@ async function setup() {
 
     // windowResized(); // Resizes window so it correctly displays all of tree.
     // draw();
-    
+
     // save canvas
     var saveBtnPng = select('#pngBtn');
     var saveBtnJpg = select('#jpgBtn');
@@ -118,68 +119,84 @@ async function setup() {
     saveBtnPng.mousePressed(downloadCanvasPng);
     saveBtnJpg.mousePressed(downloadCanvasJpg);
     downloadBtn.mousePressed(downloadCanvasJpg);
-  
-    // print 
+
+    // print
     var printBtn = select('#printBtn');
     printBtn.mousePressed(printCanvas);
     var example = await getJson(0, null); // Call json_junc.js
-    
+
     buildFromMultiset(example);
-    console.log(getJson(1, example));
+    ///console.log(getJson(1, example));
 
     scaled = frameX/(root.dis.width*1.2);
 }
 
 function zoomInFunction(){
+    console.log("[*] In zoomInFunction()");
     scaleValue = scaleValue + 1
 }
 function zoomOutFunction(){
+    console.log("[*] In zoomOutFunction()");
     if(scaleValue == 1)
     scaleValue = 1;
     else
     scaleValue = scaleValue - 1;
 }
-  
+
 function btnChangeNodeText(){
+    console.log("[*] In btnChangeNodeText()");
     var newNodeText = select("#nodeTextInput").value();
     // to be continued
  }
 function changeNodeOutlineColorShape(shapeRadious,shapeColor){
+    console.log("[*] In changeNodeOutlineColorShape()");
       nodeOutLineColor = true;
       activeNode.dis.stroke = color(shapeColor);
       activeNode.dis.strokeWeight = 3;
       activeNode.dis.r = shapeRadious;
 }
-  
+
 function changeNodeLineToContinueLine(){
+    console.log("[*] In changeNodeLineToContinueLine()");
+
     activeNode.dis.lineList = [0];
 }
 
 function changeNodeLineToDashed() {
+    console.log("[*] In changeNodeLineToDashed()");
+
     activeNode.dis.lineList = [10,10,10,10];
 }
 
 function changeRefinementToAND() {
+    console.log("[*] In changeRefinementToAND()");
+
     activeNode.refinement = 1;
 }
 
 function changeRefinementToOR() {
+    console.log("[*] In changeRefinementToOR()");
     activeNode.refinement = 0;
 }
 
 function downloadCanvasPng(){
+    console.log("[*] In downloadCanvasPng()");
     fileName = select("#treeName").value();
-    console.log(fileName);
+    ///console.log(fileName);
     saveCanvas(canvasElement, fileName, 'png');
 }
 
 function downloadCanvasJpg(){
+    console.log("[*] In downloadCanvasJpg()");
+
     fileName = select("#treeName").value();
-    console.log(fileName);
+    ///console.log(fileName);
     saveCanvas(canvasElement, fileName, 'jpg');
 }
 
 function manAddChild(){
+    console.log("[*] In manAddChild()");
+
     var input = document.getElementById("nodeChildTextInput").value;
     activeNode.add_child(new ADTree(input, IDnumber), new Display(input, 0, 0, 2));
     if (document.getElementById("flexSwitchCheckDefault").checked == 1) {
@@ -193,19 +210,22 @@ function manAddChild(){
 }
 
 function manDeleteChild(){
+    console.log("[*] In manDeleteChild()");
+
     var input = document.getElementById("nodeChildInputRemove").value;
     var nodeToDelete = root.compareNames(input);
     if (nodeToDelete == null) {
-        console.log("Node does not exist.");
+        ///console.log("Node does not exist.");
     } else {
         root.removeSubTree(nodeToDelete);
-        console.log("Node removed successfully.");
+        ///console.log("Node removed successfully.");
     }
     windowResized();
     draw();
 }
 
 function manChangeChild(){
+    console.log("[*] In manChangeChild()");
     var input = document.getElementById("nodeTextInput").value;
     activeNode.label = input;
     activeNode.dis.t = input;
@@ -216,6 +236,8 @@ function manChangeChild(){
 }
 
 function printCanvas(){
+    console.log("[*] In printCanvas()");
+
     let printWindow = window.open('', '_blank');
     printWindow.location.reload();
     printWindow.document.open();
@@ -229,14 +251,18 @@ function printCanvas(){
         printWindow.print();
     }, 500);
 }
-  
+
 function clearCurrentTree(){
+    console.log("[*] In clearCurrentTree()");
+
     example = [[],0,[]];
     // console.log("start");
     buildFromMultiset(example);
 }
 
 function max_depth(n){
+    console.log("[*] In max_depth()");
+
     if(n.children.length == 0){
         return n.dis.level;
     } else {
@@ -252,11 +278,12 @@ function max_depth(n){
 }
 
 function max_width(n, dist){
+    console.log("[*] In max_width()");
     var toReturn = n.dis.x_range;
     var curr_level = 0;
     var curr_width = -1*dist;
     var searchOrder = [];
-  
+
     searchOrder.push(n);
     for(let i = 0; i < searchOrder.length; i++){
         for(let j = 0; j < searchOrder[i].children.length; j++){
@@ -274,7 +301,7 @@ function max_width(n, dist){
         }
         curr_width = searchOrder[i].dis.x_range;
         curr_level = searchOrder[i].dis.level;
-  
+
       }
       // console.log(searchOrder[i], searchOrder[i].x_range, curr_width, curr_level, toReturn)
     }
@@ -285,6 +312,7 @@ function max_width(n, dist){
   }
 
 async function buildFromMultiset(toBuild, parent=null){
+    console.log("[*] In buildFromMultiset()");
     // console.log(root)
     // First Run of Function
     if(parent == null){
@@ -304,11 +332,12 @@ async function buildFromMultiset(toBuild, parent=null){
         // if (typeof toBuild !== 'object'){
         //     // console.log("uhh", toBuild);
         // }
-        if(Object.keys(toBuild).length-7 != 0){ // This was 6, with 7 it works, because 7 array elements for normal intermediate node
+
+        if(!(toBuild === null || toBuild === undefined) && Object.keys(toBuild).length-7 != 0){ // This was 6, with 7 it works, because 7 array elements for normal intermediate node
             // console.log("wtf hij komt hier gwn");
             var child = new ADTree(toBuild.label, IDnumber); // Get label of child
             child.refinement = toBuild.refinement;
-            parent.add_child(child, new Display(toBuild.label, 0, 0, 2)); 
+            parent.add_child(child, new Display(toBuild.label, 0, 0, 2));
             IDnumber++;
             // console.log("Leaf node: ", parent); // Added by J
             for(let i = 0; i < (Object.keys(toBuild).length-7); i++){ // Loop through all children
@@ -316,7 +345,7 @@ async function buildFromMultiset(toBuild, parent=null){
                 buildFromMultiset(toBuild[i], child);
             }
         //Leaf Node
-        } else {
+      } else if (!(toBuild == null || toBuild == undefined)){
             parent.add_child(new ADTree(toBuild.label, IDnumber), new Display(toBuild.label, 0, 0, 2));
             // console.log("a leafje", toBuild.label);
             IDnumber++;
@@ -325,6 +354,7 @@ async function buildFromMultiset(toBuild, parent=null){
 }
 
 function draw(){
+    console.log("[*] In draw()");
     // If ADT is larger than the canvas, shrink ADT and place in center
     if(toDraw){
         if(scaled < 1){
@@ -333,23 +363,25 @@ function draw(){
             root.adjust_children();
         } else {
             // root.dis.x = (width - root.dis.width)/2 + root.dis.width/2;
-            root.dis.x = canvasWidth/2 - root.dis.x_range/2; // Fixed this issue.
+            if (!(root == undefined || root.dis == undefined)){
+              root.dis.x = canvasWidth/2 - root.dis.x_range/2; // Fixed this issue.
+            }
             root.adjust_children();
         }
 
 
-    
+
         if(activeNode != null){
             // activeNodeTitle.elt.innerHTML = activeNode.t;
             // oldNodetext = activeNode.t;
             // select("#nodeTextInput").attribute("value", activeNode.t);
             // currNodeText.active = true;
-  
+
         }
         // zoom in/out
         // console.log("scale: ", scaleValue);
         scale(scaleValue);
-  
+
         clear();
         root.display();
         toDraw =false;
@@ -358,7 +390,7 @@ function draw(){
     var mouseNode = root.dis.checkCoordinates(root, mouseX, mouseY);
     //If the mouse is hoving over a node
     if(mouseNode != null && mouseNode != hoverNode){
-        console.log("HOVAH: ", mouseNode);
+        ///console.log("HOVAH: ", mouseNode);
         hoverNode = mouseNode;
         toDraw = true;
     } else if (mouseNode == null && hoverNode != null){
@@ -366,7 +398,7 @@ function draw(){
         hoverNode = null;
         toDraw = true;
     }
-  
+
     //If the mouse clicks and holds on a node
     if(mouseIsPressed && (mouseNode != null || !trackMouseStart)){
         if(trackMouseStart){
@@ -384,13 +416,14 @@ function draw(){
 }
 
 function mouseReleased(){
+    console.log("[*] In mouseReleased()");
     var clickedNode = trackNode;
     // root.clearActive();
     // var theactive = root.getActive();
-    console.log("Coords: ", mouseX, mouseY);
+    ///console.log("Coords: ", mouseX, mouseY);
 
     if (clickedNode != null && activeNode == null) {
-        console.log("clicky: ", clickedNode);
+        ///console.log("clicky: ", clickedNode);
         clickedNode.active = true;
         activeDis = clickedNode;
         activeNode = activeDis.tree;
@@ -401,24 +434,31 @@ function mouseReleased(){
         activeDis = clickedNode;
         activeNode = activeDis.tree;
     }
-    console.log("click: ", activeDis, activeNode);
+    ///console.log("click: ", activeDis, activeNode);
     toDraw = true;
     trackMouseStart = true;
     trackNode = null;
 }
-  
+
 function windowResized() {
+    console.log("[*] In windowResized()");
     var frameX = (windowWidth - sideFrameWidth);
-    console.log("frame x: ", frameX);
+    ///console.log("frame x: ", frameX);
     scaled = frameX/(root.dis.width*1.2 + (root.dis.x_range)); // Fixed scaling when resizing window.
     // scaled = frameX/(root.dis.width*1/2);
-    sidePanel.position(frameX, 0);
+    if (!(sidePanel == undefined || sidePanel == null)){
+      sidePanel.position(frameX, 0);
+    }
     // console.log("size: ", windowWidth, windowHeight);
     resizeCanvas(windowWidth, windowHeight);
     // resizeCanvas(canvasWidth,canvasHeight);
     toDraw  = true;
 }
 
-  
-  
-  
+function changeActiveNavLinkColor(){
+  console.log("[!] TODO: kleurdingen toevoegen.");
+}
+
+function showAlert(){
+  console.log("[!] TODO: Generate button fixen (Meza!).");
+}

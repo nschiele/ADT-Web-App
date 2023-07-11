@@ -14,13 +14,13 @@
     <link rel="icon" href="assets/images/logo.png" type="image/png">
   </head>
   <body>
-    
+
 <header class="navbar-custom sticky-top  flex-md-nowrap p-0">
   <div class="px-3">
     <div class="container">
       <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
         <a href="index.html" class="d-inline-block d-flex align-items-center my-2 my-lg-0 me-lg-auto text-white text-decoration-none">
-          <span id="navIconMain"data-feather="share-2" fill="#ffc107"class="bi d-inline-block mx-auto mb-1 mr-2"></span> 
+          <span id="navIconMain"data-feather="share-2" fill="#ffc107"class="bi d-inline-block mx-auto mb-1 mr-2"></span>
           <span id="navIcon">&nbsp;<span id="navText">ADT</span>app</span>
         </a>
 
@@ -82,7 +82,7 @@
               <!--Input for ADT Tree-->
               <div id="childDiv" class="collapsed insideNavLink collapse">
                 <!-- <label for="textAreaJsonContent" class="form-label">Contents</label> -->
-                
+
                   <span data-feather="plus-circle" class="align-text-bottom" id="addChildSymbol"></span>
                   <span class="nav-item">Add Child</span>
                 <div class="mb-2 mt-2 border-bottom">
@@ -91,10 +91,10 @@
                     <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
                     <label class="form-check-label" for="flexSwitchCheckDefault">Defense Child</label>
                   </div>
-                  
+
                   <div class="input-group mb-4">
                     <input type="text" class="form-control" placeholder="text.." id="nodeChildTextInput" value="" onkeyup="checkInputChild()">
-                    <button type="submit" class="btn btn-warning" id="addChildBtn"> 
+                    <button type="submit" class="btn btn-warning" id="addChildBtn">
                       <span data-feather="plus" class="align-text-bottom" onclick="manAddChild()"></span></button>
                   </div>
                 </div>
@@ -106,12 +106,12 @@
                 <div class="newChildDiv">
                   <div class="input-group mb-4 mt-2">
                     <input type="text" class="form-control" placeholder="select node to remove.." id="nodeChildInputRemove" value="" onkeyup="checkRemoveChild()">
-                    <button type="submit" class="btn btn-danger" id="RemoveChildBtn" disabled> 
+                    <button type="submit" class="btn btn-danger" id="RemoveChildBtn" disabled>
                       <span data-feather="trash" class="align-text-bottom" onclick="manDeleteChild()"></span></button>
                   </div>
                 </div>
-                
-                
+
+
                 <!-- </div> -->
               </div>
             </div>
@@ -225,12 +225,12 @@
              </div>
 
             </div>
-              
+
           </li>
 
           <!--data section-->
           <li class="nav-item">
-            <a id="toolsTab" class="nav-link" aria-current="page" href="#reportDiv" aria-expanded="false" data-bs-toggle="collapse" onclick="changeActiveNavLinkColor();">
+            <a id="toolsTab" class="nav-link" aria-current="page" href="#" aria-expanded="false" data-bs-toggle="collapse" onclick="changeActiveNavLinkColor();">
               <span data-feather="file-text" class="align-text-bottom"></span>
               Data
             </a>
@@ -246,7 +246,7 @@
               </div>
           </li>
         </ul>
-        
+
         <hr>
         <h5 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
           <span>Other Tools</span>
@@ -345,12 +345,12 @@
 </footer>
 <script src="assets/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/style/dashboard.js"></script>
-    <!-- <script src="script.js"></script> 
+    <!-- <script src="script.js"></script>
     <script src="Tree.js"></script> -->
     <script src="newScript.js"></script>
     <script src="NewTree.js"></script>
-    <script src="Display.js"></script> 
+    <script src="Display.js"></script>
     <script src="json_func.js"></script>
-    
+
   </body>
 </html>

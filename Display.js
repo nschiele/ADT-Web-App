@@ -22,8 +22,8 @@ class Display {
         // this.treeID = treeID;
         this.tree;
         this.adjust_textbox();
-        
-    
+
+
     }
 
     adjust_textbox(){
@@ -39,22 +39,22 @@ class Display {
           let_height = 20;
           text_space = this.t.length/2;
         }
-        console.log("Alleen const");
+        ///console.log("Alleen const");
         if(this.t.length > 40){
-          console.log(this.t)
+          ///console.log(this.t)
           for(let i = parseInt(this.t.length/2 - 10); i<parseInt(this.t.length/2 + 10); i++){
-            console.log("excusez-moi: ", i, this.t[i])
+            ///console.log("excusez-moi: ", i, this.t[i])
               //First space in the middle of the text
               if(this.t[i] == ' '){
                 var newString = this.t.slice(0, i) + '\n' + this.t.slice(i+1, this.t.length);
                 this.t = newString
                 break;
               }
-    
+
             }
           }
-    
-    
+
+
         if(this.t.includes("\n")){
           var nlSplit = this.t.split("\n");
           var longest = 0;
@@ -63,7 +63,7 @@ class Display {
               longest = i;
             }
             this.lines = nlSplit.length;
-            console.log(longest, nlSplit)
+            ///console.log(longest, nlSplit)
           }
           this.x_range = textWidth(nlSplit[longest]) + text_space;
         } else {
@@ -74,7 +74,7 @@ class Display {
     }
 
     adjust_text(){
-        console.log("text: ", this.t);
+        ///console.log("text: ", this.t);
         if(this.t.length > 40){
             for(let i = parseInt(this.t.length/2 - 10); i<parseInt(this.t.length/2 + 10); i++){
                 if(this.t[i] == ' '){
@@ -184,7 +184,7 @@ class Display {
     setLineDash(list) {
         drawingContext.setLineDash(list);
     }
-    
+
     display(treeObject){
         if(this.t.length < 20){
             textSize(32);
@@ -192,7 +192,7 @@ class Display {
             textSize(16);
         }
         // This node visualized
-    
+
         // draw the strokes/lines
         this.setLineDash(this.lineList);
         stroke(this.stroke);
@@ -216,7 +216,7 @@ class Display {
             text(this.t, this.x + this.t.length/5, this.y + this.y_range/this.lines -3);
             this.active = true;
         }
-    
+
         fill("color(255, 255, 255)")
         // AND refinement
         if(treeObject.refinement == 1 && treeObject.children.length >= 2){
@@ -225,13 +225,13 @@ class Display {
             var firstX = treeObject.children[0].dis.x + treeObject.children[0].dis.x_range/2;
             var lastX = treeObject.children[treeObject.children.length - 1].dis.x + treeObject.children[treeObject.children.length - 1].dis.x_range/2
             var childY = treeObject.children[0].dis.y;
-        
+
             var percentage = .3;
             var startX = myX - (myX - firstX)*percentage
             var startY = myY + (childY - myY)*percentage
             var endX = myX + (lastX - myX)*percentage
             var endY = myY + (childY - myY)*percentage
-        
+
             // line(startX, startY, endX, endY)
             curve(this.x + this.x_range/2 - this.width/2, this.y, startX,startY, endX, endY, this.x + this.x_range/2 + this.width/2, this.y)
         }
@@ -242,7 +242,7 @@ class Display {
             treeObject.children[i].display();
         }
     }
-    
-  
+
+
 
 }
