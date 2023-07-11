@@ -137,6 +137,7 @@ function zoomInFunction(){
 }
 function zoomOutFunction(){
     console.log("[*] In zoomOutFunction()");
+    console.log("SCALEVALUE: " + scaleValue);
     if(scaleValue == 1)
     scaleValue = 1;
     else
@@ -366,7 +367,10 @@ function draw(){
             if (!(root == undefined || root.dis == undefined)){
               root.dis.x = canvasWidth/2 - root.dis.x_range/2; // Fixed this issue.
             }
-            root.adjust_children();
+
+            if (!root == undefined)
+              root.adjust_children();
+
         }
 
 
