@@ -368,7 +368,7 @@ function draw(){
               root.dis.x = canvasWidth/2 - root.dis.x_range/2; // Fixed this issue.
             }
 
-            if (!root == undefined)
+            // if (!root == undefined)
               root.adjust_children();
 
         }
