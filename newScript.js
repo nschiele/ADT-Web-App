@@ -197,24 +197,23 @@ function downloadCanvasJpg(){
 
 function manAddChild(){
     console.log("[*] In manAddChild()");
-
     var input = document.getElementById("nodeChildTextInput").value;
-    var space = document.getElementsByClassName("mb-2 mt-2 border-bottom");
-    const noti = document.getElementById('noti');
-    const body = document.getElementById('noti-body');
+    const noti = document.getElementById('noti-add');
+    const body = document.getElementById('noti-body-add');
     if (activeNode == undefined) {
-        console.log("auch");
+        // No node selected. Notification prep.
         body.style.color = "red";
         body.style.backgroundColor = "lightcoral";
-        noti.querySelector('.noti-body').innerHTML = "Error! Child has not been added.";
+        noti.querySelector('.noti-body-add').innerHTML = "Error! No node selected.";
         noti.classList.add('visible');
         setTimeout (() => {
             noti.classList.remove('visible');
-        }, 2000);
+        }, 2000); // Remove notification after 2 seconds.
         return;
     }
-    activeNode.add_child(new ADTree(input, IDnumber), new Display(input, 0, 0, 2));
+    activeNode.add_child(new ADTree(input, IDnumber), new Display(input, 0, 0, 2)); // Add new child.
     if (document.getElementById("flexSwitchCheckDefault").checked == 1) {
+        // Check if defense check has been checked.
         activeNode.children.at(-1).dis.lineList = [10,10,10,10];
     }
     activeNode.dis.adjust_textbox();
@@ -222,31 +221,53 @@ function manAddChild(){
     windowResized();
     draw();
     IDnumber++;
-
-    // Poging tot kleine notificatie
    
+    // Succesful! Notification prep.
     body.style.color = "green";
     body.style.backgroundColor = "lightgreen";
-    noti.querySelector('.noti-body').innerHTML = "Child added succesfully!";
+    noti.querySelector('.noti-body-add').innerHTML = "Child added succesfully!";
     
     noti.classList.add('visible');
     setTimeout (() => {
         noti.classList.remove('visible');
-    }, 2000);
-    // noti.style.bottom = `${space.offsetHeight + 20}px`;
+    }, 2000); // Remove notification after 2 seconds.
 }
 
 function manDeleteChild(){
     console.log("[*] In manDeleteChild()");
 
-    var input = document.getElementById("nodeChildInputRemove").value;
-    var nodeToDelete = root.compareNames(input);
-    if (nodeToDelete == null) {
-        ///console.log("Node does not exist.");
-    } else {
-        root.removeSubTree(nodeToDelete);
-        ///console.log("Node removed successfully.");
+    // var input = document.getElementById("nodeChildInputRemove").value;
+    const noti = document.getElementById('noti-rem');
+    const body = document.getElementById('noti-body-rem');
+    if (activeNode == undefined) {
+        console.log("Nothing selected.");
+        // No node selected. Notification prep.
+        body.style.color = "red";
+        body.style.backgroundColor = "lightcoral";
+        noti.querySelector('.noti-body-rem').innerHTML = "Error! No node selected.";
+        noti.classList.add('visible');
+        setTimeout (() => {
+            noti.classList.remove('visible');
+        }, 2000); // Remove notification after 2 seconds.
+        return;
     }
+    // var nodeToDelete = root.compareNames(activeNode);
+    // if (nodeToDelete == null) {
+        ///console.log("Node does not exist.");
+    // } else {
+    
+    root.removeSubTree(activeNode); // Function removeSubtree gives error.
+     // Succesful! Notification prep.
+    body.style.color = "green";
+    body.style.backgroundColor = "lightgreen";
+    noti.querySelector('.noti-body-rem').innerHTML = "Child removed succesfully!";
+    
+    noti.classList.add('visible');
+    setTimeout (() => {
+        noti.classList.remove('visible');
+    }, 2000); // Remove notification after 2 seconds.
+    ///console.log("Node removed successfully.");
+    // }
     windowResized();
     draw();
 }

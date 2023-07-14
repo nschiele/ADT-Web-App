@@ -431,7 +431,7 @@ footer p {
 }
 
 /*Poging to kleine notificatie*/
-.noti{
+.noti-add, .noti-rem{
   position: absolute;
   bottom: -24.5px;
   left: 0;
@@ -443,13 +443,13 @@ footer p {
     transform 500ms;
 }
 
-.noti.visible{
+.noti-add.visible, .noti-rem.visible {
   /* transform: translateY(0); */
   opacity: 1;
 }
 
 
-.noti-body {
+.noti-body-add, .noti-body-rem {
   margin: 2px;
   padding: 1px 1px;
 

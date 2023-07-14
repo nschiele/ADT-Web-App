@@ -108,9 +108,9 @@ class ADTree{
                 if (this.children[i] === node) {
                     this.children.splice(i, 1);
                 }
-                const result = this.children[i].removeSubTree(node);
-                if (result) {
-                    return result;
+                // const result = this.children[i].removeSubTree(node);
+                if (this.children[i] && this.children[i].removeSubTree(node)) {
+                    return true;
                 }
             }
         }
