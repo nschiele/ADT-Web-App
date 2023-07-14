@@ -199,6 +199,20 @@ function manAddChild(){
     console.log("[*] In manAddChild()");
 
     var input = document.getElementById("nodeChildTextInput").value;
+    var space = document.getElementsByClassName("mb-2 mt-2 border-bottom");
+    const noti = document.getElementById('noti');
+    const body = document.getElementById('noti-body');
+    if (activeNode == undefined) {
+        console.log("auch");
+        body.style.color = "red";
+        body.style.backgroundColor = "lightcoral";
+        noti.querySelector('.noti-body').innerHTML = "Error! Child has not been added.";
+        noti.classList.add('visible');
+        setTimeout (() => {
+            noti.classList.remove('visible');
+        }, 2000);
+        return;
+    }
     activeNode.add_child(new ADTree(input, IDnumber), new Display(input, 0, 0, 2));
     if (document.getElementById("flexSwitchCheckDefault").checked == 1) {
         activeNode.children.at(-1).dis.lineList = [10,10,10,10];
@@ -208,6 +222,18 @@ function manAddChild(){
     windowResized();
     draw();
     IDnumber++;
+
+    // Poging tot kleine notificatie
+   
+    body.style.color = "green";
+    body.style.backgroundColor = "lightgreen";
+    noti.querySelector('.noti-body').innerHTML = "Child added succesfully!";
+    
+    noti.classList.add('visible');
+    setTimeout (() => {
+        noti.classList.remove('visible');
+    }, 2000);
+    // noti.style.bottom = `${space.offsetHeight + 20}px`;
 }
 
 function manDeleteChild(){

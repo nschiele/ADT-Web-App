@@ -87,17 +87,24 @@
                   <span class="nav-item">Add Child</span>
                 <div class="mb-2 mt-2 border-bottom">
                 <div class="newChildDiv">
+                  <!-- Poging tot kleine notificatie-->
                   <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
                     <label class="form-check-label" for="flexSwitchCheckDefault">Defense Child</label>
                   </div>
+                  
 
                   <div class="input-group mb-4">
                     <input type="text" class="form-control" placeholder="text.." id="nodeChildTextInput" value="" onkeyup="checkInputChild()">
                     <button type="submit" class="btn btn-warning" id="addChildBtn">
                       <span data-feather="plus" class="align-text-bottom" onclick="manAddChild()"></span></button>
+                      <div class="noti" id="noti">
+                        <div class="noti-body" id="noti-body">
+                        </div>
+                      </div>
                   </div>
                 </div>
+          
               </div>
               <div class="mb-2 mt-2">
                 <!-- <label for="textAreaJsonContent" class="form-label">Contents</label> -->

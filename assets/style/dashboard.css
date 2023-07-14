@@ -429,3 +429,35 @@ footer p {
   padding: 70px;
   color: whitesmoke;
 }
+
+/*Poging to kleine notificatie*/
+.noti{
+  position: absolute;
+  bottom: -24.5px;
+  left: 0;
+
+  /* transform: translateY(100%); */
+  opacity: 0;
+  transition:
+    opacity 500ms,
+    transform 500ms;
+}
+
+.noti.visible{
+  /* transform: translateY(0); */
+  opacity: 1;
+}
+
+
+.noti-body {
+  margin: 2px;
+  padding: 1px 1px;
+
+  font-size: smaller;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+  background-color: lightcoral;
+  color: red;
+
+  border-radius: 4px;
+}
