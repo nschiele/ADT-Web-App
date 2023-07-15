@@ -310,10 +310,9 @@ textarea:focus::placeholder {
 }
 
 .custom-btn {
-  width: 200px;
+  width: 100%;
   overflow: visible;
   border-radius: 0px;
-  left: 33%;
 }
 
 #canvasContainer{
