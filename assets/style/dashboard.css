@@ -304,14 +304,13 @@ textarea:focus::placeholder {
   stroke: red;
 }
 
-#RemoveChildBtn{
+/* #RemoveChildBtn{
   justify-content: center;
   align-items: center;
-}
+} */
 
 .custom-btn {
   width: 100%;
-  overflow: visible;
   border-radius: 0px;
 }
 
