@@ -18,13 +18,16 @@ module.exports = {
 
             /* Abatract Syntax Tree Stage */
             let abstractSyntaxTree = parsedSourcecode.buildAST();
-            let abstractSyntaxTreeVisitor = new ast.AbstractSyntaxTreeVisitor(abstractSyntaxTree);
 
+            //console.log(JSON.stringify(abstractSyntaxTree));
+            
             /* Intermediate Statements Stage */
+            let abstractSyntaxTreeVisitor = new ast.AbstractSyntaxTreeVisitor(abstractSyntaxTree);
             abstractSyntaxTreeVisitor.visit(abstractSyntaxTree.getRoot());
 
             /* XML Generation Stage */
             let interpreter = new intr.Interpreter(abstractSyntaxTreeVisitor.intermediateCode);
+            return interpreter.xmlstring;
         }
     }
 }
