@@ -7109,8 +7109,15 @@ module.exports = {
 }
 
 },{}],56:[function(require,module,exports){
-const comp = require('./Compiler/compiler');
-let compiler = new comp.Compiler("create attack node \"asd\";");
-s = compiler.compile();
-console.log(s);
+var editor = document.getElementById("editor");
+var mirror = document.getElementById("mirror");
+
+editor.addEventListener("input", function() {
+  const comp = require('./Compiler/compiler');
+  let compiler = new comp.Compiler(editor.value);
+  s = compiler.compile();  
+  mirror.value = s;
+});
+
+
 },{"./Compiler/compiler":3}]},{},[54,2,4,55,3,56]);
