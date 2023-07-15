@@ -1,0 +1,55 @@
+<?xml version='1.0'?>
+<adtree>
+  <node refinement="disjunctive">
+    <label>Broke acc</label>
+      <node refinement="conjuctive">
+        <label>ATM</label>
+          <node refinement="disjunctive">
+            <label>Card</label>
+          </node>
+          <node refinement="conjunctive">
+            <label>PIN</label>
+              <node refinement="disjunctive">
+                <label>Find Note</label>
+                <parameter domainId="MinTimeSeq1">100.0</parameter>
+                <parameter domainId="ProbSucc2">0.1</parameter>
+                <node refinement="disjunctive" switchRole="yes">
+                  <label>No rember</label>
+                </node>
+              </node>
+              <node refinement="disjunctive">
+                <label>Force</label>
+                <parameter domainId="MinTimeSeq1">5.0</parameter>
+                <parameter domainId="ProbSucc2">0.9</parameter>
+              </node>
+          </node>
+      </node>
+      <node refinement="disjunctive">
+        <label>Offline</label>
+          <node refinement="disjunctive">
+            <label>Username</label>
+          </node>
+          <node refinement="disjunctive" switchRole="yes">
+            <label>2FA</label>
+              <node refinement="disjunctive" switchRole="yes">
+                <label>malware</label>
+                  <node refinement="disjunctive">
+                    <label>Desktop</label>
+                  </node>
+                  <node refinement="disjunctive">
+                    <label>Mobile</label>
+                  </node>
+              </node>
+          </node>
+          <node refinement="disjunctive">
+            <label>Password</label>
+              <node refinement="disjunctive">
+                <label>Phishing</label>
+              </node>
+              <node refinement="disjunctive">
+                <label>Key Logger</label>
+              </node>
+          </node>
+      </node>
+  </node>
+</adtree>

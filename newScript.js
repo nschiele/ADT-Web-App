@@ -123,8 +123,10 @@ async function setup() {
     // print
     var printBtn = select('#printBtn');
     printBtn.mousePressed(printCanvas);
-    var example = await getJson(0, null); // Call json_junc.js
-
+    let url = "https://raw.githubusercontent.com/nschiele/ADT-Web-App/main/xml%20examples/fig13.xml";
+    let resp = await fetch(url);
+    var example = await getJson(0, resp); // Call json_junc.js
+    console.log("WAT: ", example);
     buildFromMultiset(example);
     ///console.log(getJson(1, example));
 
@@ -297,6 +299,44 @@ function downloadADT() {
 
 function uploadADT() {
     console.log("[*] In uploadADT()");
+    return new Promise(function(resolve, reject) {
+        var ADTInput = document.getElementById('ADTInput');
+        console.log(ADTInput);
+        ADTInput.click();
+        ADTInput.addEventListener('change', function(event) {
+            var file = event.target.files[0];
+            if (file) {
+                var fileName = file.name;
+                var fileExt = fileName.split('.').pop();
+
+                if (fileExt === 'xml') {
+                    console.log("XML");
+                    resolve(file);
+                } else if (fileExt === 'json') {
+                    console.log("JSON");
+                    reject(new Error("Unsupported file type: JSON"));
+                } else {
+                    console.log("Unsupported");
+                    reject(new Error("Unsupported file type"));
+                }
+            } else {
+                reject(new Error("No file selected"));
+            }
+        });
+    });
+}
+
+async function buildFromUpload() {
+    console.log("whoop")
+    try {
+        var file = await uploadADT();
+        var input = await getJson(0, file);
+        console.log("YA: ", input);
+        buildFromMultiset(input);
+        draw();
+    } catch(error) {
+        console.error("Error:", error);
+    }
 }
 
 
@@ -378,7 +418,7 @@ function max_width(n, dist){
 
 async function buildFromMultiset(toBuild, parent=null){
     console.log("[*] In buildFromMultiset()");
-    // console.log(root)
+    console.log(root)
     // First Run of Function
     if(parent == null){
         // console.log("hier")

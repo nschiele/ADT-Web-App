@@ -19,11 +19,11 @@ function getJson(temp, input) {
 }
 
 // Open the XML testfile
-async function getXML(){
+async function getXML(input){
     console.log("[*] In getXML()");
-    let url = "https://raw.githubusercontent.com/nschiele/ADT-Web-App/main/xml%20examples/fig13.xml";
-    let resp = await fetch(url);
-    let xml = await resp.text();
+    // let url = "https://raw.githubusercontent.com/nschiele/ADT-Web-App/main/xml%20examples/fig13.xml";
+    // let resp = await fetch(url);
+    let xml = await input.text();
     return xml;
 }
 
@@ -342,7 +342,7 @@ async function convert(XorJ, input){
 
     var input_text
     if (XorJ == 0){ // XorJ == 0 gives that input_file contains a XML
-        input_text = await getXML(); // Get XML string
+        input_text = await getXML(input); // Get XML string
         var json = await build_json(input_text); // Get JSON string and parse to JSON object
         return json;
     }
