@@ -260,7 +260,7 @@ function manDeleteChild(){
      // Succesful! Notification prep.
     body.style.color = "green";
     body.style.backgroundColor = "lightgreen";
-    noti.querySelector('.noti-body-rem').innerHTML = "Child removed succesfully!";
+    noti.querySelector('.noti-body-rem').innerHTML = "Node removed succesfully!";
     
     noti.classList.add('visible');
     setTimeout (() => {
@@ -268,6 +268,7 @@ function manDeleteChild(){
     }, 2000); // Remove notification after 2 seconds.
     ///console.log("Node removed successfully.");
     // }
+    activeNode = undefined;
     windowResized();
     draw();
 }
@@ -282,6 +283,22 @@ function manChangeChild(){
     windowResized();
     draw();
 }
+
+// Download & Upload
+
+function downloadADT() {
+    console.log("[*] In downloadADT()");
+    jsonObject = new Node();
+    jsonObject.label = root.label;
+    jsonObject.refinement = root.refinement;
+    jsonObject.depth = root.level;
+    jsonObject.parent = null;
+}
+
+function uploadADT() {
+    console.log("[*] In uploadADT()");
+}
+
 
 function printCanvas(){
     console.log("[*] In printCanvas()");

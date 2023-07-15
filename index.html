@@ -109,11 +109,11 @@
               <div class="mb-2 mt-2">
                 <!-- <label for="textAreaJsonContent" class="form-label">Contents</label> -->
                   <span data-feather="x-circle" class="align-text-bottom" id="removeChildSymbol"></span>
-                  <span class="nav-item">Remove Child</span>
+                  <span class="nav-item">Remove Selected Node</span>
                 <div class="newChildDiv">
                   <div class="input-group mb-4 mt-2">
                     <!-- <input type="text" class="form-control" placeholder="select node to remove.." id="nodeChildInputRemove" value="" onkeyup="checkRemoveChild()"> -->
-                    <button type="submit" class="btn btn-danger" id="RemoveChildBtn">
+                    <button type="submit" class="btn btn-danger custom-btn" id="RemoveChildBtn">
                       <span data-feather="trash" class="align-text-bottom" onclick="manDeleteChild()"></span></button>
                       <div class="noti-rem" id="noti-rem">
                         <div class="noti-body-rem" id="noti-body-rem">
@@ -297,7 +297,7 @@
             <!-- <div> -->
               <span data-bs-toggle="tooltip" data-bs-title="Upload">
                 <button type="button" class="btn btn-sm btn-outline-secondary" id="uploadBtn" data-bs-toggle="dropdown" aria-expanded="false">
-                  <span data-feather="upload" class="align-text-bottom"></span>
+                  <span data-feather="upload" class="align-text-bottom" onclick="uploadADT()"></span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
                   <li><button class="dropdown-item" type="button" id="xmlBtn">xml</button></li>
@@ -308,7 +308,7 @@
             <!-- <div> -->
               <span data-bs-toggle="tooltip" data-bs-title="Download">
                 <button type="button" class="btn btn-sm btn-outline-secondary" id="saveBtn" data-bs-toggle="dropdown" aria-expanded="false">
-                  <span data-feather="download" class="align-text-bottom"></span>
+                  <span data-feather="download" class="align-text-bottom" onclick="downloadADT()"></span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
                   <li><button class="dropdown-item" type="button" id="pngBtn">png</button></li>
