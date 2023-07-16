@@ -311,10 +311,14 @@
                 <button type="button" class="btn btn-sm btn-outline-secondary" id="saveBtn" data-bs-toggle="dropdown" aria-expanded="false" onclick="downloadADT()">
                   <span data-feather="download" class="align-text-bottom"></span>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end">
+                <select id="formatDropdown">
+                  <option value="json">JSON</option>
+                  <option value="xml">XML</option>
+                </select>
+                <!-- <ul class="dropdown-menu dropdown-menu-end">
                   <li><button class="dropdown-item" type="button" id="pngBtn">png</button></li>
                   <li><button class="dropdown-item" type="button" id="jpgBtn">jpg</button></li>
-                </ul>
+                </ul> -->
               </span>
             <!-- </div> -->
           </div>

@@ -12,6 +12,7 @@ class ADTree{
         this.root = this;
         this.dis = new Display(label, this.id, 0, 0, 2);
         this.dis.tree = this;
+        this.xmlNode;
     }
 
 
@@ -116,6 +117,58 @@ class ADTree{
         }
         return null;
     }
+
+    convertADTtoNode(parent) {
+        console.log("node: ", this);
+        var newNode;
+        if (this == root) {
+            var nodeRoot = new Node();
+            nodeRoot.label = this.label;
+            nodeRoot.refinement = this.refinement;
+            nodeRoot.depth = this.dis.level;
+            nodeRoot.parent = null;
+            console.log("new node: ", nodeRoot);
+            newNode = nodeRoot;
+            this.xmlNode = nodeRoot;
+        } else {
+            var ADTnode = new Node();
+            ADTnode.label = this.label;
+            ADTnode.refinement = this.refinement;
+            ADTnode.depth = this.dis.level;
+            ADTnode.parent = parent;
+            console.log("new node: ", ADTnode);
+            newNode = ADTnode;
+            this.xmlNode = ADTnode;
+        }
+        if (this.children && this.children.length > 0) {
+            for (let i = 0; i < this.children.length; i++) {
+                this.children[i].convertADTtoNode(newNode);
+            }
+        }
+    }
+
+    addChildInXML(temp_string){
+        console.log("THE XMLNODE: ", this.xmlNode);
+        temp_string = add_child(this.xmlNode, temp_string, 1);
+        if (this.children && this.children.length > 0) {
+            for (let i = 0; i < this.children.length; i++) {
+                temp_string = this.children[i].addChildInXML(temp_string);
+            }
+        }
+        console.log("it: ", temp_string);
+        return temp_string;
+    }
+
+    // setNodeStruc(parent) {
+    //     if (this !== root) {
+
+    //     }
+    //     if (this.children && this.children.length > 0) {
+    //         for (let i = 0; i < this.children.length; i++) {
+    //             this.children[i].convertADTtoNode();
+    //         }
+    //     }
+    // }
     
 
 }

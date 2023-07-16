@@ -282,7 +282,7 @@ async function build_json(input_text){
     return json;
 }
 
-function add_child(node, temp_string){
+function add_child(node, temp_string, download){
     console.log("[*] In add_child()");
 
     ///console.log(node);
@@ -312,8 +312,10 @@ function add_child(node, temp_string){
         }
     }
 
-    for (var i = 0; i < Object.keys(node).length-7; i++){ // keys komen niet overeen met volgorde
-        temp_string = add_child(node[i], temp_string);
+    if (!download) {
+        for (var i = 0; i < Object.keys(node).length-7; i++){ // keys komen niet overeen met volgorde
+            temp_string = add_child(node[i], temp_string, 0);
+        }
     }
 
     temp_string += '</node>';
@@ -328,10 +330,10 @@ function build_xml(input_text){
     var temp_string = '<?xml version="1.0" encoding="UTF-8"?><adtree>';
     var xml = null;
 
-    temp_string = add_child(input_text[0], temp_string);
+    temp_string = add_child(input_text[0], temp_string, 0);
 
     temp_string += '</adtree>';
-    ///console.log(temp_string);
+    console.log("eerst: ", temp_string);
     xml = parser.parseFromString(temp_string, "text/xml");
     return xml;
 }
@@ -344,9 +346,9 @@ async function convert(XorJ, input){
     if (XorJ == 0){ // XorJ == 0 gives that input_file contains a XML
         input_text = await getXML(input); // Get XML string
         var json = await build_json(input_text); // Get JSON string and parse to JSON object
+        console.log(json);
         return json;
-    }
-    else{ // else gives that input_file contains a JSON
+    } else{ // else gives that input_file contains a JSON
         input_text = input;
         var xml = build_xml(input_text); // Get JSON string and parse to JSON object
         return xml;

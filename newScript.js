@@ -113,11 +113,11 @@ async function setup() {
     // draw();
 
     // save canvas
-    var saveBtnPng = select('#pngBtn');
-    var saveBtnJpg = select('#jpgBtn');
+    // var saveBtnPng = select('#pngBtn');
+    // var saveBtnJpg = select('#jpgBtn');
     var downloadBtn = select("#downloadBtn")
-    saveBtnPng.mousePressed(downloadCanvasPng);
-    saveBtnJpg.mousePressed(downloadCanvasJpg);
+    // saveBtnPng.mousePressed(downloadCanvasPng);
+    // saveBtnJpg.mousePressed(downloadCanvasJpg);
     downloadBtn.mousePressed(downloadCanvasJpg);
 
     // print
@@ -288,13 +288,33 @@ function manChangeChild(){
 
 // Download & Upload
 
+
 function downloadADT() {
     console.log("[*] In downloadADT()");
-    jsonObject = new Node();
-    jsonObject.label = root.label;
-    jsonObject.refinement = root.refinement;
-    jsonObject.depth = root.level;
-    jsonObject.parent = null;
+    var selectedFormat = document.getElementById("formatDropdown").value;
+    root.convertADTtoNode(null);
+    // root.setNodeStruc(null);
+    if (selectedFormat === "xml") {
+        var parser = new DOMParser();
+        var temp_string = '<?xml version="1.0" encoding="UTF-8"?><adtree>';
+        var xml = null;
+        temp_string = root.addChildInXML(temp_string);
+        temp_string += '</adtree>';
+        console.log("DAAR GAAN WE: ", temp_string);
+        xml = parser.parseFromString(temp_string, "text/xml");
+        console.log("Final: ", xml);
+        
+        var blob = new Blob([temp_string], { type: "text/plain;charset=utf-8"});
+        var downloadLink = document.createElement("a");
+        downloadLink.href = URL.createObjectURL(blob);
+        downloadLink.download = "temp_string.xml";
+        downloadLink.click();
+    }
+    // jsonObject = new Node();
+    // jsonObject.label = root.label;
+    // jsonObject.refinement = root.refinement;
+    // jsonObject.depth = root.level;
+    // jsonObject.parent = null;
 }
 
 function uploadADT() {
@@ -314,7 +334,7 @@ function uploadADT() {
                     resolve(file);
                 } else if (fileExt === 'json') {
                     console.log("JSON");
-                    reject(new Error("Unsupported file type: JSON"));
+                    resolve(file)
                 } else {
                     console.log("Unsupported");
                     reject(new Error("Unsupported file type"));
@@ -330,7 +350,13 @@ async function buildFromUpload() {
     console.log("whoop")
     try {
         var file = await uploadADT();
-        var input = await getJson(0, file);
+        var fileExt = file.name.split('.').pop();
+        var input;
+        if (fileExt === 'xml') {
+            input = await getJson(0, file);
+        } else {
+            input = file;
+        }
         console.log("YA: ", input);
         buildFromMultiset(input);
         draw();
