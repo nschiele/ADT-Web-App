@@ -24,6 +24,7 @@ async function getXML(input){
     // let url = "https://raw.githubusercontent.com/nschiele/ADT-Web-App/main/xml%20examples/fig13.xml";
     // let resp = await fetch(url);
     let xml = await input.text();
+    console.log("wat: ", xml)
     return xml;
 }
 

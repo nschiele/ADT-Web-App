@@ -289,12 +289,12 @@ function manChangeChild(){
 // Download & Upload
 
 
-function downloadADT() {
+async function downloadADT(selectedFormat) {
     console.log("[*] In downloadADT()");
-    var selectedFormat = document.getElementById("formatDropdown").value;
-    root.convertADTtoNode(null);
-    // root.setNodeStruc(null);
-    if (selectedFormat === "xml") {
+    return new Promise(function(resolve) {
+        root.convertADTtoNode(null);
+        // root.setNodeStruc(null);
+        
         var parser = new DOMParser();
         var temp_string = '<?xml version="1.0"?>'
         temp_string += '\n';
@@ -306,18 +306,59 @@ function downloadADT() {
         console.log("DAAR GAAN WE: ", temp_string);
         xml = parser.parseFromString(temp_string, "text/xml");
         console.log("Final: ", xml);
+        resolve(temp_string);
         
-        var blob = new Blob([temp_string], { type: "text/plain;charset=utf-8"});
-        var downloadLink = document.createElement("a");
-        downloadLink.href = URL.createObjectURL(blob);
-        downloadLink.download = "SavedADT.xml";
-        downloadLink.click();
-    }
+        // if (selectedFormat === "xml") {
+        //     var blob = new Blob([temp_string], { type: "text/plain;charset=utf-8"});
+        //     var downloadLink = document.createElement("a");
+        //     downloadLink.href = URL.createObjectURL(blob);
+        //     downloadLink.download = "SavedADT.xml";
+        //     downloadLink.click();
+        // } else if (selectedFormat === "json") {
+        //     jsonfile = await getJson(0, temp_string);
+            
+        // }
+    });
     // jsonObject = new Node();
     // jsonObject.label = root.label;
     // jsonObject.refinement = root.refinement;
     // jsonObject.depth = root.level;
     // jsonObject.parent = null;
+    
+}
+
+async function downloadPrep() {
+    console.log("whoop");
+    var selectedFormat = document.getElementById("formatDropdown").value;
+    try {
+        var file = await downloadADT(selectedFormat);
+        console.log("yayayayay: ", file);
+        var input;
+        if (selectedFormat === 'json') {
+            input = await build_json(file);
+            const visited = new WeakSet();
+            input = JSON.stringify(input, (key, value) => {
+                if (typeof value === 'object' && value !== null) {
+                    if (visited.has(value)) {
+                        return '[Circular Reference]';
+                    }
+                    visited.add(value);
+                }
+                return value;
+            });
+            console.log("YA: ", file);
+        } else {
+            input = file;
+        }
+        var blob = new Blob([input], { type: "text/plain"});
+        var downloadLink = document.createElement("a");
+        downloadLink.href = URL.createObjectURL(blob);
+        console.log("YA: ", input);
+        downloadLink.download = "SavedADT." + selectedFormat;
+        downloadLink.click();
+    } catch(error) {
+        console.error("Error:", error);
+    }
 }
 
 function uploadADT() {
