@@ -176,6 +176,7 @@ async function find_par(items, i){ // todo category
     var item = items[i];
 
     while (item[j] != "<"){ // kan crashen
+        console.log("the: ", item[j]);
         j++;
     }
     while (item[j+1] == "p"){
@@ -223,6 +224,7 @@ async function build_json(input_text){
 
     // wanneer var en wanneer const (variabelen)
     const items = input_text.split("\n"); // Put the XML lines into a list of strings
+    console.log("digging deeper: ", items);
     var item; // Single line of the XML file
     var j, k; // Counting variables
     var depth = 0; // Keeping track of the depth of the json
@@ -286,6 +288,10 @@ function add_child(node, temp_string, download){
     console.log("[*] In add_child()");
 
     ///console.log(node);
+    temp_string += '\n';
+    for (var i = 0; i < node.depth+1; i++){
+        temp_string += "    ";
+    }
     temp_string += '<node refinement=';
     if (node.refinement == 0){
         temp_string += '"disjunctive"';
@@ -297,7 +303,11 @@ function add_child(node, temp_string, download){
         temp_string += ' switchRole="yes"';
     }
     temp_string += '>';
-
+    temp_string += '\n';
+    
+    for (var i = 0; i < node.depth+2; i++){
+        temp_string += "    ";
+    }
     temp_string += '<label>';
     temp_string += node.label;
     temp_string += '</label>';
@@ -316,9 +326,11 @@ function add_child(node, temp_string, download){
         for (var i = 0; i < Object.keys(node).length-7; i++){ // keys komen niet overeen met volgorde
             temp_string = add_child(node[i], temp_string, 0);
         }
-    }
 
-    temp_string += '</node>';
+        temp_string += '</node>';
+        // temp_string += '\n';
+        // temp_string += node.depth*" ";
+    }
 
     return temp_string;
 }
@@ -346,7 +358,7 @@ async function convert(XorJ, input){
     if (XorJ == 0){ // XorJ == 0 gives that input_file contains a XML
         input_text = await getXML(input); // Get XML string
         var json = await build_json(input_text); // Get JSON string and parse to JSON object
-        console.log(json);
+        console.log("JSON: ", input_text);
         return json;
     } else{ // else gives that input_file contains a JSON
         input_text = input;

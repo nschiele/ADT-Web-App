@@ -155,6 +155,11 @@ class ADTree{
                 temp_string = this.children[i].addChildInXML(temp_string);
             }
         }
+        temp_string += '\n';
+        for (var i = 0; i < this.xmlNode.depth+1; i++){
+            temp_string += "    ";
+        }
+        temp_string += '</node>';
         console.log("it: ", temp_string);
         return temp_string;
     }

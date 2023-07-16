@@ -296,9 +296,12 @@ function downloadADT() {
     // root.setNodeStruc(null);
     if (selectedFormat === "xml") {
         var parser = new DOMParser();
-        var temp_string = '<?xml version="1.0" encoding="UTF-8"?><adtree>';
+        var temp_string = '<?xml version="1.0"?>'
+        temp_string += '\n';
+        temp_string += '<adtree>';
         var xml = null;
         temp_string = root.addChildInXML(temp_string);
+        temp_string += '\n';
         temp_string += '</adtree>';
         console.log("DAAR GAAN WE: ", temp_string);
         xml = parser.parseFromString(temp_string, "text/xml");
@@ -307,7 +310,7 @@ function downloadADT() {
         var blob = new Blob([temp_string], { type: "text/plain;charset=utf-8"});
         var downloadLink = document.createElement("a");
         downloadLink.href = URL.createObjectURL(blob);
-        downloadLink.download = "temp_string.xml";
+        downloadLink.download = "SavedADT.xml";
         downloadLink.click();
     }
     // jsonObject = new Node();
@@ -354,10 +357,10 @@ async function buildFromUpload() {
         var input;
         if (fileExt === 'xml') {
             input = await getJson(0, file);
+            console.log("YA: ", file);
         } else {
             input = file;
         }
-        console.log("YA: ", input);
         buildFromMultiset(input);
         draw();
     } catch(error) {
@@ -447,7 +450,7 @@ async function buildFromMultiset(toBuild, parent=null){
     console.log(root)
     // First Run of Function
     if(parent == null){
-        // console.log("hier")
+        console.log("hier: ", toBuild);
         root = new ADTree(toBuild[0].label, IDnumber); // Get label of root
         IDnumber++;
         // disRoot = new Display(toBuild[0].label/*adtree.node.label*/, 0, 0, 2); // Added by J
