@@ -277,9 +277,31 @@ function manDeleteChild(){
 
 function manChangeChild(){
     console.log("[*] In manChangeChild()");
+    const noti = document.getElementById('noti-cha');
+    const body = document.getElementById('noti-body-cha');
+    if (activeNode == undefined) {
+        console.log("Nothing selected.");
+        // No node selected. Notification prep.
+        body.style.color = "red";
+        body.style.backgroundColor = "lightcoral";
+        noti.querySelector('.noti-body-cha').innerHTML = "Error! No node selected.";
+        noti.classList.add('visible');
+        setTimeout (() => {
+            noti.classList.remove('visible');
+        }, 2000); // Remove notification after 2 seconds.
+        return;
+    }
     var input = document.getElementById("nodeTextInput").value;
     activeNode.label = input;
     activeNode.dis.t = input;
+    body.style.color = "green";
+    body.style.backgroundColor = "lightgreen";
+    noti.querySelector('.noti-body-cha').innerHTML = "Node name changed succesfully!";
+    
+    noti.classList.add('visible');
+    setTimeout (() => {
+        noti.classList.remove('visible');
+    }, 2000); // Remove notification after 2 seconds.
     activeNode.dis.adjust_textbox();
     activeNode.update_width();
     windowResized();
