@@ -156,7 +156,8 @@ class ADTree{
             }
         }
         temp_string += '\n';
-        for (var i = 0; i < this.xmlNode.depth+1; i++){
+        temp_string += "  ";
+        for (var i = 0; i < this.xmlNode.depth; i++){
             temp_string += "    ";
         }
         temp_string += '</node>';

@@ -336,16 +336,17 @@ async function downloadPrep() {
         var input;
         if (selectedFormat === 'json') {
             input = await build_json(file);
-            const visited = new WeakSet();
-            input = JSON.stringify(input, (key, value) => {
-                if (typeof value === 'object' && value !== null) {
-                    if (visited.has(value)) {
-                        return '[Circular Reference]';
-                    }
-                    visited.add(value);
-                }
-                return value;
-            });
+            // const visited = new WeakSet();
+            // input = JSON.stringify(input, (key, value) => {
+            //     if (typeof value === 'object' && value !== null) {
+            //         if (visited.has(value)) {
+            //             return '[Circular Reference]';
+            //         }
+            //         visited.add(value);
+            //     }
+            //     return value;
+            // });
+            input = Flatted.stringify(input);
             console.log("YA: ", file);
         } else {
             input = file;
@@ -370,6 +371,7 @@ function uploadADT() {
         ADTInput.addEventListener('change', function(event) {
             var file = event.target.files[0];
             if (file) {
+                console.log("JSON: ", file);
                 var fileName = file.name;
                 var fileExt = fileName.split('.').pop();
 
@@ -400,7 +402,9 @@ async function buildFromUpload() {
             input = await getJson(0, file);
             console.log("YA: ", file);
         } else {
-            input = file;
+            var temp = file;
+            console.log("JSON: ", temp);
+            input = Flatted.parse(temp);
         }
         buildFromMultiset(input);
         draw();

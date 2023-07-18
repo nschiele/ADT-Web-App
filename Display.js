@@ -169,6 +169,7 @@ class Display {
             //Handling Child Y Location
             treeObject.children[i].dis.y = this.y + 100;
             treeObject.children[i].dis.level = this.level + 1;
+
         }
         for(let i = 0; i < treeObject.children.length; i++){
             treeObject.children[i].adjust_children();

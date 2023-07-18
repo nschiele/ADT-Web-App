@@ -290,7 +290,8 @@ function add_child(node, temp_string, download){
 
     ///console.log(node);
     temp_string += '\n';
-    for (var i = 0; i < node.depth+1; i++){
+    temp_string += "  ";
+    for (var i = 0; i < node.depth; i++){
         temp_string += "    ";
     }
     temp_string += '<node refinement=';
@@ -306,7 +307,7 @@ function add_child(node, temp_string, download){
     temp_string += '>';
     temp_string += '\n';
     
-    for (var i = 0; i < node.depth+2; i++){
+    for (var i = 0; i < node.depth+1; i++){
         temp_string += "    ";
     }
     temp_string += '<label>';
@@ -359,7 +360,7 @@ async function convert(XorJ, input){
     if (XorJ == 0){ // XorJ == 0 gives that input_file contains a XML
         input_text = await getXML(input); // Get XML string
         var json = await build_json(input_text); // Get JSON string and parse to JSON object
-        console.log("JSON: ", input_text);
+        console.log("JSON: ", json);
         return json;
     } else{ // else gives that input_file contains a JSON
         input_text = input;
