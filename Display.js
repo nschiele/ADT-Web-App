@@ -21,6 +21,12 @@ class Display {
         this.freeMove = false; // tracks if node is unlocked and can move freely
         // this.treeID = treeID;
         this.tree;
+
+        this.scale_x = 0;
+        this.scale_y = 0;
+        this.scale_x_range = 0;
+        this.scale_y_range = 0;
+
         this.adjust_textbox();
 
 
@@ -87,6 +93,15 @@ class Display {
     }
 
     update_width(treeObject){
+      /*
+        console.log("*** UPDATE_WIDTH ***");
+        console.log("NODE LABEL: " + this.t);
+        console.log("NODE WIDTH: " + this.width);
+        console.log("NODE X: " + this.x);
+        console.log("NODE XRANGE: " + this.x_range);
+        console.log("NODE RADIUS: " + this.r);
+      */
+
         var child_width = -1*this.dist;
         for(let i = 0; i < treeObject.children.length; i++){
             child_width += treeObject.children[i].dis.width + this.dist;
@@ -100,7 +115,31 @@ class Display {
     }
 
     checkCoordinates(treeObject, x, y){
-        if((x >= this.x) && (x <= (this.x + this.x_range)) && (y >= this.y) && (y <= (this.y + this.y_range))){
+
+        // Added by C
+        if (this.scale_x == 0)
+          this.scale_x = this.x;
+
+        if (this.scale_x_range == 0)
+          this.scale_x_range = this.x_range;
+
+        if (this.scale_y == 0)
+          this.scale_y = this.y;
+
+        if (this.scale_y_range == 0)
+          this.scale_y_range = this.y_range;
+
+/*
+          console.log("*** CHECKCOORDINATES ***");
+          console.log("NODE LABEL: " + this.t);
+          console.log("NODE X/XRANGE: " + this.x + "/" + this.x_range);
+          console.log("NODE SCALEX/SCALEXRANGE: " + this.scale_x + "/" + this.scale_x_range);
+*/
+
+
+
+
+        if((x >= this.scale_x) && (x <= (this.scale_x + this.scale_x_range)) && (y >= this.scale_y) && (y <= (this.scale_y + this.scale_y_range))){
             this.hover = true;
             treeObject.hover = true; // Solves the issue! By J.
             // console.log("hoovah: ", this);
@@ -165,6 +204,7 @@ class Display {
                 treeObject.children[i].dis.x += treeObject.children[i].dis.width/2;
                 treeObject.children[i].dis.x -= treeObject.children[i].dis.x_range/2;
             // }
+
             curr_x += treeObject.children[i].dis.width + this.dist;
             //Handling Child Y Location
             treeObject.children[i].dis.y = this.y + 100;
@@ -199,7 +239,8 @@ class Display {
         stroke(this.stroke);
         strokeWeight(this.strokeWeight);
         fill(this.c)
-        rect(this.x, this.y, this.x_range, this.y_range, this.r);
+        ////rect(this.x, this.y, this.x_range, this.y_range, this.r);
+        rect(this.x, this.y, this.x_range, this.y_range);
         stroke("black"); // reset
         strokeWeight(1); // reset
         fill(color(255 - this.c.levels[0], 255 - this.c.levels[1], 255 - this.c.levels[2]))
@@ -210,7 +251,8 @@ class Display {
             stroke(this.stroke);
             strokeWeight(this.strokeWeight);
             fill(color(255 - this.c.levels[0], 255 - this.c.levels[1], 255 - this.c.levels[2]));
-            rect(this.x, this.y, this.x_range, this.y_range, this.r);
+            ////rect(this.x, this.y, this.x_range, this.y_range, this.r);
+            rect(this.x, this.y, this.x_range, this.y_range);
             stroke("black");
             strokeWeight(1);
             fill(this.c);
@@ -233,7 +275,8 @@ class Display {
             var endX = myX + (lastX - myX)*percentage
             var endY = myY + (childY - myY)*percentage
 
-            // line(startX, startY, endX, endY)
+            //line(startX, startY, endX, endY);
+
             curve(this.x + this.x_range/2 - this.width/2, this.y, startX,startY, endX, endY, this.x + this.x_range/2 + this.width/2, this.y)
         }
         if(treeObject.type == 0) {
