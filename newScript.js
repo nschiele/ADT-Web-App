@@ -216,6 +216,9 @@ function manAddChild(){
     activeNode.add_child(new ADTree(input, IDnumber), new Display(input, 0, 0, 2)); // Add new child.
     if (document.getElementById("flexSwitchCheckDefault").checked == 1) {
         // Check if defense check has been checked.
+        activeNode.dis.stroke = color('green');
+        activeNode.dis.strokeWeight = 3;
+        activeNode.dis.r = shapeRadious;
         activeNode.children.at(-1).dis.lineList = [10,10,10,10];
     }
     activeNode.dis.adjust_textbox();
@@ -522,6 +525,7 @@ async function buildFromMultiset(toBuild, parent=null){
         IDnumber++;
         // disRoot = new Display(toBuild[0].label/*adtree.node.label*/, 0, 0, 2); // Added by J
         root.refinement = toBuild[0].refinement;
+        root.type = toBuild[0].swith_role;
         // console.log("Root: ", root); // Added by J
         for(let i = 0; i < Object.keys(toBuild[0]).length-6; i++){ // Loop through all children
             buildFromMultiset(toBuild[0][i], root);
@@ -538,6 +542,8 @@ async function buildFromMultiset(toBuild, parent=null){
             // console.log("wtf hij komt hier gwn");
             var child = new ADTree(toBuild.label, IDnumber); // Get label of child
             child.refinement = toBuild.refinement;
+            child.type = toBuild.swith_role;
+            console.log("waar de fuck is de switch_role: ", toBuild);
             parent.add_child(child, new Display(toBuild.label, 0, 0, 2));
             IDnumber++;
             // console.log("Leaf node: ", parent); // Added by J
@@ -547,7 +553,9 @@ async function buildFromMultiset(toBuild, parent=null){
             }
         //Leaf Node
       } else if (!(toBuild == null || toBuild == undefined)){
-            parent.add_child(new ADTree(toBuild.label, IDnumber), new Display(toBuild.label, 0, 0, 2));
+            var child = new ADTree(toBuild.label, IDnumber); // Get label of child
+            child.type = toBuild.swith_role;
+            parent.add_child(child, new Display(toBuild.label, 0, 0, 2));
             // console.log("a leafje", toBuild.label);
             IDnumber++;
         }

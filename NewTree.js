@@ -28,6 +28,10 @@ class ADTree{
         this.refinement = r;
     }
 
+    set_type(type){
+        this.type = type;
+    }
+
     getMultiArray(){
         var toReturn = [this.t];
         if(this.children.length > 0){

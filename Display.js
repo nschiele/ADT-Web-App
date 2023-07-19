@@ -236,6 +236,17 @@ class Display {
             // line(startX, startY, endX, endY)
             curve(this.x + this.x_range/2 - this.width/2, this.y, startX,startY, endX, endY, this.x + this.x_range/2 + this.width/2, this.y)
         }
+        if(treeObject.type == 0) {
+            treeObject.dis.stroke = color('red');
+            treeObject.dis.strokeWeight = 3;
+            treeObject.dis.r = shapeRadious;
+        } else if (treeObject.type == 1) {
+            treeObject.dis.stroke = color('green');
+            treeObject.dis.strokeWeight = 3;
+            treeObject.dis.r = shapeRadious;
+            
+            // treeObject.parent.dis.lineList = [10,10,10,10];
+        }
         //Visualize lines to children and then visualize children
         for (let i = 0; i < treeObject.children.length; i++){
             this.setLineDash(this.lineList);
