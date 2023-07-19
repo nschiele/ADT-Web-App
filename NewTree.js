@@ -130,6 +130,7 @@ class ADTree{
             nodeRoot.label = this.label;
             nodeRoot.refinement = this.refinement;
             nodeRoot.depth = this.dis.level;
+            nodeRoot.swith_role = this.type;
             nodeRoot.parent = null;
             console.log("new node: ", nodeRoot);
             newNode = nodeRoot;
@@ -139,6 +140,7 @@ class ADTree{
             ADTnode.label = this.label;
             ADTnode.refinement = this.refinement;
             ADTnode.depth = this.dis.level;
+            ADTnode.swith_role = this.type;
             ADTnode.parent = parent;
             console.log("new node: ", ADTnode);
             newNode = ADTnode;
