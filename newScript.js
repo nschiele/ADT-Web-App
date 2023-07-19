@@ -229,22 +229,46 @@ function downloadCanvasJpg(){
     saveCanvas(canvasElement, fileName, 'jpg');
 }
 
-function manAddChild(){
-    console.log("[*] In manAddChild()");
-    var input = document.getElementById("nodeChildTextInput").value;
-    const noti = document.getElementById('noti-add');
-    const body = document.getElementById('noti-body-add');
+function notificationCheckNode(notiEl, bodyEl) {
+    const noti = document.getElementById(notiEl);
+    console.log(document.getElementById('noti-add'));
+    console.log("NOTI: ", noti);
+    const body = document.getElementById(bodyEl);
+    console.log("BODY: ", activeNode);
     if (activeNode == undefined) {
         // No node selected. Notification prep.
         body.style.color = "red";
         body.style.backgroundColor = "lightcoral";
-        noti.querySelector('.noti-body-add').innerHTML = "Error! No node selected.";
+        noti.querySelector("." + bodyEl).innerHTML = "Error! No node selected.";
         noti.classList.add('visible');
         setTimeout (() => {
             noti.classList.remove('visible');
         }, 2000); // Remove notification after 2 seconds.
-        return;
+        return true;
     }
+}
+
+function notificationSuccess(notiEl, bodyEl, notificationContents) {
+    const noti = document.getElementById(notiEl);
+    const body = document.getElementById(bodyEl);
+     // Succesful! Notification prep.
+     body.style.color = "green";
+     body.style.backgroundColor = "lightgreen";
+     noti.querySelector("." + bodyEl).innerHTML = notificationContents;
+ 
+     noti.classList.add('visible');
+     setTimeout (() => {
+         noti.classList.remove('visible');
+     }, 2000); // Remove notification after 2 seconds.
+}
+
+function manAddChild(){
+    console.log("[*] In manAddChild()");
+    var input = document.getElementById("nodeChildTextInput").value;
+    if (notificationCheckNode('noti-add', 'noti-body-add')) {
+        // Send error notification if activeNode is undefined.
+        return;
+    } 
     activeNode.add_child(new ADTree(input, IDnumber), new Display(input, 0, 0, 2)); // Add new child.
     if (document.getElementById("flexSwitchCheckDefault").checked == 1) {
         // Check if defense check has been checked.
@@ -255,96 +279,41 @@ function manAddChild(){
     }
     activeNode.dis.adjust_textbox();
     activeNode.update_width();
-    windowResized();
+    // windowResized();
     draw();
     IDnumber++;
-
-    // Succesful! Notification prep.
-    body.style.color = "green";
-    body.style.backgroundColor = "lightgreen";
-    noti.querySelector('.noti-body-add').innerHTML = "Child added succesfully!";
-
-    noti.classList.add('visible');
-    setTimeout (() => {
-        noti.classList.remove('visible');
-    }, 2000); // Remove notification after 2 seconds.
+    notificationSuccess('noti-add', 'noti-body-add', "Child added successfully!"); // Send success notification if node has been added.
 }
 
 function manDeleteChild(){
     console.log("[*] In manDeleteChild()");
-
-    // var input = document.getElementById("nodeChildInputRemove").value;
-    const noti = document.getElementById('noti-rem');
-    const body = document.getElementById('noti-body-rem');
-    if (activeNode == undefined) {
-        console.log("Nothing selected.");
-        // No node selected. Notification prep.
-        body.style.color = "red";
-        body.style.backgroundColor = "lightcoral";
-        noti.querySelector('.noti-body-rem').innerHTML = "Error! No node selected.";
-        noti.classList.add('visible');
-        setTimeout (() => {
-            noti.classList.remove('visible');
-        }, 2000); // Remove notification after 2 seconds.
+    if (notificationCheckNode('noti-rem', 'noti-body-rem')) {
+        // Send error notification if activeNode is undefined.
         return;
-    }
-    // var nodeToDelete = root.compareNames(activeNode);
-    // if (nodeToDelete == null) {
-        ///console.log("Node does not exist.");
-    // } else {
-
+    } 
     root.removeSubTree(activeNode); // Function removeSubtree gives error.
-     // Succesful! Notification prep.
-    body.style.color = "green";
-    body.style.backgroundColor = "lightgreen";
-    noti.querySelector('.noti-body-rem').innerHTML = "Node removed succesfully!";
-
-    noti.classList.add('visible');
-    setTimeout (() => {
-        noti.classList.remove('visible');
-    }, 2000); // Remove notification after 2 seconds.
-    ///console.log("Node removed successfully.");
-    // }
     activeNode = undefined;
     windowResized();
     draw();
+    notificationSuccess('noti-rem', 'noti-body-rem', "Node deleted successfully!"); // Send success notification if node has been deleted.
 }
 
 function manChangeChild(){
     console.log("[*] In manChangeChild()");
-    const noti = document.getElementById('noti-cha');
-    const body = document.getElementById('noti-body-cha');
-    if (activeNode == undefined) {
-        console.log("Nothing selected.");
-        // No node selected. Notification prep.
-        body.style.color = "red";
-        body.style.backgroundColor = "lightcoral";
-        noti.querySelector('.noti-body-cha').innerHTML = "Error! No node selected.";
-        noti.classList.add('visible');
-        setTimeout (() => {
-            noti.classList.remove('visible');
-        }, 2000); // Remove notification after 2 seconds.
+    if (notificationCheckNode('noti-cha', 'noti-body-cha')) {
+        // Send error notification if activeNode is undefined.
         return;
-    }
+    } 
     var input = document.getElementById("nodeTextInput").value;
     activeNode.label = input;
     activeNode.dis.t = input;
-    body.style.color = "green";
-    body.style.backgroundColor = "lightgreen";
-    noti.querySelector('.noti-body-cha').innerHTML = "Node name changed succesfully!";
-
-    noti.classList.add('visible');
-    setTimeout (() => {
-        noti.classList.remove('visible');
-    }, 2000); // Remove notification after 2 seconds.
     activeNode.dis.adjust_textbox();
     activeNode.update_width();
-    //windowResized();
     draw();
+    notificationSuccess('noti-cha', 'noti-body-cha', "Node changed successfully!"); // Send success notification if node has been changed.
 }
 
 // Download & Upload
-
 
 async function downloadADT(selectedFormat) {
     console.log("[*] In downloadADT()");
@@ -580,7 +549,6 @@ async function buildFromMultiset(toBuild, parent=null){
             var child = new ADTree(toBuild.label, IDnumber); // Get label of current node
             child.refinement = toBuild.refinement;
             child.type = toBuild.swith_role;
-            console.log("waar de fuck is de switch_role: ", toBuild);
             parent.add_child(child, new Display(toBuild.label, 0, 0, 2));
             IDnumber++;
 
@@ -691,8 +659,8 @@ function windowResized() {
     }
 
     // console.log("size: ", windowWidth, windowHeight);
-    resizeCanvas(windowWidth, windowHeight);
-    // resizeCanvas(canvasWidth,canvasHeight);
+    // resizeCanvas(windowWidth, windowHeight);
+    resizeCanvas(canvasWidth,canvasHeight);
     toDraw = true;
 }
 
