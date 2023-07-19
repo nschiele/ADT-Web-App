@@ -175,7 +175,7 @@ class ADTree{
     //         }
     //     }
     // }
-    
+
 
 }
 
@@ -188,5 +188,3 @@ class ADTree{
 - label of node
 - dictionary of attributes
  */
-
-

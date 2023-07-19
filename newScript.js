@@ -1,6 +1,6 @@
 let root;
 let disRoot; // Added by J
-let scaled;
+let scaled = 1;
 let toDraw;
 let sideFrameWidth;
 
@@ -130,20 +130,52 @@ async function setup() {
     buildFromMultiset(example);
     ///console.log(getJson(1, example));
 
-    scaled = frameX/(root.dis.width*1.2);
+    //scaled = frameX/(root.dis.width*1.2);
+    console.log("SCALED: " + scaled);
 }
+
+/* For now, we maintain a scaling percentage of 25%.
+This may be up to changes. */
 
 function zoomInFunction(){
     console.log("[*] In zoomInFunction()");
-    scaleValue = scaleValue + 1
+    ////root.dis.x *= 1.25;
+    ////root.dis.x_range *= 1.25;
+    ////root.dis.y *= 1.25;
+    ////root.dis.y_range *= 1.25;
+
+    scaleValue *= 1.25;
+
+    changeCoordinates(1.25);
+
+
+/*
+    var myElement = document.getElementById("defaultCanvas0");
+    var scaleIt = 1.25;
+    var centerX = 100;
+    var centerY = 100;
+    scaleAround(myElement, scaleValue, centerX, centerY);
+*/
+
+    ////root.dis.adjust_textbox();
 }
+
 function zoomOutFunction(){
     console.log("[*] In zoomOutFunction()");
-    console.log("SCALEVALUE: " + scaleValue);
-    if(scaleValue == 1)
-    scaleValue = 1;
-    else
-    scaleValue = scaleValue - 1;
+
+    scaleValue *= 0.8;
+
+    changeCoordinates(0.8);
+
+/*
+    var myElement = document.getElementById("defaultCanvas0");
+    var scaleIt = 0.8;
+    var centerX = 100;
+    var centerY = 100;
+    scaleAround(myElement, scaleValue, centerX, centerY);
+*/
+    ////root.dis.adjust_textbox();
+
 }
 
 function btnChangeNodeText(){
@@ -223,12 +255,12 @@ function manAddChild(){
     windowResized();
     draw();
     IDnumber++;
-   
+
     // Succesful! Notification prep.
     body.style.color = "green";
     body.style.backgroundColor = "lightgreen";
     noti.querySelector('.noti-body-add').innerHTML = "Child added succesfully!";
-    
+
     noti.classList.add('visible');
     setTimeout (() => {
         noti.classList.remove('visible');
@@ -257,13 +289,13 @@ function manDeleteChild(){
     // if (nodeToDelete == null) {
         ///console.log("Node does not exist.");
     // } else {
-    
+
     root.removeSubTree(activeNode); // Function removeSubtree gives error.
      // Succesful! Notification prep.
     body.style.color = "green";
     body.style.backgroundColor = "lightgreen";
     noti.querySelector('.noti-body-rem').innerHTML = "Node removed succesfully!";
-    
+
     noti.classList.add('visible');
     setTimeout (() => {
         noti.classList.remove('visible');
@@ -297,14 +329,14 @@ function manChangeChild(){
     body.style.color = "green";
     body.style.backgroundColor = "lightgreen";
     noti.querySelector('.noti-body-cha').innerHTML = "Node name changed succesfully!";
-    
+
     noti.classList.add('visible');
     setTimeout (() => {
         noti.classList.remove('visible');
     }, 2000); // Remove notification after 2 seconds.
     activeNode.dis.adjust_textbox();
     activeNode.update_width();
-    windowResized();
+    //windowResized();
     draw();
 }
 
@@ -316,7 +348,7 @@ async function downloadADT(selectedFormat) {
     return new Promise(function(resolve) {
         root.convertADTtoNode(null);
         // root.setNodeStruc(null);
-        
+
         var parser = new DOMParser();
         var temp_string = '<?xml version="1.0"?>'
         temp_string += '\n';
@@ -329,7 +361,7 @@ async function downloadADT(selectedFormat) {
         xml = parser.parseFromString(temp_string, "text/xml");
         console.log("Final: ", xml);
         resolve(temp_string);
-        
+
         // if (selectedFormat === "xml") {
         //     var blob = new Blob([temp_string], { type: "text/plain;charset=utf-8"});
         //     var downloadLink = document.createElement("a");
@@ -338,7 +370,7 @@ async function downloadADT(selectedFormat) {
         //     downloadLink.click();
         // } else if (selectedFormat === "json") {
         //     jsonfile = await getJson(0, temp_string);
-            
+
         // }
     });
     // jsonObject = new Node();
@@ -346,7 +378,7 @@ async function downloadADT(selectedFormat) {
     // jsonObject.refinement = root.refinement;
     // jsonObject.depth = root.level;
     // jsonObject.parent = null;
-    
+
 }
 
 async function downloadPrep() {
@@ -514,38 +546,43 @@ function max_width(n, dist){
 
 async function buildFromMultiset(toBuild, parent=null){
     console.log("[*] In buildFromMultiset()");
-    console.log(root)
+
+    //console.log("Tobuild: " + toBuild);
+
+    ///console.log(root)
+
     // First Run of Function
     if(parent == null){
         console.log("hier: ", toBuild);
+
         root = new ADTree(toBuild[0].label, IDnumber); // Get label of root
         IDnumber++;
+
         // disRoot = new Display(toBuild[0].label/*adtree.node.label*/, 0, 0, 2); // Added by J
         root.refinement = toBuild[0].refinement;
         // console.log("Root: ", root); // Added by J
+
+        console.log("Keys: " + Object.keys(toBuild[0])); // Added by C
+
         for(let i = 0; i < Object.keys(toBuild[0]).length-6; i++){ // Loop through all children
             buildFromMultiset(toBuild[0][i], root);
         }
+
     // Tree Exists, adding subtrees
     } else {
-        //Intermediate Node
-        // console.log("keys: ", Object.keys(toBuild));
-        // if (typeof toBuild !== 'object'){
-        //     // console.log("uhh", toBuild);
-        // }
 
-        if(!(toBuild === null || toBuild === undefined) && Object.keys(toBuild).length-7 != 0){ // This was 6, with 7 it works, because 7 array elements for normal intermediate node
-            // console.log("wtf hij komt hier gwn");
-            var child = new ADTree(toBuild.label, IDnumber); // Get label of child
+      if(!(toBuild === null || toBuild === undefined) && Object.keys(toBuild).length-7 != 0){ // This was 6, with 7 it works, because 7 array elements for normal intermediate node
+
+            var child = new ADTree(toBuild.label, IDnumber); // Get label of current node
             child.refinement = toBuild.refinement;
             parent.add_child(child, new Display(toBuild.label, 0, 0, 2));
             IDnumber++;
-            // console.log("Leaf node: ", parent); // Added by J
-            for(let i = 0; i < (Object.keys(toBuild).length-7); i++){ // Loop through all children
-                // console.log(i)
+
+            for (let i = 0; i < (Object.keys(toBuild).length-7); i++){ // Loop through all children
                 buildFromMultiset(toBuild[i], child);
             }
-        //Leaf Node
+
+      //Leaf Node
       } else if (!(toBuild == null || toBuild == undefined)){
             parent.add_child(new ADTree(toBuild.label, IDnumber), new Display(toBuild.label, 0, 0, 2));
             // console.log("a leafje", toBuild.label);
@@ -556,42 +593,31 @@ async function buildFromMultiset(toBuild, parent=null){
 
 function draw(){
     console.log("[*] In draw()");
+
     // If ADT is larger than the canvas, shrink ADT and place in center
     if(toDraw){
-        if(scaled < 1){
-            scale(scaled);
-            root.dis.x = root.dis.width/2;
-            root.adjust_children();
-        } else {
-            // root.dis.x = (width - root.dis.width)/2 + root.dis.width/2;
-            if (!(root == undefined || root.dis == undefined)){
-              root.dis.x = canvasWidth/2 - root.dis.x_range/2; // Fixed this issue.
-            }
-
-            // if (!root == undefined)
-              root.adjust_children();
-
+        if (!(root == undefined || root.dis == undefined)){
+          root.dis.x = root.dis.width/2;
+          root.adjust_children();
         }
 
-
-
-        if(activeNode != null){
-            // activeNodeTitle.elt.innerHTML = activeNode.t;
-            // oldNodetext = activeNode.t;
-            // select("#nodeTextInput").attribute("value", activeNode.t);
-            // currNodeText.active = true;
-
-        }
         // zoom in/out
-        // console.log("scale: ", scaleValue);
+        console.log("scaleValue: ", scaleValue); // added by C
         scale(scaleValue);
 
         clear();
-        root.display();
-        toDraw =false;
+
+        if (root != null && root != undefined){
+          root.display();
+          toDraw = false;
+        }
+
     }
     //What node is the mouse currently over
-    var mouseNode = root.dis.checkCoordinates(root, mouseX, mouseY);
+    if (!(root == null || root == undefined)){
+      var mouseNode = root.dis.checkCoordinates(root, mouseX, mouseY);
+
+    }
     //If the mouse is hoving over a node
     if(mouseNode != null && mouseNode != hoverNode){
         ///console.log("HOVAH: ", mouseNode);
@@ -622,12 +648,12 @@ function draw(){
 function mouseReleased(){
     console.log("[*] In mouseReleased()");
     var clickedNode = trackNode;
-    // root.clearActive();
-    // var theactive = root.getActive();
-    ///console.log("Coords: ", mouseX, mouseY);
+
+    console.log("Coordinates: ", mouseX, mouseY);
+    //if (clickedNode != undefined)
+      //console.log(clickedNode.dis.scale_x + "/" + clickedNode.dis.scale_x_range);
 
     if (clickedNode != null && activeNode == null) {
-        ///console.log("clicky: ", clickedNode);
         clickedNode.active = true;
         activeDis = clickedNode;
         activeNode = activeDis.tree;
@@ -638,7 +664,7 @@ function mouseReleased(){
         activeDis = clickedNode;
         activeNode = activeDis.tree;
     }
-    ///console.log("click: ", activeDis, activeNode);
+
     toDraw = true;
     trackMouseStart = true;
     trackNode = null;
@@ -647,16 +673,25 @@ function mouseReleased(){
 function windowResized() {
     console.log("[*] In windowResized()");
     var frameX = (windowWidth - sideFrameWidth);
-    ///console.log("frame x: ", frameX);
-    scaled = frameX/(root.dis.width*1.2 + (root.dis.x_range)); // Fixed scaling when resizing window.
+    console.log("frame x: ", frameX);
+
+    ///scaled = frameX/(root.dis.width*1.2 + (root.dis.x_range)); // Fixed scaling when resizing window.
     // scaled = frameX/(root.dis.width*1/2);
+
     if (!(sidePanel == undefined || sidePanel == null)){
       sidePanel.position(frameX, 0);
     }
+
     // console.log("size: ", windowWidth, windowHeight);
     resizeCanvas(windowWidth, windowHeight);
     // resizeCanvas(canvasWidth,canvasHeight);
-    toDraw  = true;
+    toDraw = true;
+}
+
+function scaleAround(element, scaleValue, centerX, centerY){
+  var transformOrigin = centerX + "px " + centerY + "px";
+  element.style.transformOrigin = transformOrigin;
+  element.style.transform = "scale(" + scaleValue + ")";
 }
 
 function changeActiveNavLinkColor(){
@@ -665,4 +700,34 @@ function changeActiveNavLinkColor(){
 
 function showAlert(){
   console.log("[!] TODO: Generate button fixen (Meza!).");
+}
+
+function changeCoordinatesRec(newScaleValue, currentNode){
+  if (currentNode != null){
+    currentNode.dis.scale_x *= newScaleValue;
+    currentNode.dis.scale_x_range *= newScaleValue;
+    currentNode.dis.scale_y *= newScaleValue;
+    currentNode.dis.scale_y_range *= newScaleValue;
+
+  }
+
+  console.log("*** CHANGECOORDINATESREC ***");
+  console.log("LABEL: " + currentNode.label);
+  console.log("SCALE_X: " + currentNode.dis.scale_x);
+  console.log("SCALE_X_RANGE: " + currentNode.dis.scale_x_range);
+  console.log("SCALE_Y: " + currentNode.dis.scale_y);
+  console.log("SCALE_Y_RANGE: " + currentNode.dis.scale_y_range);
+
+
+  for (let i = 0; i < currentNode.children.length; i++){
+    changeCoordinatesRec(newScaleValue, currentNode.children[i]);
+  }
+}
+
+function changeCoordinates(newScaleValue){
+  console.log("[*] In changeCoordinates()");
+  var treeRoot = root;
+
+  changeCoordinatesRec(newScaleValue, treeRoot);
+
 }
