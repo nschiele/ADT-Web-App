@@ -185,33 +185,52 @@ function btnChangeNodeText(){
  }
 function changeNodeOutlineColorShape(shapeRadious,shapeColor){
     console.log("[*] In changeNodeOutlineColorShape()");
-      nodeOutLineColor = true;
-      activeNode.dis.stroke = color(shapeColor);
-      activeNode.dis.strokeWeight = 3;
-      activeNode.dis.r = shapeRadious;
+    if (notificationCheckNode('noti-shacol', 'noti-body-shacol')) {
+        return;
+    }
+    nodeOutLineColor = true;
+    activeNode.dis.stroke = color(shapeColor);
+    activeNode.dis.strokeWeight = 3;
+    activeNode.dis.r = shapeRadious;
+    notificationSuccess('noti-shacol', 'noti-body-shacol', "Node changed successfully"); // Send success notification if node has been added.
 }
 
 function changeNodeLineToContinueLine(){
     console.log("[*] In changeNodeLineToContinueLine()");
+    if (notificationCheckNode('noti-shacol', 'noti-body-shacol')) {
+        return;
+    }
 
     activeNode.dis.lineList = [0];
+    notificationSuccess('noti-shacol', 'noti-body-shacol', "Connector changed successfully"); // Send success notification if node has been added.
 }
 
 function changeNodeLineToDashed() {
     console.log("[*] In changeNodeLineToDashed()");
+    if (notificationCheckNode('noti-shacol', 'noti-body-shacol')) {
+        return;
+    }
 
     activeNode.dis.lineList = [10,10,10,10];
+    notificationSuccess('noti-shacol', 'noti-body-shacol', "Connector changed successfully"); // Send success notification if node has been added.
 }
 
 function changeRefinementToAND() {
     console.log("[*] In changeRefinementToAND()");
-
+    if (notificationCheckNode('noti-shacol', 'noti-body-shacol')) {
+        return;
+    }
     activeNode.refinement = 1;
+    notificationSuccess('noti-shacol', 'noti-body-shacol', "Operator changed successfully"); // Send success notification if node has been added.
 }
 
 function changeRefinementToOR() {
     console.log("[*] In changeRefinementToOR()");
+    if (notificationCheckNode('noti-shacol', 'noti-body-shacol')) {
+        return;
+    }
     activeNode.refinement = 0;
+    notificationSuccess('noti-shacol', 'noti-body-shacol', "Operator changed successfully"); // Send success notification if node has been added.
 }
 
 function downloadCanvasPng(){
@@ -237,6 +256,7 @@ function notificationCheckNode(notiEl, bodyEl) {
     console.log("BODY: ", activeNode);
     if (activeNode == undefined) {
         // No node selected. Notification prep.
+        console.log("huh");
         body.style.color = "red";
         body.style.backgroundColor = "lightcoral";
         noti.querySelector("." + bodyEl).innerHTML = "Error! No node selected.";
