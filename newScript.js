@@ -248,6 +248,26 @@ function notificationCheckNode(notiEl, bodyEl) {
     }
 }
 
+function notificationTextLength(notiEl, bodyEl, textInput) {
+    console.log("TEXTLENGTH", textInput.length);
+    const noti = document.getElementById(notiEl);
+    console.log(document.getElementById('noti-add'));
+    console.log("NOTI: ", noti);
+    const body = document.getElementById(bodyEl);
+    console.log("BODY: ", activeNode);
+    if (textInput.length == 0 || textInput.length > 128) {
+        // No node selected. Notification prep.
+        body.style.color = "red";
+        body.style.backgroundColor = "lightcoral";
+        noti.querySelector("." + bodyEl).innerHTML = "Error! Label length must be between 1 and 128 characters.";
+        noti.classList.add('visible');
+        setTimeout (() => {
+            noti.classList.remove('visible');
+        }, 2000); // Remove notification after 2 seconds.
+        return true;
+    }
+}
+
 function notificationSuccess(notiEl, bodyEl, notificationContents) {
     const noti = document.getElementById(notiEl);
     const body = document.getElementById(bodyEl);
@@ -266,6 +286,10 @@ function manAddChild(){
     console.log("[*] In manAddChild()");
     var input = document.getElementById("nodeChildTextInput").value;
     if (notificationCheckNode('noti-add', 'noti-body-add')) {
+        // Send error notification if activeNode is undefined.
+        return;
+    } 
+    if (notificationTextLength('noti-add', 'noti-body-add', input)) {
         // Send error notification if activeNode is undefined.
         return;
     } 
@@ -300,11 +324,15 @@ function manDeleteChild(){
 
 function manChangeChild(){
     console.log("[*] In manChangeChild()");
+    var input = document.getElementById("nodeTextInput").value;
     if (notificationCheckNode('noti-cha', 'noti-body-cha')) {
         // Send error notification if activeNode is undefined.
         return;
     } 
-    var input = document.getElementById("nodeTextInput").value;
+    if (notificationTextLength('noti-cha', 'noti-body-cha', input)) {
+        // Send error notification if activeNode is undefined.
+        return;
+    } 
     activeNode.label = input;
     activeNode.dis.t = input;
     activeNode.dis.adjust_textbox();
