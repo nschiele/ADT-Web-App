@@ -186,8 +186,6 @@ class ADTree{
             this.dis.stroke = color('green');
             this.dis.strokeWeight = 3;
             this.dis.r = 1;
-            
-            // treeObject.parent.dis.lineList = [10,10,10,10];
         }
     }
 

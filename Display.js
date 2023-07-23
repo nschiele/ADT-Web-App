@@ -240,19 +240,16 @@ class Display {
         strokeWeight(this.strokeWeight);
         fill(this.c)
         rect(this.x, this.y, this.x_range, this.y_range, this.r);
-        // rect(this.x, this.y, this.x_range, this.y_range);
         stroke("black"); // reset
         strokeWeight(1); // reset
         fill(color(255 - this.c.levels[0], 255 - this.c.levels[1], 255 - this.c.levels[2]))
         text(this.t, this.x + this.t.length/5, this.y + this.y_range/this.lines -3);
         //Invert colors if clicked or hovered
-        // if(this.hover || this.active){
         if(this.active){
             stroke(this.stroke);
             strokeWeight(this.strokeWeight);
             fill(color(255 - this.c.levels[0], 255 - this.c.levels[1], 255 - this.c.levels[2]));
             rect(this.x, this.y, this.x_range, this.y_range, this.r);
-            // rect(this.x, this.y, this.x_range, this.y_range);
             stroke("black");
             strokeWeight(1);
             fill(this.c);
@@ -278,25 +275,12 @@ class Display {
             //line(startX, startY, endX, endY);
             curve(this.x + this.x_range/2 - this.width/2, this.y, startX,startY, endX, endY, this.x + this.x_range/2 + this.width/2, this.y)
         }
-        console.log("needed: ", this.stroke.levels, this.r, this.tree.type)
+        // If red round (attack) and change manually to green square (defense), also changes type in ADTree object (and vice versa)
         if ((this.stroke.levels[0] === 255 && this.r === 50) && this.tree.type === 1) {
-            console.log("Now attack");
             this.tree.type = 0;
         } else if ((this.stroke.levels[1] === 128 && this.r === 1) && this.tree.type === 0) {
-            console.log("Now defense");
             this.tree.type = 1;
         }
-        // if(treeObject.type == 0) {
-        //     treeObject.dis.stroke = color('red');
-        //     treeObject.dis.strokeWeight = 3;
-        //     treeObject.dis.r = shapeRadious;
-        // } else if (treeObject.type == 1) {
-        //     treeObject.dis.stroke = color('green');
-        //     treeObject.dis.strokeWeight = 3;
-        //     treeObject.dis.r = shapeRadious;
-            
-        //     // treeObject.parent.dis.lineList = [10,10,10,10];
-        // }
         //Visualize lines to children and then visualize children
         for (let i = 0; i < treeObject.children.length; i++){
             this.setLineDash(this.lineList);
