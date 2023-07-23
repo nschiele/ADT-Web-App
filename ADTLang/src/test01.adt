@@ -1,5 +1,4 @@
 create attack node "Bank Account";
-create defense node "MFA";
-create defense node "IP range allowlisting";
-append "MFA" to "Bank Account";
+create defense node "MFA" append to "Bank Account";
+append "Bank Account" to "MFA";
 compile

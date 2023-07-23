@@ -7109,14 +7109,15 @@ module.exports = {
 }
 
 },{}],56:[function(require,module,exports){
-var editor = document.getElementById("editor");
-var mirror = document.getElementById("mirror");
-
-editor.addEventListener("input", function() {
+var button = document.getElementById("generateTreeButton");
+button.addEventListener("click", function() {
   const comp = require('./Compiler/compiler');
+  let editor = document.getElementById("textAreaJsonContent");
+  console.log(editor.value);
   let compiler = new comp.Compiler(editor.value);
   s = compiler.compile();  
-  mirror.value = s;
+  window.attackDefenseTreeXML = s;
+  console.log(s);
 });
 
 
