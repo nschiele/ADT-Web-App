@@ -278,6 +278,14 @@ class Display {
             //line(startX, startY, endX, endY);
             curve(this.x + this.x_range/2 - this.width/2, this.y, startX,startY, endX, endY, this.x + this.x_range/2 + this.width/2, this.y)
         }
+        console.log("needed: ", this.stroke.levels, this.r, this.tree.type)
+        if ((this.stroke.levels[0] === 255 && this.r === 50) && this.tree.type === 1) {
+            console.log("Now attack");
+            this.tree.type = 0;
+        } else if ((this.stroke.levels[1] === 128 && this.r === 1) && this.tree.type === 0) {
+            console.log("Now defense");
+            this.tree.type = 1;
+        }
         // if(treeObject.type == 0) {
         //     treeObject.dis.stroke = color('red');
         //     treeObject.dis.strokeWeight = 3;
