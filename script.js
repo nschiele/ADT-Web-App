@@ -191,6 +191,7 @@ async function setup() {
   // console.log("Width: ", max_width(root, 50))
   */
   var example = await getJson(0, null); // Call json_junc.js
+  console.log(example);
   
   buildFromMultiset(example);
   console.log(getJson(1, example));
@@ -338,6 +339,7 @@ async function buildFromMultiset(toBuild, parent=null){
 
 function draw(){
   // If ADT is larger than the canvas, shrink ADT and place in center
+  console.log("Drwing----------------------");
   if(toDraw){
     if(scaled < 1){
       scale(scaled);
