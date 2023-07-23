@@ -441,7 +441,7 @@ footer p {
 }
 
 /*Poging to kleine notificatie*/
-.noti-add, .noti-rem, .noti-cha{
+.noti-add, .noti-rem, .noti-cha {
   position: absolute;
   bottom: -24.5px;
   left: 0;
@@ -453,13 +453,25 @@ footer p {
     transform 500ms;
 }
 
-.noti-add.visible, .noti-rem.visible, .noti-cha.visible {
+.noti-shacol {
+  position: absolute;
+  bottom: 2.5px;
+  left: 0;
+
+  /* transform: translateY(100%); */
+  opacity: 0;
+  transition:
+    opacity 500ms,
+    transform 500ms;
+}
+
+.noti-add.visible, .noti-rem.visible, .noti-cha.visible, .noti-shacol.visible {
   /* transform: translateY(0); */
   opacity: 1;
 }
 
 
-.noti-body-add, .noti-body-rem, .noti-body-cha {
+.noti-body-add, .noti-body-rem, .noti-body-cha, .noti-body-shacol {
   margin: 2px;
   padding: 1px 1px;
 

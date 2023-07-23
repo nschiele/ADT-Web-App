@@ -185,33 +185,52 @@ function btnChangeNodeText(){
  }
 function changeNodeOutlineColorShape(shapeRadious,shapeColor){
     console.log("[*] In changeNodeOutlineColorShape()");
-      nodeOutLineColor = true;
-      activeNode.dis.stroke = color(shapeColor);
-      activeNode.dis.strokeWeight = 3;
-      activeNode.dis.r = shapeRadious;
+    if (notificationCheckNode('noti-shacol', 'noti-body-shacol')) {
+        return;
+    }
+    nodeOutLineColor = true;
+    activeNode.dis.stroke = color(shapeColor);
+    activeNode.dis.strokeWeight = 3;
+    activeNode.dis.r = shapeRadious;
+    notificationSuccess('noti-shacol', 'noti-body-shacol', "Node changed successfully"); // Send success notification if node has been added.
 }
 
 function changeNodeLineToContinueLine(){
     console.log("[*] In changeNodeLineToContinueLine()");
+    if (notificationCheckNode('noti-shacol', 'noti-body-shacol')) {
+        return;
+    }
 
     activeNode.dis.lineList = [0];
+    notificationSuccess('noti-shacol', 'noti-body-shacol', "Connector changed successfully"); // Send success notification if node has been added.
 }
 
 function changeNodeLineToDashed() {
     console.log("[*] In changeNodeLineToDashed()");
+    if (notificationCheckNode('noti-shacol', 'noti-body-shacol')) {
+        return;
+    }
 
     activeNode.dis.lineList = [10,10,10,10];
+    notificationSuccess('noti-shacol', 'noti-body-shacol', "Connector changed successfully"); // Send success notification if node has been added.
 }
 
 function changeRefinementToAND() {
     console.log("[*] In changeRefinementToAND()");
-
+    if (notificationCheckNode('noti-shacol', 'noti-body-shacol')) {
+        return;
+    }
     activeNode.refinement = 1;
+    notificationSuccess('noti-shacol', 'noti-body-shacol', "Operator changed successfully"); // Send success notification if node has been added.
 }
 
 function changeRefinementToOR() {
     console.log("[*] In changeRefinementToOR()");
+    if (notificationCheckNode('noti-shacol', 'noti-body-shacol')) {
+        return;
+    }
     activeNode.refinement = 0;
+    notificationSuccess('noti-shacol', 'noti-body-shacol', "Operator changed successfully"); // Send success notification if node has been added.
 }
 
 function downloadCanvasPng(){
@@ -237,9 +256,30 @@ function notificationCheckNode(notiEl, bodyEl) {
     console.log("BODY: ", activeNode);
     if (activeNode == undefined) {
         // No node selected. Notification prep.
+        console.log("huh");
         body.style.color = "red";
         body.style.backgroundColor = "lightcoral";
         noti.querySelector("." + bodyEl).innerHTML = "Error! No node selected.";
+        noti.classList.add('visible');
+        setTimeout (() => {
+            noti.classList.remove('visible');
+        }, 2000); // Remove notification after 2 seconds.
+        return true;
+    }
+}
+
+function notificationTextLength(notiEl, bodyEl, textInput) {
+    console.log("TEXTLENGTH", textInput.length);
+    const noti = document.getElementById(notiEl);
+    console.log(document.getElementById('noti-add'));
+    console.log("NOTI: ", noti);
+    const body = document.getElementById(bodyEl);
+    console.log("BODY: ", activeNode);
+    if (textInput.length == 0 || textInput.length > 128) {
+        // No node selected. Notification prep.
+        body.style.color = "red";
+        body.style.backgroundColor = "lightcoral";
+        noti.querySelector("." + bodyEl).innerHTML = "Error! Label length must be between 1 and 128 characters.";
         noti.classList.add('visible');
         setTimeout (() => {
             noti.classList.remove('visible');
@@ -266,6 +306,10 @@ function manAddChild(){
     console.log("[*] In manAddChild()");
     var input = document.getElementById("nodeChildTextInput").value;
     if (notificationCheckNode('noti-add', 'noti-body-add')) {
+        // Send error notification if activeNode is undefined.
+        return;
+    } 
+    if (notificationTextLength('noti-add', 'noti-body-add', input)) {
         // Send error notification if activeNode is undefined.
         return;
     } 
@@ -300,11 +344,15 @@ function manDeleteChild(){
 
 function manChangeChild(){
     console.log("[*] In manChangeChild()");
+    var input = document.getElementById("nodeTextInput").value;
     if (notificationCheckNode('noti-cha', 'noti-body-cha')) {
         // Send error notification if activeNode is undefined.
         return;
     } 
-    var input = document.getElementById("nodeTextInput").value;
+    if (notificationTextLength('noti-cha', 'noti-body-cha', input)) {
+        // Send error notification if activeNode is undefined.
+        return;
+    } 
     activeNode.label = input;
     activeNode.dis.t = input;
     activeNode.dis.adjust_textbox();
