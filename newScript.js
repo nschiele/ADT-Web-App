@@ -513,6 +513,7 @@ async function buildFromUpload() {
             input = Flatted.parse(temp);
         }
         buildFromMultiset(input);
+        root.initialColor();
         draw();
     } catch(error) {
         console.error("Error:", error);
