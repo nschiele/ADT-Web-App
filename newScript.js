@@ -295,7 +295,7 @@ function notificationSuccess(notiEl, bodyEl, notificationContents) {
      body.style.color = "green";
      body.style.backgroundColor = "lightgreen";
      noti.querySelector("." + bodyEl).innerHTML = notificationContents;
- 
+
      noti.classList.add('visible');
      setTimeout (() => {
          noti.classList.remove('visible');
@@ -308,11 +308,11 @@ function manAddChild(){
     if (notificationCheckNode('noti-add', 'noti-body-add')) {
         // Send error notification if activeNode is undefined.
         return;
-    } 
+    }
     if (notificationTextLength('noti-add', 'noti-body-add', input)) {
         // Send error notification if activeNode is undefined.
         return;
-    } 
+    }
     activeNode.add_child(new ADTree(input, IDnumber), new Display(input, 0, 0, 2)); // Add new child.
     if (document.getElementById("flexSwitchCheckDefault").checked == 1) {
         // Check if defense check has been checked.
@@ -334,7 +334,7 @@ function manDeleteChild(){
     if (notificationCheckNode('noti-rem', 'noti-body-rem')) {
         // Send error notification if activeNode is undefined.
         return;
-    } 
+    }
     root.removeSubTree(activeNode); // Function removeSubtree gives error.
     activeNode = undefined;
     windowResized();
@@ -348,11 +348,11 @@ function manChangeChild(){
     if (notificationCheckNode('noti-cha', 'noti-body-cha')) {
         // Send error notification if activeNode is undefined.
         return;
-    } 
+    }
     if (notificationTextLength('noti-cha', 'noti-body-cha', input)) {
         // Send error notification if activeNode is undefined.
         return;
-    } 
+    }
     activeNode.label = input;
     activeNode.dis.t = input;
     activeNode.dis.adjust_textbox();
@@ -567,7 +567,7 @@ function max_width(n, dist){
 async function buildFromMultiset(toBuild, parent=null){
     console.log("[*] In buildFromMultiset()");
 
-    //console.log("Tobuild: " + toBuild);
+    console.log("Tobuild: " + toBuild);
 
     ///console.log(root)
 
@@ -621,6 +621,7 @@ function draw(){
     // If ADT is larger than the canvas, shrink ADT and place in center
     if(toDraw){
         if (!(root == undefined || root.dis == undefined)){
+          console.log("root.dis.width: " + root.dis.width);
           root.dis.x = root.dis.width/2;
           root.adjust_children();
         }

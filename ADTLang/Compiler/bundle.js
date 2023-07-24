@@ -7112,12 +7112,23 @@ module.exports = {
 var editor = document.getElementById("textAreaADTLang");
 var test = document.getElementById("generateTreeButton");
 
-test.addEventListener("click", function() {
+test.addEventListener("click", async function() {
   const comp = require('./Compiler/compiler');
   let compiler = new comp.Compiler(editor.value);
   s = compiler.compile();
+  console.log("Getting s");
   console.log(s);
-  //buildFromMultiset(convert(0, s));
+
+  console.log("Getting JSON");
+  var out = await getJson(0, s);
+  console.log(typeof out);
+  console.log("OUTPUT:");
+  console.log(out);
+  console.log("OUTPUT[0]:");
+  console.log(out[0]);
+
+  buildFromMultiset(out);
+
 });
 
 

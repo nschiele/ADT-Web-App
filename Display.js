@@ -77,6 +77,9 @@ class Display {
         }
         this.y_range = let_height * this.lines;
         this.width = this.x_range;
+
+        
+        console.log("this.width: " + this.width);
     }
 
     adjust_text(){
@@ -287,7 +290,7 @@ class Display {
             treeObject.dis.stroke = color('green');
             treeObject.dis.strokeWeight = 3;
             treeObject.dis.r = shapeRadious;
-            
+
             // treeObject.parent.dis.lineList = [10,10,10,10];
         }
         //Visualize lines to children and then visualize children
