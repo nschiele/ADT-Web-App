@@ -315,13 +315,28 @@ function manAddChild(){
         // Send error notification if activeNode is undefined.
         return;
     } 
-    activeNode.add_child(new ADTree(input, IDnumber), new Display(input, 0, 0, 2)); // Add new child.
+
+    // Add new tree objects in variables
+    var childTree = new ADTree(input, IDnumber);
+    var childDisplay = new Display(input, 0, 0, 2);
+
+    // Attach new tree objects as new node under actively selected child.
+    activeNode.add_child(childTree, childDisplay); 
+
+    // Retrieve newly added child, change look to attack node.
+    var newNode = childTree.dis.tree;
+    newNode.dis.stroke = color('red');
+    newNode.dis.strokeWeight = 3;
+    newNode.dis.r = 50;
+    // childTree.children.at(-1).dis.lineList = [10, 10, 10, 10];
+    
     if (document.getElementById("flexSwitchCheckDefault").checked == 1) {
-        // Check if defense check has been checked.
-        activeNode.dis.stroke = color('green');
-        activeNode.dis.strokeWeight = 3;
-        activeNode.dis.r = 1;
-        activeNode.children.at(-1).dis.lineList = [10,10,10,10];
+        // Check if defense check has been checked. 
+        // Change look to defense child.
+        newNode.dis.stroke = color('green');
+        newNode.dis.strokeWeight = 3;
+        newNode.dis.r = 1;
+        // activeNode.children.at(-1).dis.lineList = [10,10,10,10];
     }
     activeNode.dis.adjust_textbox();
     activeNode.update_width();
