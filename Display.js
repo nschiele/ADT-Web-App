@@ -77,6 +77,9 @@ class Display {
         }
         this.y_range = let_height * this.lines;
         this.width = this.x_range;
+
+
+        console.log("this.width: " + this.width);
     }
 
     adjust_text(){
@@ -239,6 +242,8 @@ class Display {
         stroke(this.stroke);
         strokeWeight(this.strokeWeight);
         fill(this.c)
+        console.log("*** DISPLAY ***");
+        console.log(this.t + "\n" + this.x + "/" + this.y + "\n" + this.scale_x + "/" + this.scale_y + "\n\n");
         rect(this.x, this.y, this.x_range, this.y_range, this.r);
         stroke("black"); // reset
         strokeWeight(1); // reset

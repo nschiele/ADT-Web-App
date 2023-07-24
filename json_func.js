@@ -21,9 +21,21 @@ function getJson(temp, input) {
 // Open the XML testfile
 async function getXML(input){
     console.log("[*] In getXML()");
+    console.log(typeof input);
     // let url = "https://raw.githubusercontent.com/nschiele/ADT-Web-App/main/xml%20examples/fig13.xml";
     // let resp = await fetch(url);
+    var check = "";
+    if (typeof input === "string"){
+      check = input.substring(0,5);
+    }
+
+
+    if (check == "<?xml"){
+      return input;
+    }
+
     let xml = await input.text();
+
     console.log("wat: ", xml)
     return xml;
 }
@@ -225,7 +237,14 @@ async function build_json(input_text){
 
     // wanneer var en wanneer const (variabelen)
     const items = input_text.split("\n"); // Put the XML lines into a list of strings
-    console.log("digging deeper: ", items);
+
+    if (items[items.length - 1] == "")
+      items.pop();
+
+
+    console.log("digging deeper: ");
+    console.dir(items);
+
     var item; // Single line of the XML file
     var j, k; // Counting variables
     var depth = 0; // Keeping track of the depth of the json
@@ -234,7 +253,6 @@ async function build_json(input_text){
     var lastNode = null;
     var json = {};
     var r = 0; // find refinement or if role is switched
-
 
     for (var i = 1; i < items.length; i++){ // Loop through all lines
         item = items[i];
@@ -258,6 +276,7 @@ async function build_json(input_text){
                 parameters = await find_par(items, i+2);
                 if (root == null){
                     root = await insert(root, label, refinement, swith_role, parameters, depth, null, seen);
+
                     lastNode = root;
                     seen[0] = root;
                 }
@@ -267,6 +286,7 @@ async function build_json(input_text){
                     while (seen[k] != null){
                         k++
                     }
+
                     lastNode = await insert(root, label, refinement, swith_role, parameters, depth, lastNode, seen);
                     seen[k] = lastNode;
                 }
@@ -278,10 +298,12 @@ async function build_json(input_text){
             default: // Do nothing
         }
     }
+
     seen.forEach(item => {
         to_json(item, json);
       });
-    ///console.log(json);
+
+    console.log("JSON result in build_json():" + json);
     return json;
 }
 
@@ -306,7 +328,7 @@ function add_child(node, temp_string, download){
     }
     temp_string += '>';
     temp_string += '\n';
-    
+
     for (var i = 0; i < node.depth+1; i++){
         temp_string += "    ";
     }
@@ -356,15 +378,20 @@ function build_xml(input_text){
 async function convert(XorJ, input){
     console.log("[*] In convert()");
 
-    var input_text
+    var input_text;
+
     if (XorJ == 0){ // XorJ == 0 gives that input_file contains a XML
         input_text = await getXML(input); // Get XML string
         var json = await build_json(input_text); // Get JSON string and parse to JSON object
-        console.log("JSON: ", json);
         return json;
     } else{ // else gives that input_file contains a JSON
         input_text = input;
         var xml = build_xml(input_text); // Get JSON string and parse to JSON object
         return xml;
     }
+}
+
+
+function testExternalJS(){
+  console.log("[*] In testExternalJS(): EXTERNAL JAVASCRIPT WORKING");
 }

@@ -66,10 +66,10 @@
               <!--Input for ADT Tree-->
               <div id="submitNewTreeDiv" class="collapsed insideNavLink collapse">
                 <label for="textAreaJsonContent" class="form-label">Contents</label>
-                <textarea class="form-control" id="textAreaJsonContent" onkeyup="checkInput()" rows="3" placeholder="Example: Data Confidality, 1, Physical Attack, 1, Network Attack, 0, Employee Attack, Social Engineering, Fairwall, Training"></textarea>
+                <textarea class="form-control" id="textAreaADTLang" rows="3" placeholder="Example: Data Confidality, 1, Physical Attack, 1, Network Attack, 0, Employee Attack, Social Engineering, Fairwall, Training"></textarea>
                 <div id="alert" class="hiddenAlert">Text is successfully submitted!</div>
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-2">
-                <button type="submit" class="btn btn-sm me-md-2 mt-2 btn-warning" disabled id="generateTreeButton" onclick="showAlert()">Generate</button>
+                <button type="submit" class="btn btn-sm me-md-2 mt-2 btn-warning" id="generateTreeButton">Generate</button>
                 </div>
               </div>
           </li>
@@ -199,7 +199,7 @@
                  <div class="btn-group checkBoxElement" role="group" aria-label="radio btn for color red" id="btnSquareRedDiv">
                    <button type="radio" class="btn-check btn-square-color btnColorShape" name="btnColor" id="btnRadioRedSquare" autocomplete="off"></button>
                    <label class="btn btn-outline-danger btn-square-color" for="btnRadioRedSquare"></label>
-                 </div> 
+                 </div>
                </div>
                <div class="noti-shacol" id="noti-shacol">
                 <div class="noti-body-shacol" id="noti-body-shacol">
@@ -257,7 +257,7 @@
               <div id="reportDiv" class="collapsed insideNavLink collapse">
                 <!-- <label for="textAreaJsonContent" class="form-label">Contents</label> -->
                   <span data-feather="file-text" class="align-text-bottom"></span>
-                  <span class="nav-item mt-3"> Statstics </span><br>
+                  <span class="nav-item mt-3"> Statistics</span><br>
                   <span data-feather="file-text" class="align-text-bottom mt-3"></span>
                   <span class="nav-item mt-3">Probability</span><br>
                   <span data-feather="file-text" class="align-text-bottom mt-3"></span>
@@ -375,7 +375,7 @@
     <script src="NewTree.js"></script>
     <script src="Display.js"></script>
     <script src="json_func.js"></script>
-    <!--<script src="ADTLang/Compiler/compiler.js"></script>--->
+    <script src="ADTLang/Compiler/bundle.js"></script>
 
 
   </body>

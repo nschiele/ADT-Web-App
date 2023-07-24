@@ -54,6 +54,8 @@ async function setup() {
     // set height and width for the canvas
     canvasWidth = canvasParentDiv.offsetWidth;
     canvasHeight = canvasParentDiv.offsetHeight;
+    console.log("SETUP: CANVASWIDTH = " + canvasWidth +"\nCANVASHEIGHT = " + canvasHeight + "\n");
+
     // the main canvas area where the tree will go
     canvasElement = createCanvas(canvasWidth,canvasHeight);
     canvasElement.background("lightgray");
@@ -297,7 +299,7 @@ function notificationSuccess(notiEl, bodyEl, notificationContents) {
      body.style.color = "green";
      body.style.backgroundColor = "lightgreen";
      noti.querySelector("." + bodyEl).innerHTML = notificationContents;
- 
+
      noti.classList.add('visible');
      setTimeout (() => {
          noti.classList.remove('visible');
@@ -310,7 +312,7 @@ function manAddChild(){
     if (notificationCheckNode('noti-add', 'noti-body-add')) {
         // Send error notification if activeNode is undefined.
         return;
-    } 
+    }
     if (notificationTextLength('noti-add', 'noti-body-add', input)) {
         // Send error notification if activeNode is undefined.
         return;
@@ -340,22 +342,35 @@ function manAddChild(){
     }
     activeNode.dis.adjust_textbox();
     activeNode.update_width();
-    // windowResized();
-    draw();
+    windowResized();
+    resetScaleCoordinates(root, 1);
+    console.log("Scalevalue now: " + scaleValue);
+    changeCoordinatesRec(scaleValue, root);
+    printCoordinates(root);
+
+
     IDnumber++;
     notificationSuccess('noti-add', 'noti-body-add', "Child added successfully!"); // Send success notification if node has been added.
+    draw();
+
 }
 
 function manDeleteChild(){
     console.log("[*] In manDeleteChild()");
+    var parent = activeNode.parent; // Added by C
     if (notificationCheckNode('noti-rem', 'noti-body-rem')) {
         // Send error notification if activeNode is undefined.
         return;
-    } 
+    }
     root.removeSubTree(activeNode); // Function removeSubtree gives error.
+
+
     activeNode = undefined;
     windowResized();
-    draw();
+    //draw();
+    resetScaleCoordinates(root, 1);
+    console.log("Scalevalue now: " + scaleValue);
+    changeCoordinatesRec(scaleValue, root);
     notificationSuccess('noti-rem', 'noti-body-rem', "Node deleted successfully!"); // Send success notification if node has been deleted.
 }
 
@@ -365,11 +380,11 @@ function manChangeChild(){
     if (notificationCheckNode('noti-cha', 'noti-body-cha')) {
         // Send error notification if activeNode is undefined.
         return;
-    } 
+    }
     if (notificationTextLength('noti-cha', 'noti-body-cha', input)) {
         // Send error notification if activeNode is undefined.
         return;
-    } 
+    }
     activeNode.label = input;
     activeNode.dis.t = input;
     activeNode.dis.adjust_textbox();
@@ -584,21 +599,21 @@ function max_width(n, dist){
 async function buildFromMultiset(toBuild, parent=null){
     console.log("[*] In buildFromMultiset()");
 
-    //console.log("Tobuild: " + toBuild);
 
     ///console.log(root)
 
     // First Run of Function
     if(parent == null){
-        console.log("hier: ", toBuild);
+        ///console.log("hier: ", toBuild);
 
         root = new ADTree(toBuild[0].label, IDnumber); // Get label of root
         IDnumber++;
 
-        // disRoot = new Display(toBuild[0].label/*adtree.node.label*/, 0, 0, 2); // Added by J
+        ///disRoot = new Display(toBuild[0].label/*adtree.node.label*/, 0, 0, 2); // Added by J
+
         root.refinement = toBuild[0].refinement;
         root.type = toBuild[0].swith_role;
-        // console.log("Root: ", root); // Added by J
+        ///console.log("Root: ", root); // Added by J
 
         console.log("Keys: " + Object.keys(toBuild[0])); // Added by C
 
@@ -638,12 +653,13 @@ function draw(){
     // If ADT is larger than the canvas, shrink ADT and place in center
     if(toDraw){
         if (!(root == undefined || root.dis == undefined)){
+          console.log("root.dis.width: " + root.dis.width);
           root.dis.x = root.dis.width/2;
           root.adjust_children();
         }
 
         // zoom in/out
-        console.log("scaleValue: ", scaleValue); // added by C
+        //console.log("scaleValue: ", scaleValue); // added by C
         scale(scaleValue);
 
         clear();
@@ -769,6 +785,38 @@ function changeCoordinates(newScaleValue){
   console.log("[*] In changeCoordinates()");
   var treeRoot = root;
 
+  ////printCoordinates(treeRoot);
+
   changeCoordinatesRec(newScaleValue, treeRoot);
 
+}
+
+function resetScaleCoordinates(currentNode, recursion){
+  console.log("[*] In resetScaleCoordinates()");
+
+  console.log("LABEL: " + currentNode.label);
+  console.log("x/x_range: " + currentNode.dis.x + "/" + currentNode.dis.x_range);
+  currentNode.dis.scale_x = currentNode.dis.x;
+  currentNode.dis.scale_x_range = currentNode.dis.x_range;
+  currentNode.dis.scale_y = currentNode.dis.y;
+  currentNode.dis.scale_y_range = currentNode.dis.y_range;
+
+  if (recursion){
+    for (let i = 0; i < currentNode.children.length; i++){
+      resetScaleCoordinates(currentNode.children[i], recursion);
+    }
+  }
+
+}
+
+function printCoordinates(currentNode){
+  console.log("*** Current Node: " + currentNode.label + " ***");
+  console.log("Coordinates:\nx/x_range: " + currentNode.dis.x + "/" + currentNode.dis.x_range);
+  console.log("y/y_range: " + currentNode.dis.y + "/" + currentNode.dis.y_range);
+  console.log("scale_x/scale_x_range: " + currentNode.dis.scale_x + "/" + currentNode.dis.scale_x_range);
+  console.log("scale_y/scale_y_range: " + currentNode.dis.scale_y + "/" + currentNode.dis.scale_y_range);
+  console.log("width: " + currentNode.dis.width + "\n\n");
+
+  for (let i = 0; i < currentNode.children.length; i++)
+    printCoordinates(currentNode.children[i]);
 }
