@@ -377,16 +377,12 @@ function build_xml(input_text){
 //Converts XML to JSON and JSON to XML
 async function convert(XorJ, input){
     console.log("[*] In convert()");
-    console.log("XORJ: " + XorJ);
 
     var input_text;
 
     if (XorJ == 0){ // XorJ == 0 gives that input_file contains a XML
-        console.log("Zero");
         input_text = await getXML(input); // Get XML string
         var json = await build_json(input_text); // Get JSON string and parse to JSON object
-        console.log("The JSON is");
-        console.log(json);
         return json;
     } else{ // else gives that input_file contains a JSON
         input_text = input;
