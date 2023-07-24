@@ -171,6 +171,24 @@ class ADTree{
         return temp_string;
     }
 
+    initialColor() {
+        if (this.children && this.children.length > 0) {
+            for (let i = 0; i < this.children.length; i++) {
+                this.children[i].initialColor();
+            }
+        }
+        if(this.type == 0) {
+            console.log("ice", this);
+            this.dis.stroke = color('red');
+            this.dis.strokeWeight = 3;
+            this.dis.r = 50;
+        } else if (this.type == 1) {
+            this.dis.stroke = color('green');
+            this.dis.strokeWeight = 3;
+            this.dis.r = 1;
+        }
+    }
+
     // setNodeStruc(parent) {
     //     if (this !== root) {
 

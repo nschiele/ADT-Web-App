@@ -128,6 +128,7 @@ async function setup() {
     var example = await getJson(0, resp); // Call json_junc.js
     console.log("WAT: ", example);
     buildFromMultiset(example);
+    root.initialColor();
     ///console.log(getJson(1, example));
 
     //scaled = frameX/(root.dis.width*1.2);
@@ -192,6 +193,7 @@ function changeNodeOutlineColorShape(shapeRadious,shapeColor){
     activeNode.dis.stroke = color(shapeColor);
     activeNode.dis.strokeWeight = 3;
     activeNode.dis.r = shapeRadious;
+    console.log(shapeRadious, "ist ye");
     notificationSuccess('noti-shacol', 'noti-body-shacol', "Node changed successfully"); // Send success notification if node has been added.
 }
 
@@ -318,7 +320,7 @@ function manAddChild(){
         // Check if defense check has been checked.
         activeNode.dis.stroke = color('green');
         activeNode.dis.strokeWeight = 3;
-        activeNode.dis.r = shapeRadious;
+        activeNode.dis.r = 1;
         activeNode.children.at(-1).dis.lineList = [10,10,10,10];
     }
     activeNode.dis.adjust_textbox();
