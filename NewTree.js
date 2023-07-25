@@ -13,10 +13,11 @@ class ADTree{
         this.dis = new Display(label, this.id, 0, 0, 2);
         this.dis.tree = this;
         this.xmlNode;
+        this.attackNodeHasDefenseNode; // To make sure an attack node only has one defense node.
     }
 
 
-    add_child(n, display){
+    add_child(n){
         n.parent = this;
         n.root = this.root;
         this.children.push(n);

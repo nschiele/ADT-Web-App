@@ -292,6 +292,21 @@ function notificationTextLength(notiEl, bodyEl, textInput) {
     }
 }
 
+function notificationAlreadyDefenseNode(newNode, notiEl, bodyEl) {
+    const noti = document.getElementById(notiEl);
+    const body = document.getElementById(bodyEl);
+    if (newNode.parent.attackNodeHasDefenseNode) {
+        body.style.color = "red";
+        body.style.backgroundColor = "lightcoral";
+        noti.querySelector("." + bodyEl).innerHTML = "Error! Current node already has a defense node!";
+        noti.classList.add('visible');
+        setTimeout (() => {
+            noti.classList.remove('visible');
+        }, 2000); // Remove notification after 2 seconds.
+        return true;
+    }
+}
+
 function notificationSuccess(notiEl, bodyEl, notificationContents) {
     const noti = document.getElementById(notiEl);
     const body = document.getElementById(bodyEl);
@@ -335,9 +350,19 @@ function manAddChild(){
     if (document.getElementById("flexSwitchCheckDefault").checked == 1) {
         // Check if defense check has been checked. 
         // Change look to defense child.
+        if (notificationAlreadyDefenseNode(newNode, 'noti-add', 'noti-body-add')) {
+            root.removeSubTree(newNode);
+            activeNode.dis.adjust_textbox();
+            activeNode.update_width();
+            windowResized();
+            resetScaleCoordinates(root, 1);
+            changeCoordinatesRec(scaleValue, root);
+            return;
+        }
         newNode.dis.stroke = color('green');
         newNode.dis.strokeWeight = 3;
         newNode.dis.r = 1;
+        newNode.parent.attackNodeHasDefenseNode = true;
         // activeNode.children.at(-1).dis.lineList = [10,10,10,10];
     }
     activeNode.dis.adjust_textbox();
@@ -769,12 +794,12 @@ function changeCoordinatesRec(newScaleValue, currentNode){
 
   }
 
-  console.log("*** CHANGECOORDINATESREC ***");
-  console.log("LABEL: " + currentNode.label);
-  console.log("SCALE_X: " + currentNode.dis.scale_x);
-  console.log("SCALE_X_RANGE: " + currentNode.dis.scale_x_range);
-  console.log("SCALE_Y: " + currentNode.dis.scale_y);
-  console.log("SCALE_Y_RANGE: " + currentNode.dis.scale_y_range);
+//   console.log("*** CHANGECOORDINATESREC ***");
+//   console.log("LABEL: " + currentNode.label);
+//   console.log("SCALE_X: " + currentNode.dis.scale_x);
+//   console.log("SCALE_X_RANGE: " + currentNode.dis.scale_x_range);
+//   console.log("SCALE_Y: " + currentNode.dis.scale_y);
+//   console.log("SCALE_Y_RANGE: " + currentNode.dis.scale_y_range);
 
 
   for (let i = 0; i < currentNode.children.length; i++){
@@ -811,12 +836,12 @@ function resetScaleCoordinates(currentNode, recursion){
 }
 
 function printCoordinates(currentNode){
-  console.log("*** Current Node: " + currentNode.label + " ***");
-  console.log("Coordinates:\nx/x_range: " + currentNode.dis.x + "/" + currentNode.dis.x_range);
-  console.log("y/y_range: " + currentNode.dis.y + "/" + currentNode.dis.y_range);
-  console.log("scale_x/scale_x_range: " + currentNode.dis.scale_x + "/" + currentNode.dis.scale_x_range);
-  console.log("scale_y/scale_y_range: " + currentNode.dis.scale_y + "/" + currentNode.dis.scale_y_range);
-  console.log("width: " + currentNode.dis.width + "\n\n");
+//   console.log("*** Current Node: " + currentNode.label + " ***");
+//   console.log("Coordinates:\nx/x_range: " + currentNode.dis.x + "/" + currentNode.dis.x_range);
+//   console.log("y/y_range: " + currentNode.dis.y + "/" + currentNode.dis.y_range);
+//   console.log("scale_x/scale_x_range: " + currentNode.dis.scale_x + "/" + currentNode.dis.scale_x_range);
+//   console.log("scale_y/scale_y_range: " + currentNode.dis.scale_y + "/" + currentNode.dis.scale_y_range);
+//   console.log("width: " + currentNode.dis.width + "\n\n");
 
   for (let i = 0; i < currentNode.children.length; i++)
     printCoordinates(currentNode.children[i]);
