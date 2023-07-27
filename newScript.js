@@ -260,7 +260,6 @@ function notificationCheckNode(notiEl, bodyEl) {
     console.log("BODY: ", activeNode);
     if (activeNode == undefined) {
         // No node selected. Notification prep.
-        console.log("huh");
         body.style.color = "red";
         body.style.backgroundColor = "lightcoral";
         noti.querySelector("." + bodyEl).innerHTML = "Error! No node selected.";
@@ -382,7 +381,7 @@ function manAddChild(){
 
 function manDeleteChild(){
     console.log("[*] In manDeleteChild()");
-    var parent = activeNode.parent; // Added by C
+    // var parent = activeNode.parent; // Added by C
     if (notificationCheckNode('noti-rem', 'noti-body-rem')) {
         // Send error notification if activeNode is undefined.
         return;
@@ -540,6 +539,11 @@ async function buildFromUpload() {
         buildFromMultiset(input);
         root.initialColor();
         draw();
+        root.dis.adjust_textbox();
+        root.update_width();
+        windowResized();
+        resetScaleCoordinates(root, 1);
+        changeCoordinatesRec(scaleValue, root);
     } catch(error) {
         console.error("Error:", error);
     }
