@@ -250,6 +250,7 @@ class Display {
         fill(color(255 - this.c.levels[0], 255 - this.c.levels[1], 255 - this.c.levels[2]))
         text(this.t, this.x + this.t.length/5, this.y + this.y_range/this.lines -3);
         //Invert colors if clicked or hovered
+        console.log("is active?: ", this.active);
         if(this.active){
             stroke(this.stroke);
             strokeWeight(this.strokeWeight);

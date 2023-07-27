@@ -539,11 +539,10 @@ async function buildFromUpload() {
         buildFromMultiset(input);
         root.initialColor();
         draw();
-        root.dis.adjust_textbox();
-        root.update_width();
+        toDraw = true;
+        // Needed to be able to select nodes after uploading the file:
         windowResized();
         resetScaleCoordinates(root, 1);
-        changeCoordinatesRec(scaleValue, root);
     } catch(error) {
         console.error("Error:", error);
     }
