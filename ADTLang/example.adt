@@ -1,0 +1,4 @@
+create attack node label is "Hack into server";
+create attack node label is "using buffer overflow" append to "Hack into server";
+create attack node label is "pay someone" append to "Hack into server";
+compile
