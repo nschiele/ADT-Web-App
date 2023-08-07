@@ -60,7 +60,7 @@ async function setup() {
     // set height and width for the canvas
     canvasWidth = canvasParentDiv.offsetWidth;
     canvasHeight = canvasParentDiv.offsetHeight;
-    
+
     console.log("*** SETUP ***\n CANVASWIDTH = " + canvasWidth +"\nCANVASHEIGHT = " + canvasHeight + "\n"
     + "widthPixels = " + widthPixels + "\n" + "heightPixels = " + heightPixels);
 
@@ -930,7 +930,13 @@ function tryResizeCanvas(keyCode){
     canvasHeight += heightPixels;
 
   resizeCanvas(canvasWidth, canvasHeight);
-  root.display(); // Remove bug of not (instantly!) rendering tree after resizing canvas. Remove this line to verify my claim yourself.
+
+   // Removed bug of not (instantly!) rendering tree after resizing canvas. Remove this line to verify my claim yourself.
+  if (scaleValue == 1)
+    root.display();
+
+  else
+    mouseReleased();
 }
 
 function keyPressed(){
