@@ -34,6 +34,12 @@ var currNodeText;
 var newNodeText;
 let oldNodetext;
 
+// Added by C
+let widthPixels;
+let heightPixels;
+let originalCanvWidth;
+let originalCanvHeight;
+
 var IDnumber = 1; // Added by J
 
 async function setup() {
@@ -54,7 +60,9 @@ async function setup() {
     // set height and width for the canvas
     canvasWidth = canvasParentDiv.offsetWidth;
     canvasHeight = canvasParentDiv.offsetHeight;
-    console.log("SETUP: CANVASWIDTH = " + canvasWidth +"\nCANVASHEIGHT = " + canvasHeight + "\n");
+    
+    console.log("*** SETUP ***\n CANVASWIDTH = " + canvasWidth +"\nCANVASHEIGHT = " + canvasHeight + "\n"
+    + "widthPixels = " + widthPixels + "\n" + "heightPixels = " + heightPixels);
 
     // the main canvas area where the tree will go
     canvasElement = createCanvas(canvasWidth,canvasHeight);
@@ -132,6 +140,27 @@ async function setup() {
     buildFromMultiset(example);
     root.initialColor();
     ///console.log(getJson(1, example));
+
+    console.log("ROOT.DIS.WIDTH = " + root.dis.width);
+
+    // CHANGING THE WIDTH OF THE CANVAS, FOR CORRECT TREE RENDERING. STILL NEED TO MAKE THE CODE "NOT UGLY"
+    canvasWidth = root.dis.width + 150; // 150 is > 0.5 * x_range for maximum child node width, so right buffer
+    originalCanvWidth = canvasWidth;
+    widthPixels = 0.001 * canvasWidth;
+
+    // For some reason the first child has + 500?
+    resetYValues(root);
+
+    console.log("CHAIN SWAP: ");
+    console.log(checkTreeHeight(root, 0));
+
+    canvasHeight = checkTreeHeight(root, 0) + 150;
+    originalCanvHeight = canvasHeight;
+    heightPixels = 0.001 * canvasHeight;
+
+    resizeCanvas(canvasWidth, canvasHeight);
+
+
 
     //scaled = frameX/(root.dis.width*1.2);
     console.log("SCALED: " + scaled);
@@ -330,24 +359,33 @@ function manAddChild(){
     if (notificationTextLength('noti-add', 'noti-body-add', input)) {
         // Send error notification if activeNode is undefined.
         return;
-    } 
+    }
 
     // Add new tree objects in variables
     var childTree = new ADTree(input, IDnumber);
     var childDisplay = new Display(input, 0, 0, 2);
 
     // Attach new tree objects as new node under actively selected child.
-    activeNode.add_child(childTree, childDisplay); 
+    activeNode.add_child(childTree, childDisplay);
 
+    // We check if some elements are now "out of the canvas". Then we resize.
+
+
+
+
+    var newWidth = checkTreeWidth(root);
+
+    console.log("NEWWIDTH: " + newWidth);
+    console.log("NEWHEIGHT: " + newHeight);
     // Retrieve newly added child, change look to attack node.
     var newNode = childTree.dis.tree;
     newNode.dis.stroke = color('red');
     newNode.dis.strokeWeight = 3;
     newNode.dis.r = 50;
     // childTree.children.at(-1).dis.lineList = [10, 10, 10, 10];
-    
+
     if (document.getElementById("flexSwitchCheckDefault").checked == 1) {
-        // Check if defense check has been checked. 
+        // Check if defense check has been checked.
         // Change look to defense child.
         if (notificationAlreadyDefenseNode(newNode, 'noti-add', 'noti-body-add')) {
             root.removeSubTree(newNode);
@@ -375,8 +413,15 @@ function manAddChild(){
 
     IDnumber++;
     notificationSuccess('noti-add', 'noti-body-add', "Child added successfully!"); // Send success notification if node has been added.
-    draw();
 
+    var newHeight = checkTreeHeight(root, 1);
+    console.log("new height: " + newHeight);
+
+    if (newHeight > canvasHeight){
+      canvasHeight = newHeight + 20;
+      resizeCanvas(canvasWidth, canvasHeight);
+    }
+    draw();
 }
 
 function manDeleteChild(){
@@ -627,6 +672,9 @@ function max_width(n, dist){
 
 async function buildFromMultiset(toBuild, parent=null){
     console.log("[*] In buildFromMultiset()");
+    console.log("JSON");
+    console.log(toBuild);
+    console.log(toBuild[0]);
 
 
     ///console.log(root)
@@ -642,9 +690,14 @@ async function buildFromMultiset(toBuild, parent=null){
 
         root.refinement = toBuild[0].refinement;
         root.type = toBuild[0].swith_role;
+
+        root.dis.y = 20;
         ///console.log("Root: ", root); // Added by J
 
         console.log("Keys: " + Object.keys(toBuild[0])); // Added by C
+
+        // Make defense node the last node in the JSON.
+        toBuild[0] = reorderChilds(toBuild[0]);
 
         for(let i = 0; i < Object.keys(toBuild[0]).length-6; i++){ // Loop through all children
             buildFromMultiset(toBuild[0][i], root);
@@ -660,6 +713,9 @@ async function buildFromMultiset(toBuild, parent=null){
             child.type = toBuild.swith_role;
             parent.add_child(child, new Display(toBuild.label, 0, 0, 2));
             IDnumber++;
+
+            // Make defense node the last node in the JSON.
+            toBuild = reorderChilds(toBuild);
 
             for (let i = 0; i < (Object.keys(toBuild).length-7); i++){ // Loop through all children
                 buildFromMultiset(toBuild[i], child);
@@ -683,6 +739,11 @@ function draw(){
     if(toDraw){
         if (!(root == undefined || root.dis == undefined)){
           console.log("root.dis.width: " + root.dis.width);
+          if ((root.dis.width + 150) > canvasWidth){
+            canvasWidth = root.dis.width + 150;
+            resizeCanvas(canvasWidth, canvasHeight);
+          }
+
           root.dis.x = root.dis.width/2;
           root.adjust_children();
         }
@@ -729,6 +790,9 @@ function draw(){
         toDraw = true;
     //   console.log("Registering Mouse Press", startMouseX - mouseX, startMouseY - mouseY, trackNode.x, trackNode.y);
     }
+
+  // Check if the canvas needs to be resized accordingly.
+  checkArrowsPressed();
 }
 
 function mouseReleased(){
@@ -848,4 +912,152 @@ function printCoordinates(currentNode){
 
   for (let i = 0; i < currentNode.children.length; i++)
     printCoordinates(currentNode.children[i]);
+}
+
+// LEFT_ARROW = 37, UP_ARROW = 38, RIGHT_ARROW = 39, DOWN_ARROW = 40
+function tryResizeCanvas(keyCode){
+
+  if (keyCode == 37 && isAllowed(keyCode))
+    canvasWidth -= widthPixels;
+
+    else if (keyCode == 38 && isAllowed(keyCode))
+    canvasHeight -= heightPixels;
+
+  else if (keyCode == 39)
+    canvasWidth += widthPixels;
+
+  else if (keyCode == 40)
+    canvasHeight += heightPixels;
+
+  resizeCanvas(canvasWidth, canvasHeight);
+  root.display(); // Remove bug of not (instantly!) rendering tree after resizing canvas. Remove this line to verify my claim yourself.
+}
+
+function keyPressed(){
+  console.log(keyCode);
+
+  // LEFT_ARROW, UP_ARROW, RIGHT_ARROW, DOWN_ARROW
+  if (keyCode >= 37 && keyCode <= 40){
+    tryResizeCanvas(keyCode);
+  }
+}
+
+// In development
+function isAllowed(keyCode){
+  console.log("originalCanvWidth: " + originalCanvWidth);
+  console.log("originalCanvHeight: " + originalCanvHeight);
+
+  // LEFT_ARROW
+  if (keyCode == 37){
+    if (Math.ceil(canvasWidth - widthPixels) < Math.ceil(originalCanvWidth))
+      return false;
+  }
+
+  // UP_ARROW
+  else if (keyCode == 38){
+    if (Math.ceil(canvasHeight - heightPixels) < Math.ceil(originalCanvHeight))
+      return false;
+  }
+
+  return true;
+}
+
+function checkArrowsPressed(){
+  if (keyIsDown(LEFT_ARROW))
+    tryResizeCanvas(LEFT_ARROW);
+
+  else if (keyIsDown(UP_ARROW))
+    tryResizeCanvas(UP_ARROW);
+
+  else if (keyIsDown(RIGHT_ARROW))
+    tryResizeCanvas(RIGHT_ARROW);
+
+  else if (keyIsDown(DOWN_ARROW))
+    tryResizeCanvas(DOWN_ARROW);
+}
+
+// In development
+function reorderChilds(JSONObject){
+  let changeIt = false;
+  let indexChange = 0;
+  let tempHold = 0;
+
+  ////console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+  ////console.log("LABEL: " + JSONObject.label);
+  ////console.log("TYPE: " + JSONObject.type);
+
+  for (let i = 0; i < (Object.keys(JSONObject).length-7); i++){
+    if (JSONObject.swith_role != JSONObject[i].swith_role){
+      changeIt = true;
+      indexChange = i;
+
+      // LOGGING; for development
+      console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+      console.log("LABEL: " + JSONObject.label);
+
+      break;
+    }
+
+  }
+
+  // Make the defense/attack child on resp. attack/defense node the final in the list
+
+  if (changeIt){
+    tempHold = JSONObject[Object.keys(JSONObject).length-8]; // Final element
+    console.log(Object.keys(JSONObject).length - 7);
+    console.log(JSONObject);
+    console.log("TEMPHOLD.label: " + tempHold.label);
+
+    JSONObject[Object.keys(JSONObject).length-8] = JSONObject[indexChange];
+    JSONObject[indexChange] = tempHold;
+  }
+
+  return JSONObject;
+}
+
+function checkTreeWidth(currentNode){
+  maximum = currentNode.dis.x + currentNode.dis.x_range;
+
+  var temp = 0;
+
+  for (let i = 0; i < currentNode.children.length; i++){
+    temp = checkTreeWidth(currentNode.children[i]);
+
+    if (temp > maximum)
+      maximum = temp;
+  }
+
+  return maximum;
+}
+
+function checkTreeHeight(currentNode, mode){
+  var maximum = 0;
+
+  if (!mode)
+    maximum = Math.ceil(currentNode.dis.y / scaleValue) + currentNode.dis.y_range;
+
+
+  else if (mode)
+    maximum = Math.ceil(currentNode.dis.scale_y / scaleValue) + currentNode.dis.y_range;
+
+
+
+  var temp = 0;
+
+  for (let i = 0; i < currentNode.children.length; i++){
+    temp = checkTreeHeight(currentNode.children[i]);
+
+    if (temp > maximum)
+      maximum = temp;
+  }
+
+  return maximum;
+}
+
+function resetYValues(currentNode){
+  for (let i = 0; i < currentNode.children.length; i++){
+    currentNode.children[i].dis.y = currentNode.dis.y + 100;
+    resetYValues(currentNode.children[i]);
+  }
+
 }

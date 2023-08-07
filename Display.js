@@ -16,7 +16,7 @@ class Display {
         this.c = color(255, 255, 255); // color
         this.stroke = color("black") // no idea why done like this
         this.strokeWeight = 2;
-        this.lineList = [1]; // dashed lines
+        this.lineList = []; // dashed lines
         this.lines = 1;
         this.freeMove = false; // tracks if node is unlocked and can move freely
         // this.treeID = treeID;
@@ -230,6 +230,8 @@ class Display {
     }
 
     display(treeObject){
+      var amountOfNodesInLine = treeObject.children.length; // For AND REFINEMENT
+
         if(this.t.length < 20){
             textSize(32);
         } else {
@@ -238,6 +240,7 @@ class Display {
         // This node visualized
 
         // draw the strokes/lines
+        // reset to []; normal line (C)
         this.setLineDash(this.lineList);
         stroke(this.stroke);
         strokeWeight(this.strokeWeight);
@@ -269,7 +272,14 @@ class Display {
             var myX = this.x + this.x_range/2;
             var myY = this.y + this.y_range;
             var firstX = treeObject.children[0].dis.x + treeObject.children[0].dis.x_range/2;
-            var lastX = treeObject.children[treeObject.children.length - 1].dis.x + treeObject.children[treeObject.children.length - 1].dis.x_range/2
+            var lastX = treeObject.children[treeObject.children.length - 1].dis.x + treeObject.children[treeObject.children.length - 1].dis.x_range/2;
+
+            // if final child is a different node type (attack->defense or defense->attack), don't include it in AND line
+            if (treeObject.type != treeObject.children[treeObject.children.length - 1].type){
+              amountOfNodesInLine -= 1;
+              lastX = treeObject.children[treeObject.children.length - 2].dis.x + treeObject.children[treeObject.children.length - 2].dis.x_range/2;
+            }
+
             var childY = treeObject.children[0].dis.y;
 
             var percentage = .3;
@@ -278,8 +288,13 @@ class Display {
             var endX = myX + (lastX - myX)*percentage
             var endY = myY + (childY - myY)*percentage
 
-            //line(startX, startY, endX, endY);
-            curve(this.x + this.x_range/2 - this.width/2, this.y, startX,startY, endX, endY, this.x + this.x_range/2 + this.width/2, this.y)
+            if (amountOfNodesInLine == 2){
+              line(startX, startY, endX, endY);
+            }
+
+            else {
+              curve(this.x + this.x_range/2 - this.width/2, this.y, startX,startY, endX, endY, this.x + this.x_range/2 + this.width/2, this.y)
+            }
         }
         // If red round (attack) and change manually to green square (defense), also changes type in ADTree object (and vice versa)
         if ((this.stroke.levels[0] === 255 && this.r === 50) && this.tree.type === 1) {
@@ -287,9 +302,16 @@ class Display {
         } else if ((this.stroke.levels[1] === 128 && this.r === 1) && this.tree.type === 0) {
             this.tree.type = 1;
         }
+
+
         //Visualize lines to children and then visualize children
         for (let i = 0; i < treeObject.children.length; i++){
             this.setLineDash(this.lineList);
+
+            // Check if line should be dotted (C)
+            if (treeObject.type != treeObject.children[i].type)
+              this.setLineDash([10, 5]);
+
             line(this.x+this.x_range/2, this.y+this.y_range, treeObject.children[i].dis.x+treeObject.children[i].dis.x_range/2,  treeObject.children[i].dis.y)
             treeObject.children[i].display();
         }

@@ -18,9 +18,29 @@ class ADTree{
 
 
     add_child(n){
+        let tempSwitch;
+        let switchIndex;
+        let switchIt = false;
+
         n.parent = this;
         n.root = this.root;
+
         this.children.push(n);
+
+        for (let i = 0; i < this.children.length; i++){
+          if (this.type != this.children[i].type){
+            tempSwitch = this.children[i];
+            switchIt = true;
+            switchIndex = i;
+            break;
+          }
+        }
+
+        if (switchIt){
+          this.children[switchIndex] = this.children[this.children.length-1];
+          this.children[this.children.length-1] = tempSwitch;
+        }
+        
         this.dis.update_width(this);
         this.dis.adjust_children(root);
     }
