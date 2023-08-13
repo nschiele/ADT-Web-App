@@ -105,14 +105,7 @@ async function setup() {
     nodeSquareGreen.mouseReleased(function(){changeNodeOutlineColorShape(1,"green")});
     var nodeSquareRed = select('#btnSquareRedDiv');
     nodeSquareRed.mouseReleased(function(){changeNodeOutlineColorShape(1,"red")});
-
-    // change the lines to dashed
-    var dashedLine = select('#btnLineDashedDiv');
-    dashedLine.mouseReleased(changeNodeLineToDashed);
-
-    var ContinuousLine = select('#btnLineContinueDiv');
-    ContinuousLine.mouseReleased(changeNodeLineToContinueLine);
-
+    
     var ANDoperator = select('#btnAndDiv');
     ANDoperator.mouseReleased(changeRefinementToAND);
 
