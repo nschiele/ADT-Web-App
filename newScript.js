@@ -105,12 +105,13 @@ async function setup() {
     nodeSquareGreen.mouseReleased(function(){changeNodeOutlineColorShape(1,"green")});
     var nodeSquareRed = select('#btnSquareRedDiv');
     nodeSquareRed.mouseReleased(function(){changeNodeOutlineColorShape(1,"red")});
-    
+
     var ANDoperator = select('#btnAndDiv');
     ANDoperator.mouseReleased(changeRefinementToAND);
 
     var ORoperator = select('#btnOrDiv');
     ORoperator.mouseReleased(changeRefinementToOR);
+
 
     // windowResized(); // Resizes window so it correctly displays all of tree.
     // draw();
@@ -132,6 +133,7 @@ async function setup() {
     console.log("WAT: ", example);
     buildFromMultiset(example);
     root.initialColor();
+    document.getElementById("nodeTextInput").disabled = true; // Disable text customization until node is selected.
     ///console.log(getJson(1, example));
 
     console.log("ROOT.DIS.WIDTH = " + root.dis.width);
@@ -405,6 +407,7 @@ function manAddChild(){
 
 
     IDnumber++;
+    document.getElementById("nodeTextInput").setAttribute("placeholder", activeNode.dis.t);
     notificationSuccess('noti-add', 'noti-body-add', "Child added successfully!"); // Send success notification if node has been added.
 
     var newHeight = checkTreeHeight(root, 1);
@@ -433,6 +436,8 @@ function manDeleteChild(){
     resetScaleCoordinates(root, 1);
     console.log("Scalevalue now: " + scaleValue);
     changeCoordinatesRec(scaleValue, root);
+    document.getElementById("nodeTextInput").disabled = true;
+    document.getElementById("nodeTextInput").setAttribute("placeholder", "No node selected...");
     notificationSuccess('noti-rem', 'noti-body-rem', "Node deleted successfully!"); // Send success notification if node has been deleted.
 }
 
@@ -449,6 +454,7 @@ function manChangeChild(){
     }
     activeNode.label = input;
     activeNode.dis.t = input;
+    document.getElementById("nodeTextInput").setAttribute("placeholder", activeNode.dis.t);
     activeNode.dis.adjust_textbox();
     activeNode.update_width();
     draw();
@@ -561,7 +567,6 @@ function uploadADT() {
 }
 
 async function buildFromUpload() {
-    console.log("whoop")
     try {
         var file = await uploadADT();
         var fileExt = file.name.split('.').pop();
@@ -811,6 +816,11 @@ function mouseReleased(){
     toDraw = true;
     trackMouseStart = true;
     trackNode = null;
+
+    if (activeNode != null) {
+        document.getElementById("nodeTextInput").disabled = false;
+        document.getElementById("nodeTextInput").setAttribute("placeholder", activeNode.dis.t);
+    }
 }
 
 function windowResized() {
