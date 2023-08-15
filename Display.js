@@ -231,7 +231,6 @@ class Display {
 
     display(treeObject){
       var amountOfNodesInLine = treeObject.children.length; // For AND REFINEMENT
-
         if(this.t.length < 20){
             textSize(32);
         } else {

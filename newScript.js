@@ -40,6 +40,9 @@ let heightPixels;
 let originalCanvWidth;
 let originalCanvHeight;
 
+// Added by J
+let saveOn = false;
+
 var IDnumber = 1; // Added by J
 
 async function setup() {
@@ -66,7 +69,9 @@ async function setup() {
 
     // the main canvas area where the tree will go
     canvasElement = createCanvas(canvasWidth,canvasHeight);
-    canvasElement.background("lightgray");
+
+    // canvasElement.backgroundColor = "blue";
+    
     // set parent div
     canvasElement.parent("canvasContainer");
 
@@ -270,10 +275,18 @@ function downloadCanvasPng(){
 
 function downloadCanvasJpg(){
     console.log("[*] In downloadCanvasJpg()");
-
+    // canvasElement.color("lightgray");
     fileName = select("#treeName").value();
-    ///console.log(fileName);
+    // canvasElement.backgroundColor = "blue";
+    console.log("HEHHE: ", canvasElement.backgroundColor, canvasElement.height, originalCanvHeight);
+    // canvasElement.height = originalCanvHeight;
+    // canvasElement.width = originalCanvWidth;
+    // background("blue");
+    saveOn = true;
+    console.log(root);
     saveCanvas(canvasElement, fileName, 'jpg');
+    saveOn = false;
+    draw();
 }
 
 function notificationCheckNode(notiEl, bodyEl) {
@@ -732,7 +745,6 @@ async function buildFromMultiset(toBuild, parent=null){
 
 function draw(){
     console.log("[*] In draw()");
-
     // If ADT is larger than the canvas, shrink ADT and place in center
     if(toDraw){
         if (!(root == undefined || root.dis == undefined)){
@@ -753,6 +765,13 @@ function draw(){
         clear();
 
         if (root != null && root != undefined){
+          console.log("SAVE BOI");
+          if (saveOn == true) {
+            console.log("BSDJFKLSDLJFKLSDJFKLDSJKLFDSKJ");
+            background("white");
+          } else if (!saveOn)
+            background("whitesmoke");
+            canvasElement.elt.style.border = "2px solid lightgray";
           root.display();
           toDraw = false;
         }
