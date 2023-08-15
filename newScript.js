@@ -42,6 +42,9 @@ let originalCanvHeight;
 
 // Added by J
 let saveOn = false;
+let biggestHeight;
+let biggestWidth;
+let orgScaleVal;
 
 var IDnumber = 1; // Added by J
 
@@ -61,8 +64,8 @@ async function setup() {
     // get element by id
     var canvasParentDiv = document.getElementById('canvasContainer');
     // set height and width for the canvas
-    canvasWidth = canvasParentDiv.offsetWidth;
-    canvasHeight = canvasParentDiv.offsetHeight;
+    canvasWidth, biggestWidth = canvasParentDiv.offsetWidth;
+    canvasHeight, biggestHeight = canvasParentDiv.offsetHeight;
 
     console.log("*** SETUP ***\n CANVASWIDTH = " + canvasWidth +"\nCANVASHEIGHT = " + canvasHeight + "\n"
     + "widthPixels = " + widthPixels + "\n" + "heightPixels = " + heightPixels);
@@ -275,18 +278,12 @@ function downloadCanvasPng(){
 
 function downloadCanvasJpg(){
     console.log("[*] In downloadCanvasJpg()");
-    // canvasElement.color("lightgray");
     fileName = select("#treeName").value();
-    // canvasElement.backgroundColor = "blue";
-    console.log("HEHHE: ", canvasElement.backgroundColor, canvasElement.height, originalCanvHeight);
-    // canvasElement.height = originalCanvHeight;
-    // canvasElement.width = originalCanvWidth;
-    // background("blue");
-    saveOn = true;
+    saveOn = true; // Save mode on, needed for draw()
+    orgScaleVal = scaleValue; // Save previous scale value
+    scaleValue = 1; // Set scale value to 1, original canvas size
     console.log(root);
-    saveCanvas(canvasElement, fileName, 'jpg');
-    saveOn = false;
-    draw();
+    draw(); // Call draw()
 }
 
 function notificationCheckNode(notiEl, bodyEl) {
@@ -765,13 +762,20 @@ function draw(){
         clear();
 
         if (root != null && root != undefined){
-          console.log("SAVE BOI");
-          if (saveOn == true) {
-            console.log("BSDJFKLSDLJFKLSDJFKLDSJKLFDSKJ");
+          if (saveOn) {
+            // Saving mode on, saving canvas.
             background("white");
-          } else if (!saveOn)
+            activeNode.dis.active = false; // Turn active node off for jpg
+            root.display(); // Draw tree with scale = 1 and white background
+            saveCanvas(canvasElement, fileName, 'jpg'); // Actually saving the canvas
+            activeNode.dis.active = true; // Turn active node back on
+            saveOn = false; // Turn off the saving mode
+            scaleValue = orgScaleVal; // Resizing to previous scale
+            draw(); // Rerun with Saving mode off
+          } else if (!saveOn) {
             background("whitesmoke");
             canvasElement.elt.style.border = "2px solid lightgray";
+          }
           root.display();
           toDraw = false;
         }
