@@ -228,7 +228,7 @@ function changeNodeOutlineColorShape(shapeRadious,shapeColor){
     activeNode.dis.strokeWeight = 3;
     activeNode.dis.r = shapeRadious;
     console.log(shapeRadious, "ist ye");
-    notificationSuccess('noti-shacol', 'noti-body-shacol', "Node changed successfully"); // Send success notification if node has been added.
+    notificationSuccess('noti-shacol', 'noti-body-shacol', "Node changed successfully!"); // Send success notification if node has been added.
 }
 
 function changeNodeLineToContinueLine(){
@@ -238,7 +238,7 @@ function changeNodeLineToContinueLine(){
     }
 
     activeNode.dis.lineList = [0];
-    notificationSuccess('noti-shacol', 'noti-body-shacol', "Connector changed successfully"); // Send success notification if node has been added.
+    notificationSuccess('noti-shacol', 'noti-body-shacol', "Connector changed successfully!"); // Send success notification if node has been added.
 }
 
 function changeNodeLineToDashed() {
@@ -248,7 +248,7 @@ function changeNodeLineToDashed() {
     }
 
     activeNode.dis.lineList = [10,10,10,10];
-    notificationSuccess('noti-shacol', 'noti-body-shacol', "Connector changed successfully"); // Send success notification if node has been added.
+    notificationSuccess('noti-shacol', 'noti-body-shacol', "Connector changed successfully!"); // Send success notification if node has been added.
 }
 
 function changeRefinementToAND() {
@@ -257,7 +257,7 @@ function changeRefinementToAND() {
         return;
     }
     activeNode.refinement = 1;
-    notificationSuccess('noti-shacol', 'noti-body-shacol', "Operator changed successfully"); // Send success notification if node has been added.
+    notificationSuccess('noti-shacol', 'noti-body-shacol', "Operator changed successfully!"); // Send success notification if node has been added.
 }
 
 function changeRefinementToOR() {
@@ -266,7 +266,7 @@ function changeRefinementToOR() {
         return;
     }
     activeNode.refinement = 0;
-    notificationSuccess('noti-shacol', 'noti-body-shacol', "Operator changed successfully"); // Send success notification if node has been added.
+    notificationSuccess('noti-shacol', 'noti-body-shacol', "Operator changed successfully!"); // Send success notification if node has been added.
 }
 
 function downloadCanvasPng(){
@@ -354,6 +354,21 @@ function notificationSuccess(notiEl, bodyEl, notificationContents) {
      }, 2000); // Remove notification after 2 seconds.
 }
 
+function notificationIsRootNode(notiEl, bodyEl, activeN) {
+  const noti = document.getElementById(notiEl);
+  const body = document.getElementById(bodyEl);
+  if (activeN === root) {
+      body.style.color = "red";
+      body.style.backgroundColor = "lightcoral";
+      noti.querySelector("." + bodyEl).innerHTML = "Error! Selected node is root node.";
+      noti.classList.add('visible');
+      setTimeout (() => {
+          noti.classList.remove('visible');
+      }, 2000); // Remove notification after 2 seconds.
+      return true;
+  }
+}
+
 function manAddChild(){
     console.log("[*] In manAddChild()");
     var input = document.getElementById("nodeChildTextInput").value;
@@ -437,6 +452,11 @@ function manDeleteChild(){
         // Send error notification if activeNode is undefined.
         return;
     }
+    if (notificationIsRootNode('noti-rem', 'noti-body-rem', activeNode)) {
+        // Send error notification if activeNode is root.
+        return;
+    }
+
     root.removeSubTree(activeNode); // Function removeSubtree gives error.
 
 
@@ -447,6 +467,7 @@ function manDeleteChild(){
     console.log("Scalevalue now: " + scaleValue);
     changeCoordinatesRec(scaleValue, root);
     document.getElementById("nodeTextInput").disabled = true;
+    document.getElementById("nodeTextInput").value = "";
     document.getElementById("nodeTextInput").setAttribute("placeholder", "No node selected...");
     notificationSuccess('noti-rem', 'noti-body-rem', "Node deleted successfully!"); // Send success notification if node has been deleted.
 }
