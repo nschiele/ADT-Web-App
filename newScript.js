@@ -861,10 +861,24 @@ function mouseReleased(){
     trackMouseStart = true;
     trackNode = null;
 
+    console.log(mouseX, canvasWidth, mouseY, canvasHeight);
+    if (clickedNode == null && activeNode != null && ((mouseX > (canvasWidth - canvasWidth) && mouseX < canvasWidth) && (mouseY > (canvasHeight - canvasHeight) && mouseY < canvasHeight))) {
+        console.log(mouseX, canvasWidth, canvasHeight);
+        console.log("NUUUUU");
+        activeDis.active = false;
+        activeNode = null;
+        // activeNode = null;
+    }
+
     if (activeNode != null) {
         document.getElementById("nodeTextInput").disabled = false;
-        document.getElementById("nodeTextInput").setAttribute("placeholder", activeNode.dis.t);
+        document.getElementById("nodeTextInput").setAttribute("value", activeNode.dis.t);
+    } else {
+        document.getElementById("nodeTextInput").disabled = true;
+        document.getElementById("nodeTextInput").setAttribute("value", "");
+        document.getElementById("nodeTextInput").setAttribute("placeholder", "No node selected...");
     }
+
 }
 
 function windowResized() {
