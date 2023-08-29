@@ -14,6 +14,7 @@ class ADTree{
         this.dis.tree = this;
         this.xmlNode;
         this.attackNodeHasDefenseNode; // To make sure an attack node only has one defense node.
+        this.defenseNodeHasAttackNode; // To make sure a defense node only has one attack node.
     }
 
 

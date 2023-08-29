@@ -325,13 +325,24 @@ function notificationTextLength(notiEl, bodyEl, textInput) {
     }
 }
 
-function notificationAlreadyDefenseNode(newNode, notiEl, bodyEl) {
+function notificationAlreadyDefenseNode(newNode, notiEl, bodyEl, defense) {
     const noti = document.getElementById(notiEl);
     const body = document.getElementById(bodyEl);
-    if (newNode.parent.attackNodeHasDefenseNode) {
+    console.log("ik ga huilie: ", defense);
+    if (newNode.parent.attackNodeHasDefenseNode && defense) {
         body.style.color = "red";
         body.style.backgroundColor = "lightcoral";
         noti.querySelector("." + bodyEl).innerHTML = "Error! Current node already has a defense node!";
+        noti.classList.add('visible');
+        setTimeout (() => {
+            noti.classList.remove('visible');
+        }, 2000); // Remove notification after 2 seconds.
+        return true;
+    }
+    else if (newNode.parent.defenseNodeHasAttackNode && !defense) {
+        body.style.color = "red";
+        body.style.backgroundColor = "lightcoral";
+        noti.querySelector("." + bodyEl).innerHTML = "Error! Current node already has an attack node!";
         noti.classList.add('visible');
         setTimeout (() => {
             noti.classList.remove('visible');
@@ -403,11 +414,17 @@ function manAddChild(){
     newNode.dis.strokeWeight = 3;
     newNode.dis.r = 50;
     // childTree.children.at(-1).dis.lineList = [10, 10, 10, 10];
+    var defense;
 
     if (document.getElementById("flexSwitchCheckDefault").checked == 1) {
+        console.log("is defense");
+        defense = false;
         // Check if defense check has been checked.
         // Change look to defense child.
-        if (notificationAlreadyDefenseNode(newNode, 'noti-add', 'noti-body-add')) {
+        if (newNode.parent.type == 0) {
+          defense = true;
+        }
+        if (notificationAlreadyDefenseNode(newNode, 'noti-add', 'noti-body-add', defense) && defense) {
             root.removeSubTree(newNode);
             activeNode.dis.adjust_textbox();
             activeNode.update_width();
@@ -419,8 +436,33 @@ function manAddChild(){
         newNode.dis.stroke = color('green');
         newNode.dis.strokeWeight = 3;
         newNode.dis.r = 1;
-        newNode.parent.attackNodeHasDefenseNode = true;
+        if (newNode.parent.type == 0)
+          newNode.parent.attackNodeHasDefenseNode = true;
         // activeNode.children.at(-1).dis.lineList = [10,10,10,10];
+    } else if (document.getElementById("flexSwitchCheckDefault").checked == 0) {
+      defense = true;
+
+      console.log("ik ga huilie: ", newNode.parent);
+      if (newNode.parent.type == 1) {
+        console.log("ik ga huilie: ", newNode.parent.type);
+        defense = false;
+      }
+      if (notificationAlreadyDefenseNode(newNode, 'noti-add', 'noti-body-add', defense) && !defense) {
+        root.removeSubTree(newNode);
+        activeNode.dis.adjust_textbox();
+        activeNode.update_width();
+        windowResized();
+        resetScaleCoordinates(root, 1);
+        changeCoordinatesRec(scaleValue, root);
+        return;
+      }
+      // newNode.dis.stroke = color('green');
+      // newNode.dis.strokeWeight = 3;
+      // newNode.dis.r = 1;
+      
+      if (newNode.parent.type === 1) { 
+        newNode.parent.defenseNodeHasAttackNode = true;
+      }
     }
     activeNode.dis.adjust_textbox();
     activeNode.update_width();
