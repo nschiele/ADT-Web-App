@@ -401,9 +401,6 @@ function manAddChild(){
 
     // We check if some elements are now "out of the canvas". Then we resize.
 
-
-
-
     var newWidth = checkTreeWidth(root);
 
     console.log("NEWWIDTH: " + newWidth);
@@ -504,6 +501,11 @@ function manDeleteChild(){
 
     root.removeSubTree(activeNode); // Function removeSubtree gives error.
 
+    if (activeNode.parent.type == 0 && activeNode.type == 1) {
+      activeNode.parent.attackNodeHasDefenseNode = false;
+    } else if (activeNode.parent.type == 1 && activeNode.type == 0) {
+      activeNode.parent.defenseNodeHasAttackNode = false;
+    }
 
     activeNode = undefined;
     windowResized();
