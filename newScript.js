@@ -485,7 +485,8 @@ function manChangeChild(){
     }
     activeNode.label = input;
     activeNode.dis.t = input;
-    document.getElementById("nodeTextInput").setAttribute("placeholder", activeNode.dis.t);
+    document.getElementById("nodeTextInput").setAttribute("value", "");
+    // document.getElementById("nodeTextInput").setAttribute("value", input);
     activeNode.dis.adjust_textbox();
     activeNode.update_width();
     draw();
@@ -533,35 +534,19 @@ async function downloadADT(selectedFormat) {
 }
 
 async function downloadPrep() {
-    console.log("whoop");
-    var selectedFormat = document.getElementById("formatDropdown").value;
+    // var selectedFormat = document.getElementById("formatDropdown").value;
+    var selectedFormat = "xml";
     try {
-        var file = await downloadADT(selectedFormat);
-        console.log("yayayayay: ", file);
-        var input;
-        if (selectedFormat === 'json') {
-            input = await build_json(file);
-            // const visited = new WeakSet();
-            // input = JSON.stringify(input, (key, value) => {
-            //     if (typeof value === 'object' && value !== null) {
-            //         if (visited.has(value)) {
-            //             return '[Circular Reference]';
-            //         }
-            //         visited.add(value);
-            //     }
-            //     return value;
-            // });
-            input = Flatted.stringify(input);
-            console.log("YA: ", file);
-        } else {
-            input = file;
-        }
-        var blob = new Blob([input], { type: "text/plain"});
-        var downloadLink = document.createElement("a");
-        downloadLink.href = URL.createObjectURL(blob);
-        console.log("YA: ", input);
-        downloadLink.download = "SavedADT." + selectedFormat;
-        downloadLink.click();
+      var file = await downloadADT(selectedFormat);
+      console.log("yayayayay: ", file);
+      var input;
+      input = file;
+      var blob = new Blob([input], { type: "text/plain"});
+      var downloadLink = document.createElement("a");
+      downloadLink.href = URL.createObjectURL(blob);
+      console.log("YA: ", input);
+      downloadLink.download = "SavedADT." + selectedFormat;
+      downloadLink.click();
     } catch(error) {
         console.error("Error:", error);
     }
@@ -570,30 +555,26 @@ async function downloadPrep() {
 function uploadADT() {
     console.log("[*] In uploadADT()");
     return new Promise(function(resolve, reject) {
-        var ADTInput = document.getElementById('ADTInput');
-        console.log(ADTInput);
-        ADTInput.click();
-        ADTInput.addEventListener('change', function(event) {
-            var file = event.target.files[0];
-            if (file) {
-                console.log("JSON: ", file);
-                var fileName = file.name;
-                var fileExt = fileName.split('.').pop();
+      var ADTInput = document.getElementById('ADTInput');
+      console.log(ADTInput);
+      ADTInput.click();
+      ADTInput.addEventListener('change', function(event) {
+        var file = event.target.files[0];
+        if (file) {
+          var fileName = file.name;
+          var fileExt = fileName.split('.').pop();
 
-                if (fileExt === 'xml') {
-                    console.log("XML");
-                    resolve(file);
-                } else if (fileExt === 'json') {
-                    console.log("JSON");
-                    resolve(file)
-                } else {
-                    console.log("Unsupported");
-                    reject(new Error("Unsupported file type"));
-                }
-            } else {
-                reject(new Error("No file selected"));
-            }
-        });
+          if (fileExt === 'xml') {
+              console.log("XML");
+              resolve(file);
+          } else {
+              console.log("Unsupported");
+              reject(new Error("Unsupported file type"));
+          }
+        } else {
+            reject(new Error("No file selected"));
+        }
+      });
     });
 }
 
@@ -605,11 +586,7 @@ async function buildFromUpload() {
         if (fileExt === 'xml') {
             input = await getJson(0, file);
             console.log("YA: ", file);
-        } else {
-            var temp = file;
-            console.log("JSON: ", temp);
-            input = Flatted.parse(temp);
-        }
+        } 
         buildFromMultiset(input);
         root.initialColor();
         draw();
@@ -869,7 +846,8 @@ function mouseReleased(){
         activeNode = null;
         // activeNode = null;
     }
-
+   
+    document.getElementById("nodeTextInput").setAttribute("value", "");
     if (activeNode != null) {
         document.getElementById("nodeTextInput").disabled = false;
         document.getElementById("nodeTextInput").setAttribute("value", activeNode.dis.t);
