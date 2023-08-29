@@ -421,6 +421,8 @@ function manAddChild(){
         defense = false;
         // Check if defense check has been checked.
         // Change look to defense child.
+
+        // If parent is attack node, only one defense node
         if (newNode.parent.type == 0) {
           defense = true;
         }
@@ -436,15 +438,15 @@ function manAddChild(){
         newNode.dis.stroke = color('green');
         newNode.dis.strokeWeight = 3;
         newNode.dis.r = 1;
+        // If parent is defense node and hasn't had attack node yet, set it now that it does have a defense node
         if (newNode.parent.type == 0)
           newNode.parent.attackNodeHasDefenseNode = true;
         // activeNode.children.at(-1).dis.lineList = [10,10,10,10];
     } else if (document.getElementById("flexSwitchCheckDefault").checked == 0) {
       defense = true;
 
-      console.log("ik ga huilie: ", newNode.parent);
+      // If parent is defense node, only one attack node
       if (newNode.parent.type == 1) {
-        console.log("ik ga huilie: ", newNode.parent.type);
         defense = false;
       }
       if (notificationAlreadyDefenseNode(newNode, 'noti-add', 'noti-body-add', defense) && !defense) {
@@ -460,6 +462,7 @@ function manAddChild(){
       // newNode.dis.strokeWeight = 3;
       // newNode.dis.r = 1;
       
+      // If parent is defense node and hasn't had attack node yet, set it now that it does have an attack node
       if (newNode.parent.type === 1) { 
         newNode.parent.defenseNodeHasAttackNode = true;
       }
@@ -759,6 +762,24 @@ async function buildFromMultiset(toBuild, parent=null){
             var child = new ADTree(toBuild.label, IDnumber); // Get label of current node
             child.refinement = toBuild.refinement;
             child.type = toBuild.swith_role;
+
+            // Check if attack- and defense nodes only have 1 defense node and attack node resp.
+            if (parent.type == 0 && child.type == 1) {
+              if (parent.attackNodeHasDefenseNode){
+                console.log("Already has defense node!");
+                return;
+              } else {
+                parent.attackNodeHasDefenseNode = true;
+              }
+            } else if (parent.type == 1 && child.type == 0) {
+              if (parent.defenseNodeHasAttackNode){
+                console.log("Already has attack node!");
+                return;
+              } else {
+                parent.defenseNodeHasAttackNode = true;
+              }
+            }
+
             parent.add_child(child, new Display(toBuild.label, 0, 0, 2));
             IDnumber++;
 
@@ -773,6 +794,24 @@ async function buildFromMultiset(toBuild, parent=null){
       } else if (!(toBuild == null || toBuild == undefined)){
             var child = new ADTree(toBuild.label, IDnumber); // Get label of child
             child.type = toBuild.swith_role;
+
+            // Check if attack- and defense nodes only have 1 defense node and attack node resp.
+            if (parent.type == 0 && child.type == 1) {
+              if (parent.attackNodeHasDefenseNode){
+                console.log("Already has defense node!");
+                return;
+              } else {
+                parent.attackNodeHasDefenseNode = true;
+              }
+            } else if (parent.type == 1 && child.type == 0) {
+              if (parent.defenseNodeHasAttackNode){
+                console.log("Already has attack node!");
+                return;
+              } else {
+                parent.defenseNodeHasAttackNode = true;
+              }
+            }
+            
             parent.add_child(child, new Display(toBuild.label, 0, 0, 2));
             // console.log("a leafje", toBuild.label);
             IDnumber++;
