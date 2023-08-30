@@ -231,9 +231,9 @@ function changeNodeOutlineColorShape(shapeRadious,shapeColor){
     // if (activeNode.dis.stroke.levels[0] === 0 && activeNode.dis.stroke.levels[1] === 0) {
       
     // }
-    if (activeNode.dis.stroke.levels[0] === 255 && shapeColor != "black") {
+    if (activeNode.dis.stroke.levels[0] === 255 && shapeColor == "green") {
       attack = true;
-    } else if (activeNode.dis.stroke.levels[1] === 128 && shapeColor != "black") {
+    } else if (activeNode.dis.stroke.levels[1] === 128 && shapeColor == "red") {
       attack = false;
     } else if (shapeColor == "black") {
       console.log("black selected");
@@ -244,8 +244,8 @@ function changeNodeOutlineColorShape(shapeRadious,shapeColor){
       isBlack = true;
       otherType = true;
     }
-    console.log("the attac: ", attack, shapeColor);
-    if (activeNode.children && activeNode.children.length > 0 && !isBlack) {
+    console.log("the attac: ", attack, shapeColor, activeNode.children.length);
+    if (activeNode.parent.children && activeNode.parent.children.length > 0 && !isBlack) {
       // check child nodes function
       console.log("es gibt kids");
       if (!activeNode.checkParentChild(attack)) {

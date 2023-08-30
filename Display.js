@@ -296,9 +296,9 @@ class Display {
             }
         }
         // If red round (attack) and change manually to green square (defense), also changes type in ADTree object (and vice versa)
-        if ((this.stroke.levels[0] === 255 && this.r === 50) && this.tree.type === 1) {
+        if ((this.stroke.levels[0] === 255) && this.tree.type === 1) {
             this.tree.type = 0;
-        } else if ((this.stroke.levels[1] === 128 && this.r === 1) && this.tree.type === 0) {
+        } else if ((this.stroke.levels[1] === 128) && this.tree.type === 0) {
             this.tree.type = 1;
         }
 

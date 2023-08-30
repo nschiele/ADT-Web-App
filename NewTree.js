@@ -212,19 +212,52 @@ class ADTree{
     }
 
     checkParentChild(attack) {
-        if (attack) {
-            if (this.parent.type == 1 && this.parent.defenseNodeHasAttackNode) {
-                return false;
-            } else if (this.parent.type == 1 && !this.parent.defenseNodeHasAttackNode) {
+        if (attack) { // Attack node, user wants to make this defense node
+            // if (this.parent.type == 1 && this.parent.defenseNodeHasAttackNode) {
+            //     return false;
+            // } else if (this.parent.type == 1 && !this.parent.defenseNodeHasAttackNode) {
+            //     return true;
+            // }
+            var attNodeCounter = 0;
+            if (this.parent.type === 1) {
                 return true;
+            }else if (this.parent.type === 0 && this.parent.children && this.parent.children.length > 0) {
+                for (let i = 0; i < this.parent.children.length; i++) {
+                    if (this.parent.children[i].type === 0) {
+                        attNodeCounter++;
+                    }
+                }
+                console.log("att: ", attNodeCounter);
+                if (attNodeCounter === 0) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
-        } else if (!attack) {
-            if (this.parent.type == 0 && this.parent.attackNodeHasDefenseNode) {
-                return false;
-            } else if (this.parent.type == 0 && !this.parent.attackNodeHasDefenseNode) {
+        } else if (!attack) { // Defense node, user wants to make this attack node
+            // if (this.parent.type == 0 && this.parent.attackNodeHasDefenseNode) {
+            //     return false;
+            // } else if (this.parent.type == 0 && !this.parent.attackNodeHasDefenseNode) {
+            //     return true;
+            // }
+            var defNodeCounter = 0;
+            if (this.parent.type === 0) {
                 return true;
+            }else if (this.parent.type === 1 && this.parent.children && this.parent.children.length > 0) {
+                for (let i = 0; i < this.parent.children.length; i++) {
+                    if (this.parent.children[i].type === 1) {
+                        console.log("maar wat?? DEF");
+                        defNodeCounter++;
+                    }
+                }
+                if (defNodeCounter === 0) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
         }
+        return false;
     }
 
     // setNodeStruc(parent) {
