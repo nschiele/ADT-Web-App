@@ -211,6 +211,22 @@ class ADTree{
         }
     }
 
+    checkParentChild(attack) {
+        if (attack) {
+            if (this.parent.type == 1 && this.parent.defenseNodeHasAttackNode) {
+                return false;
+            } else if (this.parent.type == 1 && !this.parent.defenseNodeHasAttackNode) {
+                return true;
+            }
+        } else if (!attack) {
+            if (this.parent.type == 0 && this.parent.attackNodeHasDefenseNode) {
+                return false;
+            } else if (this.parent.type == 0 && !this.parent.attackNodeHasDefenseNode) {
+                return true;
+            }
+        }
+    }
+
     // setNodeStruc(parent) {
     //     if (this !== root) {
 

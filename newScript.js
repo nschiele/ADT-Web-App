@@ -217,18 +217,61 @@ function btnChangeNodeText(){
     console.log("[*] In btnChangeNodeText()");
     var newNodeText = select("#nodeTextInput").value();
     // to be continued
- }
+}
+
 function changeNodeOutlineColorShape(shapeRadious,shapeColor){
     console.log("[*] In changeNodeOutlineColorShape()");
     if (notificationCheckNode('noti-shacol', 'noti-body-shacol')) {
         return;
     }
-    nodeOutLineColor = true;
-    activeNode.dis.stroke = color(shapeColor);
-    activeNode.dis.strokeWeight = 3;
-    activeNode.dis.r = shapeRadious;
-    console.log(shapeRadious, "ist ye");
-    notificationSuccess('noti-shacol', 'noti-body-shacol', "Node changed successfully!"); // Send success notification if node has been added.
+    var attack;
+    var isBlack = false;
+    var turnToBlack = false;
+    var otherType = false;
+    // if (activeNode.dis.stroke.levels[0] === 0 && activeNode.dis.stroke.levels[1] === 0) {
+      
+    // }
+    if (activeNode.dis.stroke.levels[0] === 255 && shapeColor != "black") {
+      attack = true;
+    } else if (activeNode.dis.stroke.levels[1] === 128 && shapeColor != "black") {
+      attack = false;
+    } else if (shapeColor == "black") {
+      console.log("black selected");
+      turnToBlack = true;
+      // otherType = true;
+    } else {
+      console.log("black selected in shape");
+      isBlack = true;
+      otherType = true;
+    }
+    console.log("the attac: ", attack, shapeColor);
+    if (activeNode.children && activeNode.children.length > 0 && !isBlack) {
+      // check child nodes function
+      console.log("es gibt kids");
+      if (!activeNode.checkParentChild(attack)) {
+        if ((attack && shapeColor == "green") || (!attack && shapeColor == "red"))  {
+          return;
+        } else {
+          otherType = true;
+        }
+      }
+      console.log("this geht gut");
+    }
+    if (!otherType) {
+      if (attack) {
+        activeNode.parent.defenseNodeHasAttackNode = true;
+      } else if (!attack) {
+        activeNode.parent.attackNodeHasDefenseNode = true;
+      }
+    }
+    console.log(isBlack, shapeColor, activeNode.type);
+    if ((isBlack && (shapeColor == "red" && activeNode.type == 0) || (shapeColor == "green" && activeNode.type == 1)) || !isBlack || turnToBlack ) {
+      nodeOutLineColor = true;
+      activeNode.dis.stroke = color(shapeColor);
+      activeNode.dis.strokeWeight = 3;
+      activeNode.dis.r = shapeRadious;
+      notificationSuccess('noti-shacol', 'noti-body-shacol', "Node changed successfully!"); // Send success notification if node has been added.
+    }
 }
 
 function changeNodeLineToContinueLine(){
