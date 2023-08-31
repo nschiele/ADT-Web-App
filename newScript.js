@@ -253,6 +253,7 @@ function changeNodeOutlineColorShape(shapeRadious,shapeColor){
     }
     if (!otherType && activeNode.parent != null) {
       if (attack) {
+        console.log("Is now defense");
         activeNode.parent.defenseNodeHasAttackNode = true;
       } else if (!attack) {
         activeNode.parent.attackNodeHasDefenseNode = true;
@@ -908,10 +909,12 @@ function draw(){
           if (saveOn) {
             // Saving mode on, saving canvas.
             background("white");
-            activeNode.dis.active = false; // Turn active node off for jpg
+            if (activeNode != null) 
+              activeNode.dis.active = false; // Turn active node off for jpg
             root.display(); // Draw tree with scale = 1 and white background
             saveCanvas(canvasElement, fileName, 'jpg'); // Actually saving the canvas
-            activeNode.dis.active = true; // Turn active node back on
+            if (activeNode != null)
+              activeNode.dis.active = true; // Turn active node back on
             saveOn = false; // Turn off the saving mode
             scaleValue = orgScaleVal; // Resizing to previous scale
             draw(); // Rerun with Saving mode off
