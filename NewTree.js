@@ -217,17 +217,19 @@ class ADTree{
             // Parent check
             // Check if parent is defense already, then just return true.
             var defNodeCounter = 0;
-            if (this.parent.type === 0 && this.parent.children && this.parent.children.length > 0) {
-                // If attack node, then count all parents children, and check how many are defense nodes.
-                for (let i = 0; i < this.parent.children.length; i++) {
-                    if (this.parent.children[i].type === 1) {
-                        defNodeCounter++;
+            if (this.parent != null) {
+                if ((this.parent.type === 0 && this.parent.children && this.parent.children.length > 0) || (this.parent === null)) {
+                    // If attack node, then count all parents children, and check how many are defense nodes.
+                    for (let i = 0; i < this.parent.children.length; i++) {
+                        if (this.parent.children[i].type === 1) {
+                            defNodeCounter++;
+                        }
                     }
+                    if (defNodeCounter != 0) {
+                        // If 1 or more defense children, and attack parent, then no more defense children allowed.
+                        return -1;
+                    } 
                 }
-                if (defNodeCounter != 0) {
-                    // If 1 or more defense children, and attack parent, then no more defense children allowed.
-                    return -1;
-                } 
             }
             // Children check
             // Check if any children of attack node that will be defense node are attack nodes.
@@ -250,18 +252,20 @@ class ADTree{
             // Parent check
             // Check if parent is attack already, then just return true.
             var attNodeCounter = 0;
-            if (this.parent.type === 1 && this.parent.children && this.parent.children.length > 0) {
-                // If defense node, then count all parents children, and check how many are attack nodes.
-                for (let i = 0; i < this.parent.children.length; i++) {
-                    if (this.parent.children[i].type === 0) {
-                        attNodeCounter++;
+            if (this.parent != null) {
+                if ((this.parent.type === 1 && this.parent.children && this.parent.children.length > 0) || (this.parent === null)) {
+                    // If defense node, then count all parents children, and check how many are attack nodes.
+                    for (let i = 0; i < this.parent.children.length; i++) {
+                        if (this.parent.children[i].type === 0) {
+                            attNodeCounter++;
+                        }
                     }
-                }
-                if (attNodeCounter != 0) {
-                    // If 1 or more attack children, and defense parent, then no more attack children allowed.
-                    return -1;
-                }
-            } 
+                    if (attNodeCounter != 0) {
+                        // If 1 or more attack children, and defense parent, then no more attack children allowed.
+                        return -1;
+                    }
+                } 
+            }
             // Children check
             // Check if any children of defense node that will be attack node are defense nodes.
             var defChildrenCounter = 0;

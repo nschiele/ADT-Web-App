@@ -242,7 +242,7 @@ function changeNodeOutlineColorShape(shapeRadious,shapeColor){
       isBlack = true;
       otherType = true;
     }
-    if (activeNode.parent.children && activeNode.parent.children.length > 0 && !isBlack) {
+    if (!isBlack) {
       // check child nodes function
       var returnCode = activeNode.checkParentChild(attack, parentCheck);
       if (returnCode < 0) {
