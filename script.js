@@ -344,6 +344,7 @@ function draw(){
       root.x = root.width/2;
       root.adjust_children();
     } else {
+    console.log("mama mia", width);
     root.x = (width - root.width)/2 + root.width/2;
     root.adjust_children();
     }
@@ -412,8 +413,8 @@ function windowResized() {
   var frameX = (windowWidth - sideFrameWidth)
   scaled = frameX/(root.width*1.2);
   sidePanel.position(frameX, 0);
+  console.log("size: ", windowWidth, windowHeight);
   resizeCanvas(windowWidth, windowHeight);
   // resizeCanvas(canvasWidth,canvasHeight);
   toDraw  = true;
 }
-

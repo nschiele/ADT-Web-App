@@ -1,0 +1,133 @@
+Request for font "Gill Sans" blocked at visibility level 3 (requires 4)
+index.html
+Gebruik van de richtingssensor wordt niet meer ondersteund. p5.js:61006:23
+Gebruik van de bewegingssensor wordt niet meer ondersteund. p5.js:61006:23
+[*] In setup() newScript.js:40:13
+[*] In getJson() json_func.js:16:13
+[*] In convert() json_func.js:341:13
+[*] In getXML() json_func.js:23:13
+[*] In build_json() json_func.js:222:13
+[*] In find_label() json_func.js:117:13
+[*] In find_ref_rol() 2 json_func.js:134:13
+[*] In find_par() json_func.js:169:13
+[*] In insert() json_func.js:59:11
+[*] In find_label() json_func.js:117:13
+[*] In find_ref_rol() 2 json_func.js:134:13
+[*] In find_par() json_func.js:169:13
+[*] In insert() json_func.js:59:11
+[*] In find_label() json_func.js:117:13
+[*] In find_ref_rol() 2 json_func.js:134:13
+[*] In find_par() json_func.js:169:13
+[*] In insert() json_func.js:59:11
+[*] In find_label() json_func.js:117:13
+[*] In find_ref_rol() 2 json_func.js:134:13
+[*] In find_par() json_func.js:169:13
+[*] In insert() json_func.js:59:11
+[*] In find_label() json_func.js:117:13
+[*] In find_ref_rol() 2 json_func.js:134:13
+[*] In find_par() json_func.js:169:13
+[*] In insert() json_func.js:59:11
+[*] In find_label() json_func.js:117:13
+[*] In find_ref_rol() 2 json_func.js:134:13
+[*] In find_par() json_func.js:169:13
+[*] In insert() json_func.js:59:11
+[*] In find_label() json_func.js:117:13
+[*] In find_ref_rol() 2 json_func.js:134:13
+[*] In find_par() json_func.js:169:13
+[*] In insert() json_func.js:59:11
+[*] In find_label() json_func.js:117:13
+[*] In find_ref_rol() 2 json_func.js:134:13
+[*] In find_par() json_func.js:169:13
+[*] In insert() json_func.js:59:11
+[*] In find_label() json_func.js:117:13
+[*] In find_ref_rol() 2 json_func.js:134:13
+[*] In find_par() json_func.js:169:13
+[*] In insert() json_func.js:59:11
+[*] In find_label() json_func.js:117:13
+[*] In find_ref_rol() 2 json_func.js:134:13
+[*] In find_par() json_func.js:169:13
+[*] In insert() json_func.js:59:11
+[*] In find_label() json_func.js:117:13
+[*] In find_ref_rol() 2 json_func.js:134:13
+[*] In find_par() json_func.js:169:13
+[*] In insert() json_func.js:59:11
+[*] In find_label() json_func.js:117:13
+[*] In find_ref_rol() 2 json_func.js:134:13
+[*] In find_par() json_func.js:169:13
+[*] In insert() json_func.js:59:11
+[*] In find_label() json_func.js:117:13
+[*] In find_ref_rol() 2 json_func.js:134:13
+[*] In find_par() json_func.js:169:13
+[*] In insert() json_func.js:59:11
+[*] In find_label() json_func.js:117:13
+[*] In find_ref_rol() 2 json_func.js:134:13
+[*] In find_par() json_func.js:169:13
+[*] In insert() json_func.js:59:11
+[*] In find_label() json_func.js:117:13
+[*] In find_ref_rol() 2 json_func.js:134:13
+[*] In find_par() json_func.js:169:13
+[*] In insert() json_func.js:59:11
+[*] In find_label() json_func.js:117:13
+[*] In find_ref_rol() 2 json_func.js:134:13
+[*] In find_par() json_func.js:169:13
+[*] In insert() json_func.js:59:11
+[*] In to_json() 16 json_func.js:31:13
+Object { 0: {…} }
+json_func.js:347:17
+WAT:  
+Object { 0: {…} }
+newScript.js:129:13
+[*] In buildFromMultiset() newScript.js:426:13
+undefined newScript.js:427:13
+[*] In buildFromMultiset() newScript.js:426:13
+Object { children: [], type: 0, refinement: 0, id: 1, label: "Bank Account", parent: null, root: {…}, dis: {…} }
+newScript.js:427:13
+[*] In buildFromMultiset() newScript.js:426:13
+Object { children: (1) […], type: 0, refinement: 0, id: 1, label: "Bank Account", parent: null, root: {…}, dis: {…} }
+newScript.js:427:13
+[*] In buildFromMultiset() newScript.js:426:13
+Object { children: (1) […], type: 0, refinement: 0, id: 1, label: "Bank Account", parent: null, root: {…}, dis: {…} }
+newScript.js:427:13
+[*] In buildFromMultiset() newScript.js:426:13
+Object { children: (1) […], type: 0, refinement: 0, id: 1, label: "Bank Account", parent: null, root: {…}, dis: {…} }
+newScript.js:427:13
+[*] In buildFromMultiset() newScript.js:426:13
+Object { children: (1) […], type: 0, refinement: 0, id: 1, label: "Bank Account", parent: null, root: {…}, dis: {…} }
+newScript.js:427:13
+[*] In buildFromMultiset() newScript.js:426:13
+Object { children: (1) […], type: 0, refinement: 0, id: 1, label: "Bank Account", parent: null, root: {…}, dis: {…} }
+newScript.js:427:13
+[*] In buildFromMultiset() newScript.js:426:13
+Object { children: (1) […], type: 0, refinement: 0, id: 1, label: "Bank Account", parent: null, root: {…}, dis: {…} }
+newScript.js:427:13
+[*] In buildFromMultiset() newScript.js:426:13
+Object { children: (2) […], type: 0, refinement: 0, id: 1, label: "Bank Account", parent: null, root: {…}, dis: {…} }
+newScript.js:427:13
+[*] In buildFromMultiset() newScript.js:426:13
+Object { children: (2) […], type: 0, refinement: 0, id: 1, label: "Bank Account", parent: null, root: {…}, dis: {…} }
+newScript.js:427:13
+[*] In buildFromMultiset() newScript.js:426:13
+Object { children: (2) […], type: 0, refinement: 0, id: 1, label: "Bank Account", parent: null, root: {…}, dis: {…} }
+newScript.js:427:13
+[*] In buildFromMultiset() newScript.js:426:13
+Object { children: (2) […], type: 0, refinement: 0, id: 1, label: "Bank Account", parent: null, root: {…}, dis: {…} }
+newScript.js:427:13
+[*] In buildFromMultiset() newScript.js:426:13
+Object { children: (2) […], type: 0, refinement: 0, id: 1, label: "Bank Account", parent: null, root: {…}, dis: {…} }
+newScript.js:427:13
+[*] In buildFromMultiset() newScript.js:426:13
+Object { children: (2) […], type: 0, refinement: 0, id: 1, label: "Bank Account", parent: null, root: {…}, dis: {…} }
+newScript.js:427:13
+[*] In buildFromMultiset() newScript.js:426:13
+Object { children: (2) […], type: 0, refinement: 0, id: 1, label: "Bank Account", parent: null, root: {…}, dis: {…} }
+newScript.js:427:13
+[*] In buildFromMultiset() newScript.js:426:13
+Object { children: (2) […], type: 0, refinement: 0, id: 1, label: "Bank Account", parent: null, root: {…}, dis: {…} }
+newScript.js:427:13
+[*] In buildFromMultiset() newScript.js:426:13
+Object { children: (2) […], type: 0, refinement: 0, id: 1, label: "Bank Account", parent: null, root: {…}, dis: {…} }
+newScript.js:427:13
+[*] In draw() 1619 newScript.js:468:13
+
+🌸 p5.js says: [debugger eval code, line 1] copy() was expecting at least 8 arguments, but received only 1. (http://p5js.org/reference/#/p5/copy) p5.js:57167:18
+[*] In draw() 486 newScript.js:468:13

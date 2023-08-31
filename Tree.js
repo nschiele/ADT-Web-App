@@ -84,6 +84,7 @@ class Tree {
   }
 
   adjust_text(){
+    console.log("text: ", this.t);
     if(this.t.length > 40){
       for(let i = parseInt(this.t.length/2 - 10); i<parseInt(this.t.length/2 + 10); i++){
           //First space in the middle of the text
@@ -189,6 +190,7 @@ class Tree {
         //Handling Child Y Location
         this.children[i].y = this.y + 100;
         this.children[i].level = this.level + 1;
+        console.log("AAA", curr_x);
     }
     for(let i = 0; i < this.children.length; i++){
       this.children[i].adjust_children();
@@ -228,6 +230,7 @@ class Tree {
 
     fill(this.c)
     rect(this.x, this.y, this.x_range, this.y_range, this.r);
+    console.log("boxxie: ", this.x, this.y, this.x_range, this.y_range, this.r);
     stroke("black"); // reset
     strokeWeight(1); // reset
 
