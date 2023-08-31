@@ -1,0 +1,1 @@
+create attack node "Root" with children "1","2" has and relation;

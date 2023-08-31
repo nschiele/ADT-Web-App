@@ -33,7 +33,7 @@ module.exports = {
             this.xmlNodes = [];
             this.executeStatements();
             this.xmlTree = new xmlbuilder.XMLTree(this.xmlNodes[0]);
-            this.xmlTree.print('  ');
+            this.xmlstring = this.xmlTree.print('  ');
         }
         executeStatements()
         {
@@ -81,6 +81,8 @@ module.exports = {
 
                     let from = this.findXMLNode(statement.values.from);
                     let to = this.findXMLNode(statement.values.to);
+
+                    if(this.find(from, to.label)) throw Error(`[Runtime Error in Append Statement] appending node with label: "${statement.values.from}" to node with label: "${statement.values.to}" creates a cycle`);
                     to.append(from);
                     break;
                 }

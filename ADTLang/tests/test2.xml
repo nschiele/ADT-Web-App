@@ -1,0 +1,12 @@
+<?xml version='1.0'?>
+<adtree>
+  <node refinement="conjuctive">
+    <label>Root</label>
+      <node refinement="disjunctive">
+        <label>1</label>
+      </node>
+      <node refinement="disjunctive">
+        <label>2</label>
+      </node>
+  </node>
+</adtree>

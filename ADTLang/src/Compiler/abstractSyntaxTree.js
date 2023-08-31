@@ -35,7 +35,7 @@ module.exports = {
         }
         addSymbol(symbol)
         {
-            if(this.findSymbol(symbol.label) !== null) throw new Error("Symbol is already defined");
+            if(this.findSymbol(symbol.label) !== null) throw new Error(`[Semantic Error in Create Statement] node with label: "${symbol.label}" is already defined`);
             this.symbols.push(symbol);
         }
         findSymbol(label)
@@ -109,8 +109,8 @@ module.exports = {
                 case module.exports.NodeType.APPEND:
                 {
                     let variable = node.values;
-                    if(this.abstractSyntaxTree.symbolTable.findSymbol(variable.to) === null ) throw new Error("Symbol could not be found");
-                    if(this.abstractSyntaxTree.symbolTable.findSymbol(variable.from) === null ) throw new Error("Symbol could not be found");
+                    if(this.abstractSyntaxTree.symbolTable.findSymbol(variable.to) === null ) throw new Error(`[Semantic Error in append statement] Node with label: "${variable.to}" could not be found`);
+                    if(this.abstractSyntaxTree.symbolTable.findSymbol(variable.from) === null ) throw new Error(`[Semantic Error in append statement] Node with label: "${variable.from}" could not be found`);
                     let intermediateStatement = new icg.IntermediateStatement(icg.IntermediateStatementType.APPEND, variable);
                     this.intermediateCode.addStatement(intermediateStatement);                    
                     break;

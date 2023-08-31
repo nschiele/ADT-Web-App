@@ -1,0 +1,8 @@
+create attack node "Root";
+create defense node "Countermeasure" append to "Root";
+create attack node "1";
+create attack node "2";
+create attack node "3";
+append "1","2","3" to "Root";
+create attack node "4" append to "Countermeasure";
+append "1" to "4";

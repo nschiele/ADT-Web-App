@@ -1,6 +1,9 @@
 const readline = require('readline');
 const comp = require('./Compiler/compiler');
 
+
+
+
 // just evaluate if argument is given
 if (process.argv.length > 2) {
     //const result  = evaluator.evaluate(process.argv[2]);

@@ -1,21 +1,22 @@
-  ADTLangGrammar {
+  ADTLangGrammar{
     Start 
         = Statements
 
     Statements
-        = Statement*
+        = Statement+
     
     Statement
         = CreateStatement
         | AppendStatement
-        | UpdateStatement
 
     CreateStatement
-        = create NodeType Children? label is string Relation?
+        = create NodeType (label is)? string Children? Relation? CreateAppend? endstatement
 
     AppendStatement
-        = append StringList to string Relation? -- samenode
-        | append counter node to string -- counternode
+        = append StringList to string endstatement
+    
+    CreateAppend
+        = append to string
     
     UpdateStatement
         = update StringList attribute StringList
@@ -31,11 +32,10 @@
         = has booleanoperator relation
     
     Children
-        = with digit+ children StringList -- children
+        = with children StringList
     
     StringList
-        = StringList "," string -- list
-        | string
+        = NonemptyListOf<string, ",">
 
     NodeType
         = type node
@@ -83,17 +83,24 @@
     to
         = "to"
 
-
     string
         = quotes words quotes
     
     words
-        = words space word -- wordlist
-        | word
+        = word  (spaces word)*
 
     word
         = (letter | digit)+
 
     quotes
         = "\""
+    
+    comment 
+        = "#" any*
+
+    space
+        += comment
+
+    endstatement
+        = ";"
   }

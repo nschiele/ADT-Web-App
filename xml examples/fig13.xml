@@ -2,7 +2,7 @@
 <adtree>
   <node refinement="disjunctive">
     <label>Bank Account</label>
-      <node refinement="conjuctive">
+      <node refinement="conjunctive">
         <label>ATM</label>
           <node refinement="disjunctive">
             <label>Card</label>
@@ -20,7 +20,7 @@
               </node>
           </node>
       </node>
-      <node refinement="conjuctive">
+      <node refinement="conjunctive">
         <label>Online</label>
           <node refinement="disjunctive">
             <label>Username</label>

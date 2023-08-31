@@ -7,8 +7,115 @@ module.exports = {
     {
         constructor()
         {
-            this.contents = fs.readFileSync('Compiler/ADTLang.ohm', 'utf-8');
-            this.grammar = ohm.grammar(this.contents);
+            //this.contents = fs.readFileSync('Compiler/ADTLang.ohm', 'utf-8');
+            this.gramdef = `ADTLangGrammar{
+                Start 
+                    = Statements
+            
+                Statements
+                    = Statement+
+                
+                Statement
+                    = CreateStatement
+                    | AppendStatement
+                    | UpdateStatement
+            
+                CreateStatement
+                    = create NodeType (label is)? string Children? Relation? CreateAppend? endstatement
+            
+                AppendStatement
+                    = append StringList to string endstatement
+                
+                CreateAppend
+                    = append to string
+                
+                UpdateStatement
+                    = update StringList attribute StringList
+            
+                attribute
+                    = label
+                    | relation
+                
+                update
+                    = "update"
+            
+                Relation
+                    = has booleanoperator relation
+                
+                Children
+                    = with children StringList
+                
+                StringList
+                    = NonemptyListOf<string, ",">
+            
+                NodeType
+                    = type node
+                
+                node
+                    = "node"
+                
+                type
+                    = "attack"
+                    | "defense"
+            
+                counter
+                    = "counter"
+            
+                create
+                    = "create"
+            
+                append
+                    = "append"
+            
+                root
+                    = "root"
+            
+                label 
+                    = "label"
+                is
+                    = "is"
+                
+                with
+                    = "with"
+            
+                has
+                    = "has"
+            
+                booleanoperator
+                    = "and"
+                    | "or"
+            
+                relation
+                    = "relation"
+                
+                children
+                    = "children"
+            
+                to
+                    = "to"
+            
+                string
+                    = quotes words quotes
+                
+                words
+                    = word  (spaces word)*
+            
+                word
+                    = (letter | digit)+
+            
+                quotes
+                    = "\\""
+                
+                comment 
+                    = "#" any*
+            
+                space
+                    += comment
+            
+                endstatement
+                    = ";"
+              }`
+            this.grammar = ohm.grammar(this.gramdef);
             this.semantics = this.grammar.createSemantics();
             this.semantics.addOperation('buildAST', {
                 Start(statements) {
@@ -26,7 +133,7 @@ module.exports = {
                 Statement(statement) {
                     return statement.buildAST();
                 },
-                CreateStatement(_create, nodetype, children, _label, _is, string, relation, append, _endstatement) {
+                CreateStatement(_create, nodetype, _label, _is, string, children, relation, append, _endstatement) {
 
                     nodetype = nodetype.buildAST();
                     string = string.buildAST();
@@ -67,7 +174,7 @@ module.exports = {
                 Relation(_has, booleanoperator, _relation) {
                     return booleanoperator.buildAST();
                 },
-                Children(_with, digit, _children, StringList) {
+                Children(_with, _children, StringList) {
                     let children = StringList.buildAST();
                     let node = new ast.Node(ast.NodeType.CHILDREN, {});
 
@@ -109,6 +216,11 @@ module.exports = {
         parse(sourcecode)
         {
             let syntaxMatcher = this.grammar.match(sourcecode);
+            if( syntaxMatcher.failed())
+            {
+                let err = `[Syntax error during matching] message: ${syntaxMatcher.message}`;
+                throw Error(err);
+            }
             return this.semantics(syntaxMatcher);
         }
     }

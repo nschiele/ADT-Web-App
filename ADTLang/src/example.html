@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Text Editor</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .editor-container {
+      display: flex;
+      height: 100%;
+    }
+    
+    .editor {
+      flex: 1;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 10px;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+    }
+    
+    .mirror {
+      flex: 1;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 10px;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="editor-container">
+    <textarea class="editor" id="editor" placeholder="Start typing..."></textarea>
+    <textarea class="mirror" id="mirror" readonly></textarea>
+  </div>
+  
+  <script src="./bundle.js">
+  </script>
+</body>
+</html>

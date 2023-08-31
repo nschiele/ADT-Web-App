@@ -81,8 +81,6 @@ async function insert(root, label, refinement, swith_role, parameters, depth, la
     node.swith_role = swith_role;
     node.parameters = parameters;
 
-    // 4e kind ipv 0e todo opgelost?
-
     if (root == null){
         node.code = "0";
         node.parent = node;
@@ -125,12 +123,26 @@ async function insert(root, label, refinement, swith_role, parameters, depth, la
     return node;
 }
 
-// Don't hardcode positions
-async function find_label(item){
-    console.log("[*] In find_label()");
+
+async function find_label(items, i){
 
     var label = "";
     var j = 0;
+    var k = i;
+    var item = items[k];
+    while (item[j] != "l"){
+        if (item[j] == ">"){
+            k++;
+            item = items[k];
+            j = 0;
+        }
+        else{
+            j++;
+            if (item[j] == "l" && item[j+1] == "e"){
+                j++;
+            }
+        }
+    }
     // Retrieve the label
     while (item[j] != ">"){
         j++;
@@ -143,13 +155,14 @@ async function find_label(item){
     return label;
 }
 
+// hc pos todo
 async function find_ref_rol(item, j, r){
     console.log("[*] In find_ref_rol()");
     var ref_swi;
-    while (item[j] != "="){ // Find the refinement
+    while (item[j] != '"'){ // Find the refinement
         j++;
     }
-    j += 2;
+    j++;
     if (r == 0){
         if (item[j] == "c"){
             ref_swi = 1;
@@ -167,7 +180,10 @@ async function find_ref_rol(item, j, r){
                 return ref_swi;
             }
         }
-        j += 2;
+        while (item[j] != '"'){
+            j++;
+        }
+        j++;
         if (item[j] == "y"){
            ref_swi = 1;
         }
@@ -178,28 +194,43 @@ async function find_ref_rol(item, j, r){
     return ref_swi;
 }
 
+
 async function find_par(items, i){ // todo category
     console.log("[*] In find_par()");
 
+
     var j = 0;
-    var parameters = [];
-    var parameter = new Array(2).fill(0);
+    var start = i;
+    var parameters = {};
     var parameter_name = null;
     var parameter_value = null;
     var item = items[i];
 
+
     while (item[j] != "<"){ // kan crashen
         console.log("the: ", item[j]);
+
         j++;
+        if (item[j] == "p"){
+            break;
+        }
+        else if (item[j] == "/" || (item[j] == "n" && i != start)){
+            return parameters;
+        }
+        else{
+            i++;
+            j = 0;
+            item = items[i];
+        }
     }
-    while (item[j+1] == "p"){
+    while (item[j] == "p"){
         parameter_name = "";
         parameter_value = "";
         // Retrieve the name
-        while (item[j] != "="){ // Find the refinement
+        while (item[j] != '"'){
             j++;
         }
-        j += 2;
+        j++;
         while (item[j] != '"'){
             parameter_name += item[j];
             j++
@@ -213,9 +244,7 @@ async function find_par(items, i){ // todo category
             j++
         }
 
-        parameter[0] = parameter_name;
-        parameter[1] = parameter_value;
-        parameters.push(parameter);
+        parameters[parameter_name] = parameter_value;
 
         j = 0;
         i++;
@@ -223,10 +252,8 @@ async function find_par(items, i){ // todo category
         while (item[j] != "<"){ // kan crashen
             j++;
         }
-        parameter.delete;
-        parameter = new Array(2).fill(0);
+        j++;
     }
-    parameter.delete;
     return parameters;
 }
 
@@ -264,16 +291,16 @@ async function build_json(input_text){
             case "/": // Closing tag
                 depth--;
                 break;
-            case "a": // Adtree tag
-                break;
+            case "a":
+                break; // Adtree tag, skip
             case "n": // Node tag
                 // todo hardcoden van variable locaties wegwerken
-                label = await find_label(items[i+1]);
+                label = await find_label(items, i);
                 refinement = await find_ref_rol(item, j, r);
                 r = 1;
                 swith_role = await find_ref_rol(item, j, r);
                 r = 0;
-                parameters = await find_par(items, i+2);
+                parameters = await find_par(items, i);
                 if (root == null){
                     root = await insert(root, label, refinement, swith_role, parameters, depth, null, seen);
 
@@ -306,6 +333,7 @@ async function build_json(input_text){
     console.log("JSON result in build_json():" + json);
     return json;
 }
+
 
 function add_child(node, temp_string, download){
     console.log("[*] In add_child()");
