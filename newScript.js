@@ -226,6 +226,7 @@ function changeNodeOutlineColorShape(shapeRadious,shapeColor){
     }
     var attack;
     var isBlack = false;
+    var parentCheck = false;
     var turnToBlack = false;
     var otherType = false;
     // if (activeNode.dis.stroke.levels[0] === 0 && activeNode.dis.stroke.levels[1] === 0) {
@@ -236,26 +237,22 @@ function changeNodeOutlineColorShape(shapeRadious,shapeColor){
     } else if (activeNode.dis.stroke.levels[1] === 128 && shapeColor == "red") {
       attack = false;
     } else if (shapeColor == "black") {
-      console.log("black selected");
       turnToBlack = true;
-      // otherType = true;
     } else {
-      console.log("black selected in shape");
       isBlack = true;
       otherType = true;
     }
-    console.log("the attac: ", attack, shapeColor, activeNode.children.length);
     if (activeNode.parent.children && activeNode.parent.children.length > 0 && !isBlack) {
       // check child nodes function
-      console.log("es gibt kids");
-      if (!activeNode.checkParentChild(attack)) {
+      var returnCode = activeNode.checkParentChild(attack, parentCheck);
+      if (returnCode < 0) {
         if ((attack && shapeColor == "green") || (!attack && shapeColor == "red"))  {
+          notificationParentChildCheckFailure('noti-shacol', 'noti-body-shacol', attack, returnCode);
           return;
         } else {
           otherType = true;
         }
       }
-      console.log("this geht gut");
     }
     if (!otherType) {
       if (attack) {
@@ -421,6 +418,31 @@ function notificationIsRootNode(notiEl, bodyEl, activeN) {
       }, 2000); // Remove notification after 2 seconds.
       return true;
   }
+}
+
+function notificationParentChildCheckFailure(notiEl, bodyEl, attack, returnCode) {
+  const noti = document.getElementById(notiEl);
+  const body = document.getElementById(bodyEl);
+  body.style.color = "red";
+  body.style.backgroundColor = "lightcoral";
+  if (attack) {
+    if (returnCode === -1) {
+      noti.querySelector("." + bodyEl).innerHTML = "Error! Parent is invalid if this node is changed to defense node.";
+    } else if (returnCode === -2) {
+      noti.querySelector("." + bodyEl).innerHTML = "Error! This node is invalid if it is changed to a defense node.";
+    }
+  } else if (!attack) {
+    if (returnCode === -1) {
+      noti.querySelector("." + bodyEl).innerHTML = "Error! Parent is invalid if this node is changed to attack node.";
+    } else if (returnCode === -2) {
+      noti.querySelector("." + bodyEl).innerHTML = "Error! This node is invalid if it is changed to an attack node.";
+    }
+  }
+  noti.classList.add('visible');
+  setTimeout (() => {
+      noti.classList.remove('visible');
+  }, 2000); // Remove notification after 2 seconds.
+  return true;
 }
 
 function manAddChild(){

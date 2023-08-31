@@ -211,53 +211,75 @@ class ADTree{
         }
     }
 
-    checkParentChild(attack) {
+    checkParentChild(attack, parentCheck) {
+        console.log("PCHECK");
         if (attack) { // Attack node, user wants to make this defense node
-            // if (this.parent.type == 1 && this.parent.defenseNodeHasAttackNode) {
-            //     return false;
-            // } else if (this.parent.type == 1 && !this.parent.defenseNodeHasAttackNode) {
-            //     return true;
-            // }
+            // Parent check
+            // Check if parent is defense already, then just return true.
+            var defNodeCounter = 0;
+            if (this.parent.type === 0 && this.parent.children && this.parent.children.length > 0) {
+                // If attack node, then count all parents children, and check how many are defense nodes.
+                for (let i = 0; i < this.parent.children.length; i++) {
+                    if (this.parent.children[i].type === 1) {
+                        defNodeCounter++;
+                    }
+                }
+                if (defNodeCounter != 0) {
+                    // If 1 or more defense children, and attack parent, then no more defense children allowed.
+                    return -1;
+                } 
+            }
+            // Children check
+            // Check if any children of attack node that will be defense node are attack nodes.
+            var attChildrenCounter = 0;
+            if ((this.children && this.children.length > 0) || (!this.children)) {
+                for (let j = 0; j < this.children.length; j++) {
+                    if (this.children[j].type === 0) {
+                        attChildrenCounter++;
+                    }
+                }
+                if (attChildrenCounter > 1) {
+                    // If more than one attack node, and parent will be defense node, than defense node will have >1
+                    // attack children. Not possible, so return false.
+                    return -2;
+                }
+            }
+            // If both parents check and children check succeed, return true.
+            return 0;
+        } else if (!attack) { // Defense node, user wants to make this attack node
+            // Parent check
+            // Check if parent is attack already, then just return true.
             var attNodeCounter = 0;
-            if (this.parent.type === 1) {
-                return true;
-            }else if (this.parent.type === 0 && this.parent.children && this.parent.children.length > 0) {
+            if (this.parent.type === 1 && this.parent.children && this.parent.children.length > 0) {
+                // If defense node, then count all parents children, and check how many are attack nodes.
                 for (let i = 0; i < this.parent.children.length; i++) {
                     if (this.parent.children[i].type === 0) {
                         attNodeCounter++;
                     }
                 }
-                console.log("att: ", attNodeCounter);
-                if (attNodeCounter === 0) {
-                    return true;
-                } else {
-                    return false;
+                if (attNodeCounter != 0) {
+                    // If 1 or more attack children, and defense parent, then no more attack children allowed.
+                    return -1;
                 }
-            }
-        } else if (!attack) { // Defense node, user wants to make this attack node
-            // if (this.parent.type == 0 && this.parent.attackNodeHasDefenseNode) {
-            //     return false;
-            // } else if (this.parent.type == 0 && !this.parent.attackNodeHasDefenseNode) {
-            //     return true;
-            // }
-            var defNodeCounter = 0;
-            if (this.parent.type === 0) {
-                return true;
-            }else if (this.parent.type === 1 && this.parent.children && this.parent.children.length > 0) {
-                for (let i = 0; i < this.parent.children.length; i++) {
-                    if (this.parent.children[i].type === 1) {
-                        console.log("maar wat?? DEF");
-                        defNodeCounter++;
+            } 
+            // Children check
+            // Check if any children of defense node that will be attack node are defense nodes.
+            var defChildrenCounter = 0;
+            if ((this.children && this.children.length > 0) || (!this.children)) {
+                for (let j = 0; j < this.children.length; j++) {
+                    if (this.children[j].type === 1) {
+                        defChildrenCounter++;
                     }
                 }
-                if (defNodeCounter === 0) {
-                    return true;
-                } else {
-                    return false;
+                if (defChildrenCounter > 1) {
+                    // If more than one attack node, and parent will be defense node, than defense node will have >1
+                    // attack children. Not possible, so return false.
+                    return -2;
                 }
             }
+            return 0;
         }
-        return false;
+        return -3;
     }
 
     // setNodeStruc(parent) {
