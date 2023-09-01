@@ -653,8 +653,9 @@ async function downloadPrep() {
       var blob = new Blob([input], { type: "text/plain"});
       var downloadLink = document.createElement("a");
       downloadLink.href = URL.createObjectURL(blob);
-      console.log("YA: ", input);
       downloadLink.download = "SavedADT." + selectedFormat;
+      if (!(root.checkForWarnings()))
+        alert("Caution! You are trying to download your tree in .xml with black nodes present. This could lead to unstable behaviour when uploading into ADTapp.")
       downloadLink.click();
     } catch(error) {
         console.error("Error:", error);
@@ -911,9 +912,8 @@ function draw(){
             if (activeNode != null) 
               activeNode.dis.active = false; // Turn active node off for jpg
             root.display(); // Draw tree with scale = 1 and white background
-            if (!(root.checkForWarnings())) {
+            if (!(root.checkForWarnings()))
               alert("Caution! Your ADT contains black nodes, which are not seen as attack or defense nodes.")
-            }
             saveCanvas(canvasElement, fileName, 'jpg'); // Actually saving the canvas
             if (activeNode != null)
               activeNode.dis.active = true; // Turn active node back on
