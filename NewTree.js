@@ -286,6 +286,22 @@ class ADTree{
         return -3;
     }
 
+    checkForWarnings(){
+        if (this.children && this.children.length > 0) {
+            for (let i = 0; i < this.children.length; i++) {
+                console.log("colors: ", this.dis.stroke.levels);
+                if (this.dis.stroke.levels[0] === 0 && this.dis.stroke.levels[1] === 0) {
+                    console.log
+                    return false;
+                }
+                if (!this.children[i].checkForWarnings()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     // setNodeStruc(parent) {
     //     if (this !== root) {
 

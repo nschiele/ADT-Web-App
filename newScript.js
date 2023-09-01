@@ -911,6 +911,9 @@ function draw(){
             if (activeNode != null) 
               activeNode.dis.active = false; // Turn active node off for jpg
             root.display(); // Draw tree with scale = 1 and white background
+            if (!(root.checkForWarnings())) {
+              alert("Caution! Your ADT contains black nodes, which are not seen as attack or defense nodes.")
+            }
             saveCanvas(canvasElement, fileName, 'jpg'); // Actually saving the canvas
             if (activeNode != null)
               activeNode.dis.active = true; // Turn active node back on
