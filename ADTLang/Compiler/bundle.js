@@ -7128,6 +7128,7 @@ test.addEventListener("click", async function() {
   console.log(out[0]);
 
   buildFromMultiset(out);
+  root.initialColor();
 
 });
 
