@@ -1034,8 +1034,33 @@ function changeActiveNavLinkColor(){
   console.log("[!] TODO: kleurdingen toevoegen.");
 }
 
-function showAlert(){
+function notificationShowAlertADTLang(notiEl, bodyEl, success) {
   console.log("[!] TODO: Generate button fixen (Meza!).");
+  const noti = document.getElementById(notiEl);
+  console.log(document.getElementById('noti-add'));
+  console.log("NOTI: ", noti);
+  const body = document.getElementById(bodyEl);
+  console.log("BODY: ", activeNode);
+  if (success) {
+    // No node selected. Notification prep.
+    body.style.color = "green";
+    body.style.backgroundColor = "lightgreen";
+    noti.querySelector("." + bodyEl).innerHTML = "Tree has been constructed from ADTLang input!";
+    noti.classList.add('visible');
+    setTimeout (() => {
+        noti.classList.remove('visible');
+    }, 2000); // Remove notification after 2 seconds.
+    return true;
+  } else {
+    body.style.color = "red";
+    body.style.backgroundColor = "lightcoral";
+    noti.querySelector("." + bodyEl).innerHTML = "Error! ADTLang input invalid.";
+    noti.classList.add('visible');
+    setTimeout (() => {
+        noti.classList.remove('visible');
+    }, 2000); // Remove notification after 2 seconds.
+    return true;
+  }
 }
 
 function changeCoordinatesRec(newScaleValue, currentNode){

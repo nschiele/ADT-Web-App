@@ -465,13 +465,23 @@ footer p {
     transform 500ms;
 }
 
-.noti-add.visible, .noti-rem.visible, .noti-cha.visible, .noti-shacol.visible {
+.noti-alert {
+  position: absolute;
+  bottom: 3px;
+
+  opacity: 0;
+  transition:
+    opacity 500ms,
+    transform 500ms;
+}
+
+.noti-add.visible, .noti-rem.visible, .noti-cha.visible, .noti-shacol.visible, .noti-alert.visible {
   /* transform: translateY(0); */
   opacity: 1;
 }
 
 
-.noti-body-add, .noti-body-rem, .noti-body-cha, .noti-body-shacol {
+.noti-body-add, .noti-body-rem, .noti-body-cha, .noti-body-shacol, .noti-body-alert {
   margin: 2px;
   padding: 1px 1px;
 
