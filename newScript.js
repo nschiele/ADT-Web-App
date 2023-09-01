@@ -254,9 +254,9 @@ function changeNodeOutlineColorShape(shapeRadious,shapeColor){
     if (!otherType && activeNode.parent != null) {
       if (attack) {
         console.log("Is now defense");
-        activeNode.parent.defenseNodeHasAttackNode = true;
-      } else if (!attack) {
         activeNode.parent.attackNodeHasDefenseNode = true;
+      } else if (!attack) {
+        activeNode.parent.defenseNodeHasAttackNode = true;
       }
     }
     console.log(isBlack, shapeColor, activeNode.type);
