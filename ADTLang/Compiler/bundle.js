@@ -7140,7 +7140,6 @@ test.addEventListener("click", async function() {
     root.initialColor();
     notificationShowAlertADTLang('noti-alert', 'noti-body-alert', true);
   } catch(error) {
-    console.error("HA NOOB", error);
     notificationShowAlertADTLang('noti-alert', 'noti-body-alert', false);
   }
   

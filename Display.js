@@ -33,6 +33,7 @@ class Display {
     }
 
     adjust_textbox(){
+        console.log("in adjust_textbox");
         var let_width;
         var let_height;
         var text_space;
@@ -49,7 +50,7 @@ class Display {
         if(this.t.length > 40){
           ///console.log(this.t)
           for(let i = parseInt(this.t.length/2 - 10); i<parseInt(this.t.length/2 + 10); i++){
-            ///console.log("excusez-moi: ", i, this.t[i])
+            // console.log("excusez-moi: ", i, this.t[i])
               //First space in the middle of the text
               if(this.t[i] == ' '){
                 var newString = this.t.slice(0, i) + '\n' + this.t.slice(i+1, this.t.length);
@@ -79,8 +80,64 @@ class Display {
         this.width = this.x_range;
 
 
-        console.log("this.width: " + this.width);
+        // console.log("this.width: " + this.width);
+        // this.tree.update_width();
+        // this.tree.adjust_children();
     }
+
+    adjust_textboxCC(){
+      console.log("in adjust_textboxCC");
+      var let_width;
+      var let_height;
+      var text_space;
+      if(this.t.length < 20){
+        textSize(32);
+        let_height = 30;
+        text_space = this.t.length/2;
+      } else {
+        textSize(16);
+        let_height = 20;
+        text_space = this.t.length/2;
+      }
+      // console.log("Alleen const");
+      if(this.t.length > 40){
+        ///console.log(this.t)
+        for(let i = parseInt(this.t.length/2 - 10); i<parseInt(this.t.length/2 + 10); i++){
+          // console.log("excusez-moi: ", i, this.t[i])
+            //First space in the middle of the text
+            if(this.t[i] == ' '){
+              var newString = this.t.slice(0, i) + '\n' + this.t.slice(i+1, this.t.length);
+              this.t = newString
+              break;
+            }
+
+          }
+        }
+
+
+      if(this.t.includes("\n")){
+        var nlSplit = this.t.split("\n");
+        var longest = 0;
+        for(let i = 0; i < nlSplit.length; i++){
+          if(nlSplit[i].length > nlSplit[longest].length){
+            longest = i;
+          }
+          this.lines = nlSplit.length;
+          ///console.log(longest, nlSplit)
+        }
+        this.x_range = textWidth(nlSplit[longest]) + text_space;
+      } else {
+        this.x_range = textWidth(this.t) + text_space;
+      }
+      this.y_range = let_height * this.lines;
+      this.width = this.x_range;
+
+
+      // console.log("this.width: " + this.width);
+      // this.tree.update_width();
+      // this.tree.adjust_children();
+  }
+    
 
     adjust_text(){
         ///console.log("text: ", this.t);
@@ -96,6 +153,7 @@ class Display {
     }
 
     update_width(treeObject){
+      console.log("*** UPDATE_WIDTH ***");
       /*
         console.log("*** UPDATE_WIDTH ***");
         console.log("NODE LABEL: " + this.t);
@@ -198,6 +256,7 @@ class Display {
     }
 
     adjust_children(treeObject){
+      console.log("IN ADJUST_CHILDREN");
         var curr_x = this.x + this.x_range/2 - this.width/2;
         // console.log(this.child_width(dist))
         for(let i = 0; i < treeObject.children.length; i++){
@@ -230,6 +289,7 @@ class Display {
     }
 
     display(treeObject){
+      console.log("IN DISPLAY");
       var amountOfNodesInLine = treeObject.children.length; // For AND REFINEMENT
         if(this.t.length < 20){
             textSize(32);
@@ -295,7 +355,7 @@ class Display {
               curve(this.x + this.x_range/2 - this.width/2, this.y, startX,startY, endX, endY, this.x + this.x_range/2 + this.width/2, this.y)
             }
         }
-        // If red round (attack) and change manually to green square (defense), also changes type in ADTree object (and vice versa)
+        // If red (attack) and change manually to green (defense), also changes type in ADTree object (and vice versa)
         if ((this.stroke.levels[0] === 255) && this.tree.type === 1) {
             this.tree.type = 0;
         } else if ((this.stroke.levels[1] === 128) && this.tree.type === 0) {

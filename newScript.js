@@ -487,7 +487,7 @@ function manAddChild(){
         }
         if (notificationAlreadyDefenseNode(newNode, 'noti-add', 'noti-body-add', defense) && defense) {
             root.removeSubTree(newNode);
-            activeNode.dis.adjust_textbox();
+            activeNode.dis._textbox();
             activeNode.update_width();
             windowResized();
             resetScaleCoordinates(root, 1);
@@ -568,16 +568,21 @@ function manDeleteChild(){
     } else if (activeNode.parent.type == 1 && activeNode.type == 0) {
       activeNode.parent.defenseNodeHasAttackNode = false;
     }
-
+    
+    activeNode.parent.dis.update_width(activeNode.parent);
+    activeNode.parent.dis.adjust_children(root);
     activeNode = undefined;
     windowResized();
     //draw();
     resetScaleCoordinates(root, 1);
+    // root.dis.adjust_textbox();
+    // root.adjust_width();
     console.log("Scalevalue now: " + scaleValue);
     changeCoordinatesRec(scaleValue, root);
     document.getElementById("nodeTextInput").disabled = true;
     document.getElementById("nodeTextInput").value = "";
     document.getElementById("nodeTextInput").setAttribute("placeholder", "No node selected...");
+    draw();
     notificationSuccess('noti-rem', 'noti-body-rem', "Node deleted successfully!"); // Send success notification if node has been deleted.
 }
 
@@ -595,9 +600,11 @@ function manChangeChild(){
     activeNode.label = input;
     activeNode.dis.t = input;
     document.getElementById("nodeTextInput").setAttribute("value", "");
-    // document.getElementById("nodeTextInput").setAttribute("value", input);
-    activeNode.dis.adjust_textbox();
-    activeNode.update_width();
+    activeNode.dis.adjust_textboxCC();
+    activeNode.dis.update_width(activeNode);
+    activeNode.dis.adjust_children(root);
+    resetScaleCoordinates(root, true);
+    changeCoordinatesRec(scaleValue, root);
     draw();
     notificationSuccess('noti-cha', 'noti-body-cha', "Node changed successfully!"); // Send success notification if node has been changed.
 }
@@ -1099,7 +1106,7 @@ function changeCoordinates(newScaleValue){
 }
 
 function resetScaleCoordinates(currentNode, recursion){
-  console.log("[*] In resetScaleCoordinates()");
+  // console.log("[*] In resetScaleCoordinates()");
 
   console.log("LABEL: " + currentNode.label);
   console.log("x/x_range: " + currentNode.dis.x + "/" + currentNode.dis.x_range);
@@ -1109,7 +1116,9 @@ function resetScaleCoordinates(currentNode, recursion){
   currentNode.dis.scale_y_range = currentNode.dis.y_range;
 
   if (recursion){
+    // console.log("[*] In resetScaleCoordinates()");
     for (let i = 0; i < currentNode.children.length; i++){
+      console.log("[*] In resetScaleCoordinates()", currentNode);
       resetScaleCoordinates(currentNode.children[i], recursion);
     }
   }
