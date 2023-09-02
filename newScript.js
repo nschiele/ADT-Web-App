@@ -600,11 +600,18 @@ function manChangeChild(){
     activeNode.label = input;
     activeNode.dis.t = input;
     document.getElementById("nodeTextInput").setAttribute("value", "");
-    activeNode.dis.adjust_textboxCC();
-    activeNode.dis.update_width(activeNode);
-    activeNode.dis.adjust_children(root);
-    resetScaleCoordinates(root, true);
+    // activeNode.dis.adjust_textbox();
+    // root.dis.adjust_children(activeNode);
+    // activeNode.dis.update_width(activeNode);
+    // resetScaleCoordinates(root, true);
+    // changeCoordinatesRec(scaleValue, root);
+    activeNode.dis.adjust_textbox();
+    activeNode.update_width();
+    windowResized();
+    resetScaleCoordinates(root, 1);
+    console.log("Scalevalue now: " + scaleValue);
     changeCoordinatesRec(scaleValue, root);
+    printCoordinates(root);
     draw();
     notificationSuccess('noti-cha', 'noti-body-cha', "Node changed successfully!"); // Send success notification if node has been changed.
 }
