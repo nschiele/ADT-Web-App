@@ -120,6 +120,9 @@ async function setup() {
     var ORoperator = select('#btnOrDiv');
     ORoperator.mouseReleased(changeRefinementToOR);
 
+    var deleteBtn = select('#deleteBtn')
+    deleteBtn.mouseReleased(function(){deleteADT()})
+
 
     // windowResized(); // Resizes window so it correctly displays all of tree.
     // draw();
@@ -321,6 +324,46 @@ function downloadCanvasJpg(){
     scaleValue = 1; // Set scale value to 1, original canvas size
     console.log(root);
     draw(); // Call draw()
+}
+
+function deleteADT(){
+    console.log("In deleteADT!")
+    activeNode = null
+    console.log(root.children.length)
+    var toBeDeleted = []
+    if (root.children) {
+      for (let i = 0; i < root.children.length; i++) {
+        // This is split up. 
+        // If first child is child 0, and second child is child 1, and the first child is deleted before the second child is detected,
+        // the second child will become the first child after the first child is deleted, and is therefore not detected.
+        // That is why all the to-be-deleted children are added to an array first, and after detection of all children, they will
+        // be deleted.
+        toBeDeleted.push(root.children[i])
+      }
+      for (let j = 0; j < toBeDeleted.length; j++) {
+        // Delete all the children.
+        root.removeSubTree(toBeDeleted[j])
+      }
+    }
+    root.label = "Root";
+    root.dis.t = "Root";
+    document.getElementById("nodeTextInput").setAttribute("value", "");
+    
+    // Give the right position on the canvas
+    root.dis.adjust_textbox(); // Adjust length of textbox
+    root.update_width(); // Adjust width of textbox
+    windowResized(); // Resize window
+
+    // Change coordinates
+    resetScaleCoordinates(root, 1); 
+    changeCoordinatesRec(scaleValue, root);
+
+    // Resize window with new coordinates and reset them
+    windowResized();
+    resetScaleCoordinates(root, 1);
+
+    // Draw the resulting ADT
+    draw();
 }
 
 function notificationCheckNode(notiEl, bodyEl) {
