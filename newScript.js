@@ -347,7 +347,7 @@ function deleteADT(){
     }
     root.label = "Root";
     root.dis.t = "Root";
-    document.getElementById("nodeTextInput").setAttribute("value", "");
+    document.getElementById("nodeTextInput").setAttribute("placeholder", "");
     
     // Give the right position on the canvas
     root.dis.adjust_textbox(); // Adjust length of textbox
@@ -642,7 +642,7 @@ function manChangeChild(){
     }
     activeNode.label = input;
     activeNode.dis.t = input;
-    document.getElementById("nodeTextInput").setAttribute("value", "");
+    document.getElementById("nodeTextInput").setAttribute("placeholder", "");
     // activeNode.dis.adjust_textbox();
     // root.dis.adjust_children(activeNode);
     // activeNode.dis.update_width(activeNode);
@@ -1054,13 +1054,13 @@ function mouseReleased(){
         // activeNode = null;
     }
    
-    document.getElementById("nodeTextInput").setAttribute("value", "");
+    document.getElementById("nodeTextInput").setAttribute("placeholder", "");
     if (activeNode != null) {
         document.getElementById("nodeTextInput").disabled = false;
-        document.getElementById("nodeTextInput").setAttribute("value", activeNode.dis.t);
+        document.getElementById("nodeTextInput").setAttribute("placeholder", activeNode.dis.t);
     } else {
         document.getElementById("nodeTextInput").disabled = true;
-        document.getElementById("nodeTextInput").setAttribute("value", "");
+        document.getElementById("nodeTextInput").setAttribute("placeholder", "");
         document.getElementById("nodeTextInput").setAttribute("placeholder", "No node selected...");
     }
 
