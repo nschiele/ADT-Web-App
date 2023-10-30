@@ -120,6 +120,9 @@ async function setup() {
     var ORoperator = select('#btnOrDiv');
     ORoperator.mouseReleased(changeRefinementToOR);
 
+    var deleteBtn = select('#deleteBtn')
+    deleteBtn.mouseReleased(function(){deleteADT()})
+
 
     // windowResized(); // Resizes window so it correctly displays all of tree.
     // draw();
@@ -253,9 +256,9 @@ function changeNodeOutlineColorShape(shapeRadious,shapeColor){
     }
     if (!otherType && activeNode.parent != null) {
       if (attack) {
-        activeNode.parent.defenseNodeHasAttackNode = true;
-      } else if (!attack) {
         activeNode.parent.attackNodeHasDefenseNode = true;
+      } else if (!attack) {
+        activeNode.parent.defenseNodeHasAttackNode = true;
       }
     }
     console.log(isBlack, shapeColor, activeNode.type);
@@ -321,6 +324,46 @@ function downloadCanvasJpg(){
     scaleValue = 1; // Set scale value to 1, original canvas size
     console.log(root);
     draw(); // Call draw()
+}
+
+function deleteADT(){
+    console.log("In deleteADT!")
+    activeNode = null
+    console.log(root.children.length)
+    var toBeDeleted = []
+    if (root.children) {
+      for (let i = 0; i < root.children.length; i++) {
+        // This is split up. 
+        // If first child is child 0, and second child is child 1, and the first child is deleted before the second child is detected,
+        // the second child will become the first child after the first child is deleted, and is therefore not detected.
+        // That is why all the to-be-deleted children are added to an array first, and after detection of all children, they will
+        // be deleted.
+        toBeDeleted.push(root.children[i])
+      }
+      for (let j = 0; j < toBeDeleted.length; j++) {
+        // Delete all the children.
+        root.removeSubTree(toBeDeleted[j])
+      }
+    }
+    root.label = "Root";
+    root.dis.t = "Root";
+    document.getElementById("nodeTextInput").setAttribute("placeholder", "");
+    
+    // Give the right position on the canvas
+    root.dis.adjust_textbox(); // Adjust length of textbox
+    root.update_width(); // Adjust width of textbox
+    windowResized(); // Resize window
+
+    // Change coordinates
+    resetScaleCoordinates(root, 1); 
+    changeCoordinatesRec(scaleValue, root);
+
+    // Resize window with new coordinates and reset them
+    windowResized();
+    resetScaleCoordinates(root, 1);
+
+    // Draw the resulting ADT
+    draw();
 }
 
 function notificationCheckNode(notiEl, bodyEl) {
@@ -487,7 +530,7 @@ function manAddChild(){
         }
         if (notificationAlreadyDefenseNode(newNode, 'noti-add', 'noti-body-add', defense) && defense) {
             root.removeSubTree(newNode);
-            activeNode.dis.adjust_textbox();
+            activeNode.dis._textbox();
             activeNode.update_width();
             windowResized();
             resetScaleCoordinates(root, 1);
@@ -568,16 +611,21 @@ function manDeleteChild(){
     } else if (activeNode.parent.type == 1 && activeNode.type == 0) {
       activeNode.parent.defenseNodeHasAttackNode = false;
     }
-
+    
+    activeNode.parent.dis.update_width(activeNode.parent);
+    activeNode.parent.dis.adjust_children(root);
     activeNode = undefined;
     windowResized();
     //draw();
     resetScaleCoordinates(root, 1);
+    // root.dis.adjust_textbox();
+    // root.adjust_width();
     console.log("Scalevalue now: " + scaleValue);
     changeCoordinatesRec(scaleValue, root);
     document.getElementById("nodeTextInput").disabled = true;
     document.getElementById("nodeTextInput").value = "";
     document.getElementById("nodeTextInput").setAttribute("placeholder", "No node selected...");
+    draw();
     notificationSuccess('noti-rem', 'noti-body-rem', "Node deleted successfully!"); // Send success notification if node has been deleted.
 }
 
@@ -594,10 +642,19 @@ function manChangeChild(){
     }
     activeNode.label = input;
     activeNode.dis.t = input;
-    document.getElementById("nodeTextInput").setAttribute("value", "");
-    // document.getElementById("nodeTextInput").setAttribute("value", input);
+    document.getElementById("nodeTextInput").setAttribute("placeholder", "");
+    // activeNode.dis.adjust_textbox();
+    // root.dis.adjust_children(activeNode);
+    // activeNode.dis.update_width(activeNode);
+    // resetScaleCoordinates(root, true);
+    // changeCoordinatesRec(scaleValue, root);
     activeNode.dis.adjust_textbox();
     activeNode.update_width();
+    windowResized();
+    resetScaleCoordinates(root, 1);
+    console.log("Scalevalue now: " + scaleValue);
+    changeCoordinatesRec(scaleValue, root);
+    printCoordinates(root);
     draw();
     notificationSuccess('noti-cha', 'noti-body-cha', "Node changed successfully!"); // Send success notification if node has been changed.
 }
@@ -653,8 +710,9 @@ async function downloadPrep() {
       var blob = new Blob([input], { type: "text/plain"});
       var downloadLink = document.createElement("a");
       downloadLink.href = URL.createObjectURL(blob);
-      console.log("YA: ", input);
       downloadLink.download = "SavedADT." + selectedFormat;
+      if (!(root.checkForWarnings()))
+        alert("Caution! You are trying to download your tree in .xml with black nodes present. This could lead to unstable behaviour when uploading into ADTapp.")
       downloadLink.click();
     } catch(error) {
         console.error("Error:", error);
@@ -908,10 +966,14 @@ function draw(){
           if (saveOn) {
             // Saving mode on, saving canvas.
             background("white");
-            activeNode.dis.active = false; // Turn active node off for jpg
+            if (activeNode != null) 
+              activeNode.dis.active = false; // Turn active node off for jpg
             root.display(); // Draw tree with scale = 1 and white background
+            if (!(root.checkForWarnings()))
+              alert("Caution! Your ADT contains black nodes, which are not seen as attack or defense nodes.")
             saveCanvas(canvasElement, fileName, 'jpg'); // Actually saving the canvas
-            activeNode.dis.active = true; // Turn active node back on
+            if (activeNode != null)
+              activeNode.dis.active = true; // Turn active node back on
             saveOn = false; // Turn off the saving mode
             scaleValue = orgScaleVal; // Resizing to previous scale
             draw(); // Rerun with Saving mode off
@@ -992,13 +1054,13 @@ function mouseReleased(){
         // activeNode = null;
     }
    
-    document.getElementById("nodeTextInput").setAttribute("value", "");
+    document.getElementById("nodeTextInput").setAttribute("placeholder", "");
     if (activeNode != null) {
         document.getElementById("nodeTextInput").disabled = false;
-        document.getElementById("nodeTextInput").setAttribute("value", activeNode.dis.t);
+        document.getElementById("nodeTextInput").setAttribute("placeholder", activeNode.dis.t);
     } else {
         document.getElementById("nodeTextInput").disabled = true;
-        document.getElementById("nodeTextInput").setAttribute("value", "");
+        document.getElementById("nodeTextInput").setAttribute("placeholder", "");
         document.getElementById("nodeTextInput").setAttribute("placeholder", "No node selected...");
     }
 
@@ -1032,8 +1094,33 @@ function changeActiveNavLinkColor(){
   console.log("[!] TODO: kleurdingen toevoegen.");
 }
 
-function showAlert(){
+function notificationShowAlertADTLang(notiEl, bodyEl, success) {
   console.log("[!] TODO: Generate button fixen (Meza!).");
+  const noti = document.getElementById(notiEl);
+  console.log(document.getElementById('noti-add'));
+  console.log("NOTI: ", noti);
+  const body = document.getElementById(bodyEl);
+  console.log("BODY: ", activeNode);
+  if (success) {
+    // No node selected. Notification prep.
+    body.style.color = "green";
+    body.style.backgroundColor = "lightgreen";
+    noti.querySelector("." + bodyEl).innerHTML = "Tree has been constructed from ADTLang input!";
+    noti.classList.add('visible');
+    setTimeout (() => {
+        noti.classList.remove('visible');
+    }, 2000); // Remove notification after 2 seconds.
+    return true;
+  } else {
+    body.style.color = "red";
+    body.style.backgroundColor = "lightcoral";
+    noti.querySelector("." + bodyEl).innerHTML = "Error! ADTLang input invalid.";
+    noti.classList.add('visible');
+    setTimeout (() => {
+        noti.classList.remove('visible');
+    }, 2000); // Remove notification after 2 seconds.
+    return true;
+  }
 }
 
 function changeCoordinatesRec(newScaleValue, currentNode){
@@ -1069,7 +1156,7 @@ function changeCoordinates(newScaleValue){
 }
 
 function resetScaleCoordinates(currentNode, recursion){
-  console.log("[*] In resetScaleCoordinates()");
+  // console.log("[*] In resetScaleCoordinates()");
 
   console.log("LABEL: " + currentNode.label);
   console.log("x/x_range: " + currentNode.dis.x + "/" + currentNode.dis.x_range);
@@ -1079,7 +1166,9 @@ function resetScaleCoordinates(currentNode, recursion){
   currentNode.dis.scale_y_range = currentNode.dis.y_range;
 
   if (recursion){
+    // console.log("[*] In resetScaleCoordinates()");
     for (let i = 0; i < currentNode.children.length; i++){
+      console.log("[*] In resetScaleCoordinates()", currentNode);
       resetScaleCoordinates(currentNode.children[i], recursion);
     }
   }

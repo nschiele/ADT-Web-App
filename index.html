@@ -67,7 +67,11 @@
               <div id="submitNewTreeDiv" class="collapsed insideNavLink collapse">
                 <label for="textAreaJsonContent" class="form-label">Contents</label>
                 <textarea class="form-control" id="textAreaADTLang" rows="3" placeholder="Example: Data Confidality, 1, Physical Attack, 1, Network Attack, 0, Employee Attack, Social Engineering, Fairwall, Training"></textarea>
-                <div id="alert" class="hiddenAlert">Text is successfully submitted!</div>
+                <!-- <div id="alert" class="hiddenAlert">Text is successfully submitted!</div> -->
+                <div class="noti-alert" id="noti-alert">
+                  <div class="noti-body-alert" id="noti-body-alert">
+                  </div>
+                </div>
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-2">
                 <button type="submit" class="btn btn-sm me-md-2 mt-2 btn-warning" id="generateTreeButton">Generate</button>
                 </div>
