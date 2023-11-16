@@ -45,6 +45,7 @@ let saveOn = false;
 let biggestHeight;
 let biggestWidth;
 let orgScaleVal;
+let active = null;
 
 var IDnumber = 1; // Added by J
 
@@ -133,3 +134,9 @@ function manAddChild(inputVal) { // inputVal is a string
 // function scream() {
 //   // super.test();
 // }
+
+function mouseDragged() {
+  if (active != null){
+    active.setPos(mouseX,mouseY);
+  }
+}
