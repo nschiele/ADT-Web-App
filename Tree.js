@@ -41,6 +41,7 @@ class ADTree{
         console.log(this.name);
     }
     inputPressed(){
+        console.log("pressed");
         active = this;
         
     }
@@ -50,6 +51,7 @@ class ADTree{
         this.isDragging = false;
     }
     setPos(X,Y){
-        this.root.position(canvasElement.position().x+X,canvasElement.position().y+Y);
+        this.root.position(canvasElement.position().x+X-this.root.width/2,canvasElement.position().y+Y-this.root.height/2);
+        console.log(this.root.width/2);
     }
 }
