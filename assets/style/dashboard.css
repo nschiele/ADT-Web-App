@@ -493,3 +493,9 @@ footer p {
 
   border-radius: 4px;
 }
+
+.Node {
+  text-align: center;
+  border: 2px solid black;
+  border-radius: 10px;
+}
