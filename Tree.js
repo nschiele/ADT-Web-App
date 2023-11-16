@@ -1,279 +1,327 @@
-class Tree {
-  constructor(text, x = 0, y = 0, radius = 2, dist = 50){
-    this.x = x;
-    this.y = y;
-    this.t = text;
-    this.r = radius;
-    this.x_range; //X_range of just this node
-    this.width; //Total width of the subtree
-    this.y_range;
-    this.lines = 1;
-    this.level = 0;
-    this.children = [];
-    this.parent = null;
-    this.root = this;
-    this.refinement = 0; //defaults to OR;
-    this.dist = dist;//Distance of children
-    this.active = false; //Checks if node is currently selected
-    this.hover = false;
-    this.c = color(255, 255, 255);
-    this.stroke = color("black");
-    this.strokeWeight = 2;
-    this.lineList = [1]; // dashed lines
-    this.freeMove = false; //Tracks if the node is unlocked and can move freely
-    // console.log(this.x)
-
-    var let_width;
-    var let_height;
-    var text_space;
-    if(this.t.length < 20){
-      textSize(32);
-      let_height = 30;
-      text_space = this.t.length/2;
-    } else {
-      textSize(16);
-      let_height = 20;
-      text_space = this.t.length/2;
+class ADTree{
+    // Constructor ADTree
+    constructor(label, IDnumber){
+        this.children = [];
+        this.type = 0;
+        this.refinement = 0;
+        this.id = IDnumber;
+        this.label = label;
+        this.attributes;
+        // Parent & Root?
+        this.parent = null;
+        this.root = this;
+        this.dis = new Display(label, this.id, 0, 0, 2);
+        this.dis.tree = this;
+        this.xmlNode;
+        this.attackNodeHasDefenseNode; // To make sure an attack node only has one defense node.
+        this.defenseNodeHasAttackNode; // To make sure a defense node only has one attack node.
     }
 
-    if(this.t.length > 40){
-      console.log(this.t)
-      for(let i = parseInt(this.t.length/2 - 10); i<parseInt(this.t.length/2 + 10); i++){
-        console.log(i, this.t[i])
-          //First space in the middle of the text
-          if(this.t[i] == ' '){
-            var newString = this.t.slice(0, i) + '\n' + this.t.slice(i+1, this.t.length);
-            this.t = newString
+
+    add_child(n){
+        let tempSwitch;
+        let switchIndex;
+        let switchIt = false;
+
+        n.parent = this;
+        n.root = this.root;
+
+        this.children.push(n);
+
+        for (let i = 0; i < this.children.length; i++){
+          if (this.type != this.children[i].type){
+            tempSwitch = this.children[i];
+            switchIt = true;
+            switchIndex = i;
             break;
           }
-
         }
-      }
 
-
-    if(this.t.includes("\n")){
-      var nlSplit = this.t.split("\n");
-      var longest = 0;
-      for(let i = 0; i < nlSplit.length; i++){
-        if(nlSplit[i].length > nlSplit[longest].length){
-          longest = i;
+        if (switchIt){
+          this.children[switchIndex] = this.children[this.children.length-1];
+          this.children[this.children.length-1] = tempSwitch;
         }
-        this.lines = nlSplit.length;
-        console.log(longest, nlSplit)
-      }
-      this.x_range = textWidth(nlSplit[longest]) + text_space;
-    } else {
-      this.x_range = textWidth(this.t) + text_space;
+        
+        this.dis.update_width(this);
+        this.dis.adjust_children(root);
     }
-    this.y_range = let_height * this.lines;
-    this.width = this.x_range;
 
-  }
-
-  getMultiArray(){
-    var toReturn = [this.t];
-
-    if(this.children.length > 0){
-      toReturn.push(this.refinement);
-      toReturn.push([]);
-      for(let i = 0; i < this.children.length; i++){
-        toReturn[2].push(this.children[i].getMultiArray());
-      }
+    set_refinement(r){
+        this.refinement = r;
     }
-    return toReturn;
-  }
 
-  adjust_text(){
-    console.log("text: ", this.t);
-    if(this.t.length > 40){
-      for(let i = parseInt(this.t.length/2 - 10); i<parseInt(this.t.length/2 + 10); i++){
-          //First space in the middle of the text
-          if(this.t[i] == ' '){
-            var newString = this.t.slice(0, i) + '\n' + this.t.slice(i+1, this.t.length);
-            this.t.length = newString
-          }
-          break;
+    set_type(type){
+        this.type = type;
+    }
+
+    getMultiArray(){
+        var toReturn = [this.t];
+        if(this.children.length > 0){
+            toReturn.push(this.refinement);
+            toReturn.push([]);
+            for(let i = 0; i < this.children.length; i++){
+                toReturn[2].push(this.children[i].getMultiArray());
+            }
         }
-      }
-  }
-  //Updates Child Width of node
-  update_width(){
-    var child_width = -1*this.dist;
-    for(let i = 0; i < this.children.length; i++){
-      child_width += this.children[i].width + this.dist;
-    }
-    if(child_width > this.x_range){
-          this.width = child_width;
-    }
-    if(this.parent != null){
-      this.parent.update_width();
     }
 
-  }
+    adjust_children(){
+        this.dis.adjust_children(this);
+    }
 
-  add_child(n){
-    n.parent = this;
-    n.root = this.root;
-    // while(n.root.parent != null){
-    //     n.root = n.root.parent;
+    display(){
+        this.dis.display(this);
+    }
+
+    checkCoordinates(x, y){
+        this.dis.checkCoordinates(this, x, y);
+    }
+
+    update_width(){
+        this.dis.update_width(this);
+    }
+
+    display(){
+        this.dis.display(this);
+    }
+
+    clearActive(){
+        this.dis.clearActive(this);
+    }
+
+    getActive(){
+        console.log("ran: ", this);
+        if (this.dis.getActive(this) == true){
+            return this;
+        }
+        // return this;
+    }
+
+    getID(ID) { // Currently not used, probably not necessary and will be removed in future push!
+        if (this.id == ID) {
+            return this;
+        } else {
+            for (var i = 0; i < this.children.length; i++) {
+                var result = this.children[i].getID(ID);  // Pass ID instead of this.children[i].id
+                if (this.id == ID) {
+                    return this;  // Return the result if found
+                }
+            }
+        }
+        return null;  // Return null if ID is not found
+    }
+
+    compareNames(label){
+        if (this.label === label) {
+            return this;
+        }
+        if (this.children && this.children.length > 0) {
+            for (let i = 0; i < this.children.length; i++) {
+                const result = this.children[i].compareNames(label);
+                if (result) {
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
+
+    removeSubTree(node){
+        if (this === node) {
+            console.log("Root is tried to be deleted.");
+        }
+        if (this.children && this.children.length > 0) {
+            for (let i = 0; i < this.children.length; i++) {
+                if (this.children[i] === node) {
+                    this.children.splice(i, 1);
+                }
+                // const result = this.children[i].removeSubTree(node);
+                if (this.children[i] && this.children[i].removeSubTree(node)) {
+                    return true;
+                }
+            }
+        }
+        return null;
+    }
+
+    convertADTtoNode(parent) {
+        console.log("node: ", this);
+        var newNode;
+        if (this == root) {
+            var nodeRoot = new Node();
+            nodeRoot.label = this.label;
+            nodeRoot.refinement = this.refinement;
+            nodeRoot.depth = this.dis.level;
+            nodeRoot.swith_role = this.type;
+            nodeRoot.parent = null;
+            console.log("new node: ", nodeRoot);
+            newNode = nodeRoot;
+            this.xmlNode = nodeRoot;
+        } else {
+            var ADTnode = new Node();
+            ADTnode.label = this.label;
+            ADTnode.refinement = this.refinement;
+            ADTnode.depth = this.dis.level;
+            ADTnode.swith_role = this.type;
+            ADTnode.parent = parent;
+            console.log("new node: ", ADTnode);
+            newNode = ADTnode;
+            this.xmlNode = ADTnode;
+        }
+        if (this.children && this.children.length > 0) {
+            for (let i = 0; i < this.children.length; i++) {
+                this.children[i].convertADTtoNode(newNode);
+            }
+        }
+    }
+
+    addChildInXML(temp_string){
+        console.log("THE XMLNODE: ", this.xmlNode);
+        temp_string = add_child(this.xmlNode, temp_string, 1);
+        if (this.children && this.children.length > 0) {
+            for (let i = 0; i < this.children.length; i++) {
+                temp_string = this.children[i].addChildInXML(temp_string);
+            }
+        }
+        temp_string += '\n';
+        temp_string += "  ";
+        for (var i = 0; i < this.xmlNode.depth; i++){
+            temp_string += "    ";
+        }
+        temp_string += '</node>';
+        console.log("it: ", temp_string);
+        return temp_string;
+    }
+
+    initialColor() {
+        if (this.children && this.children.length > 0) {
+            for (let i = 0; i < this.children.length; i++) {
+                this.children[i].initialColor();
+            }
+        }
+        if(this.type == 0) {
+            console.log("ice", this);
+            this.dis.stroke = color('red');
+            this.dis.strokeWeight = 3;
+            this.dis.r = 50;
+        } else if (this.type == 1) {
+            this.dis.stroke = color('green');
+            this.dis.strokeWeight = 3;
+            this.dis.r = 1;
+        }
+    }
+
+    checkParentChild(attack, parentCheck) {
+        console.log("PCHECK");
+        if (attack) { // Attack node, user wants to make this defense node
+            // Parent check
+            // Check if parent is defense already, then just return true.
+            var defNodeCounter = 0;
+            if (this.parent != null) {
+                if ((this.parent.type === 0 && this.parent.children && this.parent.children.length > 0) || (this.parent === null)) {
+                    // If attack node, then count all parents children, and check how many are defense nodes.
+                    for (let i = 0; i < this.parent.children.length; i++) {
+                        if (this.parent.children[i].type === 1) {
+                            defNodeCounter++;
+                        }
+                    }
+                    if (defNodeCounter != 0) {
+                        // If 1 or more defense children, and attack parent, then no more defense children allowed.
+                        return -1;
+                    } 
+                }
+            }
+            // Children check
+            // Check if any children of attack node that will be defense node are attack nodes.
+            var attChildrenCounter = 0;
+            if ((this.children && this.children.length > 0) || (!this.children)) {
+                for (let j = 0; j < this.children.length; j++) {
+                    if (this.children[j].type === 0) {
+                        attChildrenCounter++;
+                    }
+                }
+                if (attChildrenCounter > 1) {
+                    // If more than one attack node, and parent will be defense node, than defense node will have >1
+                    // attack children. Not possible, so return false.
+                    return -2;
+                }
+            }
+            // If both parents check and children check succeed, return true.
+            return 0;
+        } else if (!attack) { // Defense node, user wants to make this attack node
+            // Parent check
+            // Check if parent is attack already, then just return true.
+            var attNodeCounter = 0;
+            if (this.parent != null) {
+                if ((this.parent.type === 1 && this.parent.children && this.parent.children.length > 0) || (this.parent === null)) {
+                    // If defense node, then count all parents children, and check how many are attack nodes.
+                    for (let i = 0; i < this.parent.children.length; i++) {
+                        if (this.parent.children[i].type === 0) {
+                            attNodeCounter++;
+                        }
+                    }
+                    if (attNodeCounter != 0) {
+                        // If 1 or more attack children, and defense parent, then no more attack children allowed.
+                        return -1;
+                    }
+                } 
+            }
+            // Children check
+            // Check if any children of defense node that will be attack node are defense nodes.
+            var defChildrenCounter = 0;
+            if ((this.children && this.children.length > 0) || (!this.children)) {
+                for (let j = 0; j < this.children.length; j++) {
+                    if (this.children[j].type === 1) {
+                        defChildrenCounter++;
+                    }
+                }
+                if (defChildrenCounter > 1) {
+                    // If more than one attack node, and parent will be defense node, than defense node will have >1
+                    // attack children. Not possible, so return false.
+                    return -2;
+                }
+            }
+            return 0;
+        }
+        return -3;
+    }
+
+    checkForWarnings(){
+        if (this.children && this.children.length > 0) {
+            for (let i = 0; i < this.children.length; i++) {
+                console.log("colors: ", this.dis.stroke.levels);
+                if (this.dis.stroke.levels[0] === 0 && this.dis.stroke.levels[1] === 0) {
+                    console.log
+                    return false;
+                }
+                if (!this.children[i].checkForWarnings()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    // setNodeStruc(parent) {
+    //     if (this !== root) {
+
+    //     }
+    //     if (this.children && this.children.length > 0) {
+    //         for (let i = 0; i < this.children.length; i++) {
+    //             this.children[i].convertADTtoNode();
+    //         }
+    //     }
     // }
-    this.children.push(n);
-    // if(this.children.length == 1){
-    //   this.children[0].x = this.x;
-    // } else if (this.children.length % 2 == 0){
-    //   for(let i = 0; i < this.children.length/2; i++){
-    //     console.log(this.x - (this.children[i].x_range - 50)*(this.children.length/2 - i))
-    //     this.children[i].x = this.x - (this.children[i].x_range - 50)*(this.children.length/2 - i);
-    //   }
-    //   for(let i = this.children.length/2; i<this.children.length; i++){
-    //     this.children[i].x = this.x + (this.children[i].x_range + 50)*(this.children.length/2 + i);
-    //   }
-    // }
-    this.update_width();
-      //Handling Width
-    this.root.adjust_children();
-    }
 
 
-  checkCoordinates(x, y){
-    if(x >= this.x && x <= this.x + this.x_range && y >= this.y && y <= this.y+  this.y_range ){
-      this.hover = true;
-      return this;
-    } else {
-      // console.log(this.x, x, this.x + this.x_range, "  ", this.y, y, this.y + this.y_range)
-      this.hover = false;
-      for(let i = 0; i < this.children.length; i++){
-        var toReturn = this.children[i].checkCoordinates(x, y);
-        if(toReturn != null){
-          return toReturn
-        }
-      }
-      return null;
-    }
-
-  }
-
-  clearActive(){
-    this.active = false;
-    for(let i = 0; i < this.children.length; i++){
-      this.children[i].clearActive();
-    }
-  }
-
-  getActive(){
-    if(this.active == true){
-      return this;
-    } else {
-      for(let i = 0; i<this.children.length; i++){
-        var toReturn = this.children[i].getActive();
-        if(toReturn != null){
-          return toReturn;
-        }
-      }
-      return null;
-    }
-  }
-
-    //Adjusts the locations of children dependent on size
-  adjust_children(){
-
-      var curr_x = this.x + this.x_range/2 - this.width/2;
-      // console.log(this.child_width(dist))
-      for(let i = 0; i < this.children.length; i++){
-        //Handling Child X Location
-        this.children[i].x = curr_x;
-        // if(this.children[i].children.length == 0){
-          this.children[i].x += this.children[i].width/2
-          this.children[i].x -= this.children[i].x_range/2
-        // }
-        curr_x += this.children[i].width + this.dist;
-        //Handling Child Y Location
-        this.children[i].y = this.y + 100;
-        this.children[i].level = this.level + 1;
-        console.log("AAA", curr_x);
-    }
-    for(let i = 0; i < this.children.length; i++){
-      this.children[i].adjust_children();
-    }
-
-  }
-
-  set_refinement(r){
-    this.refinement = r;
-  }
-
-
-  // reset the lines at the end of the draw
-  resetLines() {
-    stroke("black");
-    strokeWeight(1);
-  }
-  // dashed lines
-  setLineDash(list) {
-    drawingContext.setLineDash(list);
-  }
-
-  display(){
-
-    if(this.t.length < 20){
-      textSize(32);
-    } else {
-      textSize(16);
-    }
-    
-    // This node visualized
-
-    // draw the strokes/lines
-    this.setLineDash(this.lineList);
-    stroke(this.stroke);
-    strokeWeight(this.strokeWeight);
-
-    fill(this.c)
-    rect(this.x, this.y, this.x_range, this.y_range, this.r);
-    console.log("boxxie: ", this.x, this.y, this.x_range, this.y_range, this.r);
-    stroke("black"); // reset
-    strokeWeight(1); // reset
-
-    fill(color(255 - this.c.levels[0], 255 - this.c.levels[1], 255 - this.c.levels[2]))
-    text(this.t, this.x + this.t.length/5, this.y + this.y_range/this.lines -3);
-    //Invert colors if clicked or hovered
-    if(this.hover || this.active){
-      stroke(this.stroke);
-      strokeWeight(this.strokeWeight);
-      fill(color(255 - this.c.levels[0], 255 - this.c.levels[1], 255 - this.c.levels[2]));
-      rect(this.x, this.y, this.x_range, this.y_range, this.r);
-      stroke("black");
-      strokeWeight(1);
-      fill(this.c);
-      text(this.t, this.x + this.t.length/5, this.y + this.y_range/this.lines -3);
-
-    }
-
-
-    fill("color(255, 255, 255)")
-    // AND refinement
-    if(this.refinement == 1 && this.children.length >= 2){
-      var myX = this.x + this.x_range/2;
-      var myY = this.y + this.y_range;
-      var firstX = this.children[0].x + this.children[0].x_range/2;
-      var lastX = this.children[this.children.length - 1].x + this.children[this.children.length - 1].x_range/2
-      var childY = this.children[0].y;
-
-      var percentage = .3;
-      var startX = myX - (myX - firstX)*percentage
-      var startY = myY + (childY - myY)*percentage
-      var endX = myX + (lastX - myX)*percentage
-      var endY = myY + (childY - myY)*percentage
-
-      // line(startX, startY, endX, endY)
-      curve(this.x + this.x_range/2 - this.width/2, this.y, startX,startY, endX, endY, this.x + this.x_range/2 + this.width/2, this.y)
-    }
-
-    //Visualize lines to children and then visualize children
-    for (let i = 0; i < this.children.length; i++){
-      this.setLineDash(this.lineList);
-      line(this.x+this.x_range/2, this.y+this.y_range, this.children[i].x+this.children[i].x_range/2,  this.children[i].y)
-      this.children[i].display();
-    }
-  }
 }
+
+/**
+ * Node
+- List of children
+- type of node
+- type of refinement
+- id of node
+- label of node
+- dictionary of attributes
+ */
