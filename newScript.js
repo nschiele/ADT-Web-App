@@ -74,7 +74,7 @@ async function setup() {
     canvasElement = createCanvas(canvasWidth,canvasHeight);
 
     // canvasElement.backgroundColor = "blue";
-    
+
     // set parent div
     canvasElement.parent("canvasContainer");
 
@@ -177,25 +177,13 @@ This may be up to changes. */
 
 function zoomInFunction(){
     console.log("[*] In zoomInFunction()");
-    ////root.dis.x *= 1.25;
-    ////root.dis.x_range *= 1.25;
-    ////root.dis.y *= 1.25;
-    ////root.dis.y_range *= 1.25;
 
     scaleValue *= 1.25;
 
     changeCoordinates(1.25);
 
 
-/*
-    var myElement = document.getElementById("defaultCanvas0");
-    var scaleIt = 1.25;
-    var centerX = 100;
-    var centerY = 100;
-    scaleAround(myElement, scaleValue, centerX, centerY);
-*/
 
-    ////root.dis.adjust_textbox();
 }
 
 function zoomOutFunction(){
@@ -205,14 +193,6 @@ function zoomOutFunction(){
 
     changeCoordinates(0.8);
 
-/*
-    var myElement = document.getElementById("defaultCanvas0");
-    var scaleIt = 0.8;
-    var centerX = 100;
-    var centerY = 100;
-    scaleAround(myElement, scaleValue, centerX, centerY);
-*/
-    ////root.dis.adjust_textbox();
 
 }
 
@@ -313,17 +293,36 @@ function downloadCanvasPng(){
     console.log("[*] In downloadCanvasPng()");
     fileName = select("#treeName").value();
     ///console.log(fileName);
-    saveCanvas(canvasElement, fileName, 'png');
+    //saveCanvas(canvasElement, fileName, 'png');
 }
 
 function downloadCanvasJpg(){
-    console.log("[*] In downloadCanvasJpg()");
-    fileName = select("#treeName").value();
-    saveOn = true; // Save mode on, needed for draw()
-    orgScaleVal = scaleValue; // Save previous scale value
-    scaleValue = 1; // Set scale value to 1, original canvas size
-    console.log(root);
-    draw(); // Call draw()
+  console.log("[*] In downloadCanvasJpg()");
+  fileName = select("#treeName").value();
+  if (root != null && root != undefined){
+    // Setup for save
+    background("white");
+    if (activeNode != null)
+      activeNode.dis.active = false;
+
+    scale(scaleValue);
+
+    root.display();
+
+
+    if (!(root.checkForWarnings()))
+      alert("Caution! Your ADT contains black nodes, which are not seen as attack or defense nodes.")
+    saveCanvas(canvasElement, fileName, 'jpg');
+
+    if (activeNode != null)
+      activeNode.dis.active = true;
+
+    // Post save
+    background("whitesmoke");
+    canvasElement.elt.style.border = "2px solid lightgray";
+    draw();
+
+  }
 }
 
 function deleteADT(){
@@ -333,7 +332,7 @@ function deleteADT(){
     var toBeDeleted = []
     if (root.children) {
       for (let i = 0; i < root.children.length; i++) {
-        // This is split up. 
+        // This is split up.
         // If first child is child 0, and second child is child 1, and the first child is deleted before the second child is detected,
         // the second child will become the first child after the first child is deleted, and is therefore not detected.
         // That is why all the to-be-deleted children are added to an array first, and after detection of all children, they will
@@ -348,14 +347,14 @@ function deleteADT(){
     root.label = "Root";
     root.dis.t = "Root";
     document.getElementById("nodeTextInput").setAttribute("placeholder", "");
-    
+
     // Give the right position on the canvas
     root.dis.adjust_textbox(); // Adjust length of textbox
     root.update_width(); // Adjust width of textbox
     windowResized(); // Resize window
 
     // Change coordinates
-    resetScaleCoordinates(root, 1); 
+    resetScaleCoordinates(root, 1);
     changeCoordinatesRec(scaleValue, root);
 
     // Resize window with new coordinates and reset them
@@ -563,9 +562,9 @@ function manAddChild(){
       // newNode.dis.stroke = color('green');
       // newNode.dis.strokeWeight = 3;
       // newNode.dis.r = 1;
-      
+
       // If parent is defense node and hasn't had attack node yet, set it now that it does have an attack node
-      if (newNode.parent.type === 1) { 
+      if (newNode.parent.type === 1) {
         newNode.parent.defenseNodeHasAttackNode = true;
       }
     }
@@ -611,7 +610,7 @@ function manDeleteChild(){
     } else if (activeNode.parent.type == 1 && activeNode.type == 0) {
       activeNode.parent.defenseNodeHasAttackNode = false;
     }
-    
+
     activeNode.parent.dis.update_width(activeNode.parent);
     activeNode.parent.dis.adjust_children(root);
     activeNode = undefined;
@@ -643,16 +642,11 @@ function manChangeChild(){
     activeNode.label = input;
     activeNode.dis.t = input;
     document.getElementById("nodeTextInput").setAttribute("placeholder", "");
-    // activeNode.dis.adjust_textbox();
-    // root.dis.adjust_children(activeNode);
-    // activeNode.dis.update_width(activeNode);
-    // resetScaleCoordinates(root, true);
-    // changeCoordinatesRec(scaleValue, root);
+
     activeNode.dis.adjust_textbox();
     activeNode.update_width();
     windowResized();
     resetScaleCoordinates(root, 1);
-    console.log("Scalevalue now: " + scaleValue);
     changeCoordinatesRec(scaleValue, root);
     printCoordinates(root);
     draw();
@@ -753,7 +747,7 @@ async function buildFromUpload() {
         if (fileExt === 'xml') {
             input = await getJson(0, file);
             console.log("YA: ", file);
-        } 
+        }
         buildFromMultiset(input);
         root.initialColor();
         draw();
@@ -933,7 +927,7 @@ async function buildFromMultiset(toBuild, parent=null){
                 parent.defenseNodeHasAttackNode = true;
               }
             }
-            
+
             parent.add_child(child, new Display(toBuild.label, 0, 0, 2));
             // console.log("a leafje", toBuild.label);
             IDnumber++;
@@ -957,35 +951,17 @@ function draw(){
         }
 
         // zoom in/out
-        //console.log("scaleValue: ", scaleValue); // added by C
         scale(scaleValue);
 
         clear();
 
         if (root != null && root != undefined){
-          if (saveOn) {
-            // Saving mode on, saving canvas.
-            background("white");
-            if (activeNode != null) 
-              activeNode.dis.active = false; // Turn active node off for jpg
-            root.display(); // Draw tree with scale = 1 and white background
-            if (!(root.checkForWarnings()))
-              alert("Caution! Your ADT contains black nodes, which are not seen as attack or defense nodes.")
-            saveCanvas(canvasElement, fileName, 'jpg'); // Actually saving the canvas
-            if (activeNode != null)
-              activeNode.dis.active = true; // Turn active node back on
-            saveOn = false; // Turn off the saving mode
-            scaleValue = orgScaleVal; // Resizing to previous scale
-            draw(); // Rerun with Saving mode off
-          } else if (!saveOn) {
-            background("whitesmoke");
-            canvasElement.elt.style.border = "2px solid lightgray";
-          }
           root.display();
           toDraw = false;
         }
 
     }
+
     //What node is the mouse currently over
     if (!(root == null || root == undefined)){
       var mouseNode = root.dis.checkCoordinates(root, mouseX, mouseY);
@@ -1011,10 +987,8 @@ function draw(){
             trackMouseStart = false;
             trackNode.freeMove = true;
         }
-      // trackNode.x = (-1* startMouseX + mouseX)/scaled;
-      // trackNode.y = (-1*startMouseY + mouseY)/scaled;
+
         toDraw = true;
-    //   console.log("Registering Mouse Press", startMouseX - mouseX, startMouseY - mouseY, trackNode.x, trackNode.y);
     }
 
   // Check if the canvas needs to be resized accordingly.
@@ -1053,7 +1027,7 @@ function mouseReleased(){
         activeNode = null;
         // activeNode = null;
     }
-   
+
     document.getElementById("nodeTextInput").setAttribute("placeholder", "");
     if (activeNode != null) {
         document.getElementById("nodeTextInput").disabled = false;
