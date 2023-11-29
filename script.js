@@ -140,3 +140,9 @@ function mouseDragged() {
     active.setPos(mouseX,mouseY);
   }
 }
+
+function keyPressed() {
+  if (keyCode === LEFT_ARROW) {
+    console.log(active);
+  }
+}
