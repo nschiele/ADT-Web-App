@@ -100,6 +100,7 @@ async function setup() {
     // mainTree contains all the sub-trees of children. Aka: Root node.
     // mainTree = new ADTree("test");
     // manAddChild("testInput!");
+    root = new ADTree("Root node");
 }
 
 function windowResized() {
