@@ -52,13 +52,14 @@ var IDnumber = 1; // Added by J
 let cX = 0;
 let cY = 0;
 
+let mX;
+let mY;
 async function setup() {
     console.log("[*] In setup()");
     // noLoop();
     toDraw = true;
     trackMouseStart = true;
     frameRate(60);
-
     sideFrameWidth = 400;
     var frameX = windowWidth - sideFrameWidth;
     // var canv = createCanvas(700, 700);
@@ -76,15 +77,17 @@ async function setup() {
     noSmooth();
   
     
-    // set parent div
+    // Parent the canvas to the container DIV, this properly places it within the window
     canvasElement.parent("canvasContainer");
+    canvasElement.elt.addEventListener('mousedown', () => { mX = mouseX; mY = mouseY; active = canvasElement; console.log(mouseX, mouseY)});
 
     /* windowWidth/Height is in pixels; the width and height of window (not the entire display, just the html DOM!)
      * sticky-top is the class of the top bar. canvTopBar is the id of the buttons right above the canvas. (zoom in, out, export, import, etc.). 
      * The heights of these elements are considered when setting canvas position and dimensions.
      * 0.25 is used to multiply the width, since the left-sidebar has a width of 25%.
      */
-    canvasElement.position(windowWidth*0.25, select("#topBar").offsetHeight + select("#canvTopBar").offsetHeight);
+    select("#canvTopBar").position(windowWidth*0.25, select("#topBar").offsetHeight);
+    canvasElement.position(windowWidth*0.25, select("#topBar").offsetHeight + select("#canvTopBar").offsetHeight+26);
     
     cX = canvasElement.position().x;
     cY = canvasElement.position().y;
@@ -95,55 +98,77 @@ async function setup() {
     /* styling canvas */
     // canvasElement.elt.style.backgroundColor = "blue";
     canvasElement.elt.style.borderRadius = "0";
-    // canvasElement.elt.style.border = "2px solid pink";
 
-    // mainTree contains all the sub-trees of children. Aka: Root node.
-    // mainTree = new ADTree("test");
-    // manAddChild("testInput!");
-    root = new ADTree("Root node");
+    // Initialize canvas with 1 node
+    root = new ADTree("Target");
+
+    //    General P5-related setup
+    // Tell the canvas to translate all given coordinates to be related to the entire window, not just the canvas. (so (0,0) is top left of the window, not the canvas. Helps with calculations later.)
+    translate(-cX, -cY);
+    // Color and thickness of lines between nodes
+    stroke('darkgray');
+    strokeWeight(2);
 }
 
-function windowResized() {
-  canvasElement.position(windowWidth*0.25, select("#topBar").offsetHeight + select("#canvTopBar").offsetHeight);
+
+function windowResized() { // Called whenever window is resized, standard in p5: https://p5js.org/reference/#/p5/windowResized
+  canvasElement.position(windowWidth*0.25, select("#topBar").offsetHeight + select("#canvTopBar").offsetHeight+26);
+  resetMatrix(); // Reset any translation
+  moveNodes(root, -(cX - canvasElement.position().x), -(cY - canvasElement.position().y));
   cX = canvasElement.position().x;
   cY = canvasElement.position().y;
+  select("#canvTopBar").position(windowWidth*0.25, select("#topBar").offsetHeight);
   resizeCanvas(windowWidth-cX, windowHeight-cY-document.getElementById('botFooter').offsetHeight, true);
+  translate(-cX,-cY); // Re-translate relative to new canvas position
+  drawLines(root); // Re-draw all lines, since they are deleted by resizeCanvas
 }
 
-// function createNode(inputVal) {
-//   if (inputVal == null) { // if input NOT given, use nodeChildTextInput. Else, use input.
-//     textVal = select("#nodeChildTextInput").elt.value;
-//     if (!textVal) // if nodeChildTextInput empty, use placeholder
-//         inp = createInput("Placeholder");
-//     else
-//         inp = createInput(textVal);
-//   } else {
-//       inp = createInput(inputVal);
-//   } 
-//   inp.addClass('Node'); // add styling
-//   inp.position(canvasElement.position().x, canvasElement.position().y) // set pos to top-left of canvas
-//   inp.mouseClicked(scream);
-//   childTree = new ADTree(inp);
-//   return childTree;
-// }
 
-function manAddChild(inputVal) { // inputVal is a string
-  // mainTree.addChild(createNode(inputVal));
+function manAddChild(inputVal) { // Manually add a child, inputVal is a string to be given as the text-content of the created node.
   childTree = new ADTree(inputVal);
 }
 
-// function scream() {
-//   // super.test();
-// }
-
-function mouseDragged() {
-  if (active != null){
-    active.setPos(mouseX,mouseY);
+function drawLines(node){ // Recursively draw all lines between all nodes and their children
+  for (let i = 0; i < node.children.length; i++) {
+    // Draw line between root of sub-tree and child i
+    line(node.root.x + node.root.elt.offsetWidth/2, node.root.y + node.root.elt.offsetHeight, node.children[i].root.x + node.children[i].root.elt.offsetWidth/2, node.children[i].root.y);
+    // recursively call drawLines on sub-trees
+    drawLines(node.children[i]);
   }
 }
 
-function keyPressed() {
+function moveNodes(node, moveX, moveY){ // Moves all nodes in tree
+  node.root.position(node.root.x + moveX, node.root.y + moveY); // Move node by moveX and moveY
+  node.oldX = node.root.x;
+  node.oldY = node.root.y;
+  for (let i = 0; i < node.children.length; i++) {
+    // recursively call moveNodes on sub-trees
+    moveNodes(node.children[i], moveX, moveY);
+  }
+}
+
+function mouseDragged() { // Called when mouse is clicked and dragged, standard in p5: https://p5js.org/reference/#/p5/mouseDragged
+  if (active != null){ 
+    console.log(active);
+    if (active == canvasElement){ // If the canvas is activing, the user is scrolling the canvas
+      console.log("clear")
+      clear();
+      moveNodes(root, -(mX - mouseX), -(mY - mouseY));
+      drawLines(root);
+      mX = mouseX;
+      mY = mouseY;
+    } else { // if a node is active, drag around the node
+      console.log("clear")
+      clear();              // Clears all drawn pixels off the canvas
+      drawLines(root);      // Recurively re-draw lines every frame while dragging (as inneficient as it is, you can't re-draw an individual line while dragging)
+      active.setPos(mouseX,mouseY);
+    }
+  }
+}
+
+function keyPressed() { // Temporary: bind anything to happen when clicking left arrow
   if (keyCode === LEFT_ARROW) {
     console.log(active);
+    root.root.elt.focus();
   }
 }

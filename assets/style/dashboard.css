@@ -1,6 +1,7 @@
 body {
   font-size: .875rem;
   height: 100%;
+  overflow: hidden;
 }
 .feather {
   width: 16px;
@@ -318,6 +319,7 @@ textarea:focus::placeholder {
   margin-right: 2%;
   margin-left: 3%;
   min-height: 75vh;
+  z-index: 0;
 }
 
 canvas{
@@ -495,13 +497,15 @@ footer p {
 }
 
 .Node {
+  background-color: #f4f4f4;
+  width: 300px;
   text-align: center;
   border: 2px solid darkgray;
   border-radius: 20px;
   padding-bottom: 5px;
   padding-top: 5px;
   outline: none;
-  z-index: 10;
+  z-index: 2;
   word-wrap: break-word;
   resize: none;
 }
@@ -521,5 +525,18 @@ footer p {
   outline: none;
   padding-bottom: 2px;
   padding-left: 7px;
-  z-index: 0;
+  z-index: 1;
+}
+
+#canvTopBar {
+  z-index: 3;
+  background-color: white;
+  padding: 0;
+  margin: 0;
+  width: 75vw;
+  left:-10;
+}
+
+#treeName {
+  margin-left: 0.6vw;
 }
