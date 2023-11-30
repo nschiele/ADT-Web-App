@@ -528,6 +528,24 @@ footer p {
   z-index: 1;
 }
 
+.contextRefine {
+  background-color: #FF6464;
+  border: none;
+  border-radius: 50% 50% 0% 0%;
+  color: #FFF;
+  font-size: 10px;
+  width: 27px;
+  height: 27px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  outline: none;
+  padding-bottom: 2px;
+  padding-left: 7px;
+  z-index: 1;
+}
+
 #canvTopBar {
   z-index: 3;
   background-color: white;

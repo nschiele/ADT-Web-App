@@ -134,6 +134,14 @@ function drawLines(node){ // Recursively draw all lines between all nodes and th
     line(node.root.x + node.root.elt.offsetWidth/2, node.root.y + node.root.elt.offsetHeight, node.children[i].root.x + node.children[i].root.elt.offsetWidth/2, node.children[i].root.y);
     // recursively call drawLines on sub-trees
     drawLines(node.children[i]);
+    if (i > 0){
+      if (node.refinementIsAnd){
+        line(node.root.x + node.root.elt.offsetWidth/2 + ((node.children[i-1].root.x + node.children[i-1].root.elt.offsetWidth/2) - (node.root.x + node.root.elt.offsetWidth/2))/10, // middle of current node - 1/10th x-distance to left node of current pair
+             node.root.y + node.root.elt.offsetHeight + (node.children[i-1].root.y - (node.root.y + node.root.elt.offsetHeight))/10,  // bottom of current node - 1/10th u-distance to top of left node of current pair
+             node.root.x + node.root.elt.offsetWidth/2 + ((node.children[i].root.x + node.children[i].root.elt.offsetWidth/2) - (node.root.x + node.root.elt.offsetWidth/2))/10,  // middle of current node - 1/10th distance to right node of current pair
+             node.root.y + node.root.elt.offsetHeight + (node.children[i].root.y - (node.root.y + node.root.elt.offsetHeight))/10)  // bottom of current node - 1/10th distance to top of left node of current pair
+      }
+    }
   }
 }
 
@@ -168,7 +176,10 @@ function mouseDragged() { // Called when mouse is clicked and dragged, standard 
 
 function keyPressed() { // Temporary: bind anything to happen when clicking left arrow
   if (keyCode === LEFT_ARROW) {
-    console.log(active);
     root.root.elt.focus();
+    active.refinementIsAnd = !active.refinementIsAnd;
+    clear();
+    drawLines(root);
+    console.log(active);
   }
 }

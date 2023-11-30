@@ -4,9 +4,11 @@ class ADTree{
         this.children = [];
         this.name = "ROOT NODE!";
         this.root;
+        this.refinementIsAnd = false;
         this.isDragging = false;
         this.contextEnabled = false;
-        let btn = null;
+        let Plusbtn = null;
+        let Refinebtn = null;
         this.oldX = width/2 + cX;
         this.oldY = height/8 + cY;
         if (inputVal == null) { // if input NOT given, use nodeChildTextInput. Else, use input.
@@ -32,58 +34,80 @@ class ADTree{
         this.root.elt.addEventListener('input', this.resizeInputBox.bind(this))
     }
 
-    // addChild(inputNode){
-    //     // this.children.push(inputNode)
-    // }
     resizeInputBox() {
-        // console.log(this.root.elt.value.length);
+        this.Plusbtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Plusbtn.width/2, this.root.position().y+this.root.elt.offsetHeight);
+        clear();
+        drawLines(root);
+        console.log("HEIGHT");
         console.log(this.root.elt.offsetHeight);
-        console.log(this.root.elt.offsetWidth, this.root.elt.offsetHeight);
-        this.btn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.btn.width/2, this.root.position().y+this.root.elt.offsetHeight);
     }
 
     addChild(){
         let newChild = new ADTree("Child");
-        newChild.root.position(this.oldX - 50 + (this.children.length - 1)*50, this.oldY + 50);
         this.children.push(newChild);
+        if (this.children.length == 1){
+            this.children[this.children.length-1].root.position(this.oldX, this.oldY + 200 + this.root.elt.offsetHeight);
+        } else {
+            for (let i = 0; i < this.children.length-1; i++){
+                this.children[i].root.position(this.children[i].root.x - 175, this.oldY + 200 + this.root.elt.offsetHeight);
+            }
+            this.children[this.children.length-1].root.position(this.oldX + 175*(this.children.length-1), this.oldY + 200 + this.root.elt.offsetHeight);
+        }
         this.root.elt.focus();
-        // draw line between parent and child
-        line(this.root.x + this.root.elt.offsetWidth/2, this.root.y + this.root.elt.offsetHeight, newChild.root.x + newChild.root.elt.offsetWidth/2, newChild.root.y);
+        clear();
+        drawLines(root);
     }
+
     toggleContextMenu(){
         if (this.contextEnabled){
-            this.btn.remove();
+            this.Plusbtn.remove();
+            this.Refinebtn.remove();
         } else {
-            this.btn = createButton("+");
-            this.btn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.btn.width/2, this.root.position().y+this.root.elt.offsetHeight);
-            this.btn.addClass('contextAddChild');
-            this.btn.mousePressed(this.addChild.bind(this));
+            this.Plusbtn = createButton("+");
+            this.Plusbtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Plusbtn.width/2, this.root.position().y+this.root.elt.offsetHeight);
+            this.Plusbtn.addClass('contextAddChild');
+            this.Plusbtn.mousePressed(this.addChild.bind(this));
+
+            if (this.refinementIsAnd){
+                this.Refinebtn = createButton("OR");
+                console.log("OR BTN")
+            } else {
+                this.Refinebtn = createButton("AND");
+                console.log("AND BTN")
+            }
+            this.Refinebtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Plusbtn.width/2, this.root.position().y-this.Refinebtn.elt.offsetHeight);
+            this.Refinebtn.addClass('contextRefine');
+            this.Refinebtn.mousePressed(() => {this.refinementIsAnd = !this.refinementIsAnd; clear(); drawLines(root);});
         }
         this.contextEnabled = !this.contextEnabled;
     }
+
     focusing(){
         active = this;
         this.toggleContextMenu();
         this.root.style("border", "2px solid #FF6464");
-        
     }
+
     unfocusing(){
         console.log(this.name);
         active = null;
         this.toggleContextMenu();
         this.root.style("border", "2px solid darkgray");
     }
+
     inputPressed(){
         console.log(mouseX + canvasElement.position().x, mouseY + canvasElement.position().y, this.root.position().x, this.root.position().y)
         this.oldX = this.root.x;
         this.oldY = this.root.y;
     }
+
     inputReleased(){
         this.isDragging = false;
         this.oldX = this.root.x;
         this.oldY = this.root.y;
         this.root.elt.focus();
     }
+
     setPos(X,Y){
         if (
             mouseX + canvasElement.position().x < this.oldX-10 ||
@@ -97,7 +121,6 @@ class ADTree{
         }
         if (this.isDragging == true)
             this.root.position(canvasElement.position().x+X-this.root.elt.offsetWidth/2,canvasElement.position().y+Y-this.root.elt.offsetHeight/2);
-            this.btn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.btn.width/2, this.root.position().y+this.root.elt.offsetHeight);
-        
+            this.Plusbtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Plusbtn.width/2, this.root.position().y+this.root.elt.offsetHeight);
     }
 }
