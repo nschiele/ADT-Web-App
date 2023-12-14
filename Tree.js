@@ -5,10 +5,12 @@ class ADTree{
         this.name = "ROOT NODE!";
         this.root;
         this.refinementIsAnd = false;
+        this.isDefense = false;
         this.isDragging = false;
         this.contextEnabled = false;
         let Plusbtn = null;
         let Refinebtn = null;
+        let AtkDefBtn = null;
         this.oldX = width/2 + cX;
         this.oldY = height/8 + cY;
         if (inputVal == null) { // if input NOT given, use nodeChildTextInput. Else, use input.
@@ -59,49 +61,82 @@ class ADTree{
     }
 
     toggleContextMenu(){
-        if (this.contextEnabled){
+        if (this.contextEnabled){ // If contextMenu is enabled, it should disable when toggled. So delete all btns
+            console.log("TOGGGLE CONTEXT")
             this.Plusbtn.remove();
             this.Refinebtn.remove();
-        } else {
+            this.AtkDefBtn.removeAttribute("data-feather");
+            feather.replace();
+            this.AtkDefBtn.remove();
+        } else {                  // ELSE, buttons are not currently active, create them
+
+            // Create the plus button
             this.Plusbtn = createButton("+");
             this.Plusbtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Plusbtn.width/2, this.root.position().y+this.root.elt.offsetHeight);
             this.Plusbtn.addClass('contextAddChild');
             this.Plusbtn.mousePressed(this.addChild.bind(this));
-
-            if (this.refinementIsAnd){
+            
+            // Create refinedment (AND/OR) button
+            if (this.refinementIsAnd)
                 this.Refinebtn = createButton("OR");
-                console.log("OR BTN")
-            } else {
+            else 
                 this.Refinebtn = createButton("AND");
-                console.log("AND BTN")
-            }
             this.Refinebtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Plusbtn.width/2, this.root.position().y-this.Refinebtn.elt.offsetHeight);
             this.Refinebtn.addClass('contextRefine');
-            this.Refinebtn.mousePressed(() => {this.refinementIsAnd = !this.refinementIsAnd; clear(); drawLines(root);});
+            this.Refinebtn.mousePressed(() => {
+                this.refinementIsAnd = !this.refinementIsAnd;
+                clear();
+                drawLines(root);
+                if (this.refinementIsAnd)
+                    this.Refinebtn.elt.innerHTML = "OR";
+                else 
+                    this.Refinebtn.elt.innerHTML = "AND";
+            });
+
+            // Create defense/attack toggle
+            this.AtkDefBtn = createButton("");
+            if (this.isDefense)
+                this.AtkDefBtn.attribute("data-feather","shield");
+            else 
+                this.AtkDefBtn.attribute("data-feather","shield-off");
+            this.AtkDefBtn.position(this.root.position().x+this.root.elt.offsetWidth/2 + this.Refinebtn.elt.offsetWidth - this.Plusbtn.width/2, this.root.position().y-this.Refinebtn.elt.offsetHeight);
+            this.AtkDefBtn.addClass('atkDef');
+            this.AtkDefBtn.mousePressed(() => {
+                this.isDefense = !this.isDefense;
+                console.log("DEFENSE IS " + this.isDefense);
+                if (!this.isDefense)
+                    this.AtkDefBtn.attribute("data-feather","shield");
+                else 
+                    this.AtkDefBtn.attribute("data-feather","shield-off");
+                feather.replace();
+                });
+            feather.replace();
         }
-        this.contextEnabled = !this.contextEnabled;
+        this.contextEnabled = !this.contextEnabled; // Toggle contextEnabled bool
     }
 
     focusing(){
-        active = this;
-        this.toggleContextMenu();
-        this.root.style("border", "2px solid #FF6464");
     }
 
     unfocusing(){
-        console.log(this.name);
-        active = null;
-        this.toggleContextMenu();
-        this.root.style("border", "2px solid darkgray");
     }
 
     inputPressed(){
         console.log(mouseX + canvasElement.position().x, mouseY + canvasElement.position().y, this.root.position().x, this.root.position().y)
         this.oldX = this.root.x;
         this.oldY = this.root.y;
+        if (active != this){
+            active = this;
+            if (lastActive != null && lastActive != canvasElement)
+                lastActive.toggleContextMenu();
+            lastActive = this;
+            this.toggleContextMenu();
+            this.root.style("border", "2px solid #FF6464");
+        }
     }
 
     inputReleased(){
+        this.toggleContextMenu();
         this.isDragging = false;
         this.oldX = this.root.x;
         this.oldY = this.root.y;
@@ -109,18 +144,24 @@ class ADTree{
     }
 
     setPos(X,Y){
-        if (
-            mouseX + canvasElement.position().x < this.oldX-10 ||
-            mouseX + canvasElement.position().x > this.oldX+this.root.elt.offsetWidth+10 ||
-            mouseY + canvasElement.position().y < this.oldY-10 ||
-            mouseY + canvasElement.position().y > this.oldY+this.root.elt.offsetHeight+10
-        ){
-            this.isDragging = true;
-            this.root.elt.blur();
-            active = this;
-        }
-        if (this.isDragging == true)
+        if (this.isDragging == true){
             this.root.position(canvasElement.position().x+X-this.root.elt.offsetWidth/2,canvasElement.position().y+Y-this.root.elt.offsetHeight/2);
             this.Plusbtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Plusbtn.width/2, this.root.position().y+this.root.elt.offsetHeight);
+        } else {
+            if (
+                mouseX + canvasElement.position().x < this.oldX-10 ||
+                mouseX + canvasElement.position().x > this.oldX+this.root.elt.offsetWidth+10 ||
+                mouseY + canvasElement.position().y < this.oldY-10 ||
+                mouseY + canvasElement.position().y > this.oldY+this.root.elt.offsetHeight+10
+            ){
+                this.toggleContextMenu();
+                this.isDragging = true;
+                this.root.elt.blur();
+                active = this;
+                lastActive = this;
+            }
+        }
+        
+        
     }
 }

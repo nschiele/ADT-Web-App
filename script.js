@@ -15,6 +15,8 @@ let trackMouseStart;
 let startMouseX;
 let startMouseY;
 
+let refinementDist = 0.2;
+
 let sidePanel;
 let createADTDiv;
 let activeNodeTitle;
@@ -46,6 +48,7 @@ let biggestHeight;
 let biggestWidth;
 let orgScaleVal;
 let active = null;
+let lastActive = null;
 
 var IDnumber = 1; // Added by J
 
@@ -79,7 +82,11 @@ async function setup() {
     
     // Parent the canvas to the container DIV, this properly places it within the window
     canvasElement.parent("canvasContainer");
-    canvasElement.elt.addEventListener('mousedown', () => { mX = mouseX; mY = mouseY; active = canvasElement; console.log(mouseX, mouseY)});
+    canvasElement.elt.addEventListener('mousedown', () => { mX = mouseX; mY = mouseY;
+                                                            lastActive.toggleContextMenu();
+                                                            lastActive = canvasElement;
+                                                            active = canvasElement;
+                                                            console.log(mouseX, mouseY)});
 
     /* windowWidth/Height is in pixels; the width and height of window (not the entire display, just the html DOM!)
      * sticky-top is the class of the top bar. canvTopBar is the id of the buttons right above the canvas. (zoom in, out, export, import, etc.). 
@@ -136,10 +143,10 @@ function drawLines(node){ // Recursively draw all lines between all nodes and th
     drawLines(node.children[i]);
     if (i > 0){
       if (node.refinementIsAnd){
-        line(node.root.x + node.root.elt.offsetWidth/2 + ((node.children[i-1].root.x + node.children[i-1].root.elt.offsetWidth/2) - (node.root.x + node.root.elt.offsetWidth/2))/10, // middle of current node - 1/10th x-distance to left node of current pair
-             node.root.y + node.root.elt.offsetHeight + (node.children[i-1].root.y - (node.root.y + node.root.elt.offsetHeight))/10,  // bottom of current node - 1/10th u-distance to top of left node of current pair
-             node.root.x + node.root.elt.offsetWidth/2 + ((node.children[i].root.x + node.children[i].root.elt.offsetWidth/2) - (node.root.x + node.root.elt.offsetWidth/2))/10,  // middle of current node - 1/10th distance to right node of current pair
-             node.root.y + node.root.elt.offsetHeight + (node.children[i].root.y - (node.root.y + node.root.elt.offsetHeight))/10)  // bottom of current node - 1/10th distance to top of left node of current pair
+        line(node.root.x + node.root.elt.offsetWidth/2 + ((node.children[i-1].root.x + node.children[i-1].root.elt.offsetWidth/2) - (node.root.x + node.root.elt.offsetWidth/2))*refinementDist, // middle of current node - 1/10th x-distance to left node of current pair
+             node.root.y + node.root.elt.offsetHeight + (node.children[i-1].root.y - (node.root.y + node.root.elt.offsetHeight))*refinementDist,  // bottom of current node - 1/10th u-distance to top of left node of current pair
+             node.root.x + node.root.elt.offsetWidth/2 + ((node.children[i].root.x + node.children[i].root.elt.offsetWidth/2) - (node.root.x + node.root.elt.offsetWidth/2))*refinementDist,  // middle of current node - 1/10th distance to right node of current pair
+             node.root.y + node.root.elt.offsetHeight + (node.children[i].root.y - (node.root.y + node.root.elt.offsetHeight))*refinementDist)  // bottom of current node - 1/10th distance to top of left node of current pair
       }
     }
   }
@@ -157,7 +164,7 @@ function moveNodes(node, moveX, moveY){ // Moves all nodes in tree
 
 function mouseDragged() { // Called when mouse is clicked and dragged, standard in p5: https://p5js.org/reference/#/p5/mouseDragged
   if (active != null){ 
-    console.log(active);
+    // console.log(active);
     if (active == canvasElement){ // If the canvas is activing, the user is scrolling the canvas
       console.log("clear")
       clear();
