@@ -676,6 +676,61 @@ async function downloadPrep() {
     }
 }
 
+function isFirstLineXML_Declaration(text) {
+  console.log("[*] In isFirstLineXML_Declaration()");
+  var xmlDeclaration = text.substring(0,5);
+  if(xmlDeclaration == "<?xml") {
+    return(true);
+  }
+  else return(false);
+  //NAAR VOORBEELD VAN DE GUY DIE DE JSON PARSER GESCHREVEN HEEFT
+  /*var check = "";
+    if (typeof input === "string"){
+      check = input.substring(0,5);
+    }
+
+
+    if (check == "<?xml"){
+      return input;
+    } */
+}
+
+async function drawTreeFromXML(treeInXML) {
+  console.log("[*] In drawTreeFromXML()");
+  try {
+    var input = await getJson(0, treeInXML);
+    buildFromMultiset(input);
+    root.initialColor();
+    draw();
+    toDraw = true;
+    // Needed to be able to select nodes after uploading the file:
+    windowResized();
+    resetScaleCoordinates(root, 1);
+  } catch(error) {
+      console.error("Error:", error);
+  }
+}
+
+async function retrieveFromServer() {
+  console.log("[*] In retrieveFromServer()");
+
+  let response = await fetch("https://liacs.leidenuniv.nl/~s2521423/index.php");
+  if(response.ok) {
+    let treeInXML = await response.text();
+    console.log(treeInXML);
+    if(isFirstLineXML_Declaration(treeInXML) == true){
+      drawTreeFromXML(treeInXML)
+    }
+    else {
+      alert("Format not supported.");
+    }
+  }
+  else {
+    alert("Request to the server not succesfull!" + response.status);
+    console.log(response.status);
+  }
+}
+
 function uploadADT() {
     console.log("[*] In uploadADT()");
     return new Promise(function(resolve, reject) {
