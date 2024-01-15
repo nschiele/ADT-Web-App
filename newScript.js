@@ -676,17 +676,43 @@ async function downloadPrep() {
     }
 }
 
+function isConsentGiven() {
+  console.log("[*] In isConsentGiven()");
+
+  //Ask the user for consent to store their tree in a storage
+  //to be used for further research
+  if(confirm("CONSENT MESSAGE") == true) {
+    return(true);
+  }
+  else return (false);
+}
+
 async function uploadToServer() {
   console.log("[*] In uploadToServer()");
 
-  let treeInXML = await downloadADT("");
+  if(isConsentGiven() == true) {
+    let treeInXML = await downloadADT("");
+    console.log(treeInXML);
+    let response = await fetch("https://liacs.leidenuniv.nl/~s2521423/index.php", {
+      method: "POST",
+      body: treeInXML
+    });
+    let result = await response.text();
+    console.log(result);
+  }
+  else {
+    //No consent was given; do nothing
+    console.log("No consent given");
+  }
+
+  /*let treeInXML = await downloadADT("");
   console.log(treeInXML);
   let response = await fetch("https://liacs.leidenuniv.nl/~s2521423/index.php", {
     method: "POST",
     body: treeInXML
   });
   let result = await response.text();
-  console.log(result);
+  console.log(result);*/
 }
 
 function isFirstLineXML_Declaration(text) {
