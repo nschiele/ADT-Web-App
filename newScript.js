@@ -676,6 +676,19 @@ async function downloadPrep() {
     }
 }
 
+async function uploadToServer() {
+  console.log("[*] In uploadToServer()");
+
+  let treeInXML = await downloadADT("");
+  console.log(treeInXML);
+  let response = await fetch("https://liacs.leidenuniv.nl/~s2521423/index.php", {
+    method: "POST",
+    body: treeInXML
+  });
+  let result = await response.text();
+  console.log(result);
+}
+
 function isFirstLineXML_Declaration(text) {
   console.log("[*] In isFirstLineXML_Declaration()");
   var xmlDeclaration = text.substring(0,5);
