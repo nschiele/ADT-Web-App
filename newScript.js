@@ -722,53 +722,46 @@ async function uploadToServer() {
 
   if(isConsentGiven() == true) {
     let treeInXML = await downloadADT("");
-    console.log(treeInXML);
-    if((treeInXML.length <= 32768) ==  true) {
+    if((treeInXML.length <= 65408) ==  true) {
       treeName = getInputFromUser("Please name your tree", "TreeName");
       while(isInputlengthWithinLimit(64, treeName) == false) {
         treeName = getInputFromUser("Please name your tree", "TreeName");
       }
-      console.log(treeName);
 
       userName = getInputFromUser("Please provide your name", "UserName");
       while(isInputlengthWithinLimit(32, userName) == false) {
         userName = getInputFromUser("Please provide your name", "UserName");
       }
-      console.log(userName);
 
       //Generate the token of the tree; between 1 (inclusive) and 99999 (inclusive)
       treeToken = Math.floor(Math.random() * 100000) + 1;
-      console.log(treeToken);
       
-      //POST request
+      //POST request 
+      let treeData = {
+        userName: userName,
+        treeName: treeName,
+        treeToken: treeToken,
+        treeInXML: treeInXML
+      };
       let response = await fetch("https://liacs.leidenuniv.nl/~s2521423/index.php", {
       method: "POST",
-      body: treeInXML
+      headers: {
+        "Content-Type": "application/json;charset=utf-8"
+      },
+      body: JSON.stringify(treeData)
       });
+      
       let result = await response.text();
-
-      alert(result);
-      console.log(result);
       if(result.startsWith("ERROR") ==  false) {
-        console.log("REGEL 751");
         alert("Your tree identifier consists of: \n TreeName: " + treeName + "\n Token: " + treeToken
          + "\n \nPlease remember this as you will need it to retrieve your tree later.");
         
       }
     }
     else {
-      alert("Your tree is too large to be uploaded to the server.")
+      alert("Your tree is too large to be uploaded to the server (limit is roughly 600 nodes).")
     }
   }
-
-  /*let treeInXML = await downloadADT("");
-  console.log(treeInXML);
-  let response = await fetch("https://liacs.leidenuniv.nl/~s2521423/index.php", {
-    method: "POST",
-    body: treeInXML
-  });
-  let result = await response.text();
-  console.log(result);*/
 }
 
 function isFirstLineXML_Declaration(text) {
