@@ -679,8 +679,6 @@ async function downloadPrep() {
 function isConsentGiven() {
   console.log("[*] In isConsentGiven()");
 
-  //Ask the user for consent to store their tree in a storage
-  //to be used for further research
   if(confirm("CONSENT MESSAGE") == true) {
     return(true);
   }
@@ -699,15 +697,6 @@ function isInputlengthWithinLimit(limit, string) {
     return(false);
   }
 }
-
-/*function getTreeName() {
-  //Let the user name their tree, default name is TreeName
-  treeName = prompt("Please name your tree", "TreeName");
-  if(treeName == null) {
-    treeName = "TreeName";
-  }
-  return(treeName);
-}*/
 
 function getInputFromUser(promptMessage, defaultValue) {
   inputFromUser = prompt(promptMessage, defaultValue);
@@ -736,31 +725,40 @@ async function uploadToServer() {
       //Generate the token of the tree; between 1 (inclusive) and 99999 (inclusive)
       treeToken = Math.floor(Math.random() * 100000) + 1;
       
-      //POST request 
       let treeData = {
         userName: userName,
         treeName: treeName,
         treeToken: treeToken,
         treeInXML: treeInXML
       };
-      let response = await fetch("https://liacs.leidenuniv.nl/~s2521423/index.php", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json;charset=utf-8"
-      },
-      body: JSON.stringify(treeData)
-      });
 
-      let result = await response.text();
-      if(result.startsWith("ERROR") ==  false) {
-        alert("Your tree identifier consists of: \n TreeName: " + treeName + "\n Token: " + treeToken
-         + "\n \nPlease remember this as you will need it to retrieve your tree later.");
-        
+      try {
+        let response = await fetch("https://liacs.leidenuniv.nl/~s2521423/index.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json;charset=utf-8"
+        },
+        body: JSON.stringify(treeData)
+        });
+
+        if(response.ok) {
+          let result = await response.text();
+          if(result.startsWith("ERROR") ==  false) {
+            alert("Your tree identifier consists of: \n TreeName: " + treeName + "\n Token: " + treeToken
+             + "\n \nPlease remember this as you will need it to retrieve your tree later.");
+          }
+          else alert(result);
+        }
+        else {
+          alert("Request to the server not succesfull!" + response.status);
+          console.log(response.status);
+        }
+
+      } catch(err) {
+        alert(err);
       }
     }
-    else {
-      alert("Your tree is too large to be uploaded to the server (limit is roughly 600 nodes).")
-    }
+    else alert("Your tree is too large to be uploaded to the server (limit is roughly 600 nodes).")
   }
 }
 
@@ -771,16 +769,6 @@ function isFirstLineXML_Declaration(text) {
     return(true);
   }
   else return(false);
-  //NAAR VOORBEELD VAN DE GUY DIE DE JSON PARSER GESCHREVEN HEEFT
-  /*var check = "";
-    if (typeof input === "string"){
-      check = input.substring(0,5);
-    }
-
-
-    if (check == "<?xml"){
-      return input;
-    } */
 }
 
 async function drawTreeFromXML(treeInXML) {
@@ -805,37 +793,31 @@ async function retrieveFromServer() {
   treeName = getInputFromUser("Please provide your tree name", "");
   treeToken = getInputFromUser("Please provide the token for your tree", "");
 
-  let response = await fetch("https://liacs.leidenuniv.nl/~s2521423/index.php?treeName=" + treeName + "&treeToken=" + treeToken);
-  if(response.ok) {
-    let treeInXML = await response.text();
-    console.log(treeInXML);
-    if(isFirstLineXML_Declaration(treeInXML) == true){
-      drawTreeFromXML(treeInXML)
+  try {
+    let response = await fetch("https://liacs.leidenuniv.nl/~s2521423/index.php?treeName=" + treeName + "&treeToken=" + treeToken);
+    if(response.ok) {
+      let result = await response.text();
+      console.log(result);
+      if(result.startsWith("ERROR") ==  false) {
+        if(isFirstLineXML_Declaration(result) == true){
+          drawTreeFromXML(result)
+        }
+        else alert("Format not supported; xml expected.");
+      }
+      else {
+        if(result.startsWith("ERROR: Fetch")) {
+          alert("Tree not found; please check tree name and token.");
+        }
+        else alert(result);
+      }
     }
     else {
-      alert("Format not supported.");
+      alert("Request to the server not succesfull!" + response.status);
+      console.log(response.status);
     }
+  } catch(err) {
+    alert(err);
   }
-  else {
-    alert("Request to the server not succesfull!" + response.status);
-    console.log(response.status);
-  }
-
-  /*let response = await fetch("https://liacs.leidenuniv.nl/~s2521423/index.php");
-  if(response.ok) {
-    let treeInXML = await response.text();
-    console.log(treeInXML);
-    if(isFirstLineXML_Declaration(treeInXML) == true){
-      drawTreeFromXML(treeInXML)
-    }
-    else {
-      alert("Format not supported.");
-    }
-  }
-  else {
-    alert("Request to the server not succesfull!" + response.status);
-    console.log(response.status);
-  }*/
 }
 
 function uploadADT() {
