@@ -750,7 +750,7 @@ async function uploadToServer() {
       },
       body: JSON.stringify(treeData)
       });
-      
+
       let result = await response.text();
       if(result.startsWith("ERROR") ==  false) {
         alert("Your tree identifier consists of: \n TreeName: " + treeName + "\n Token: " + treeToken
@@ -802,7 +802,10 @@ async function drawTreeFromXML(treeInXML) {
 async function retrieveFromServer() {
   console.log("[*] In retrieveFromServer()");
 
-  let response = await fetch("https://liacs.leidenuniv.nl/~s2521423/index.php");
+  treeName = getInputFromUser("Please provide your tree name", "");
+  treeToken = getInputFromUser("Please provide the token for your tree", "");
+
+  let response = await fetch("https://liacs.leidenuniv.nl/~s2521423/index.php?treeName=" + treeName + "&treeToken=" + treeToken);
   if(response.ok) {
     let treeInXML = await response.text();
     console.log(treeInXML);
@@ -817,6 +820,22 @@ async function retrieveFromServer() {
     alert("Request to the server not succesfull!" + response.status);
     console.log(response.status);
   }
+
+  /*let response = await fetch("https://liacs.leidenuniv.nl/~s2521423/index.php");
+  if(response.ok) {
+    let treeInXML = await response.text();
+    console.log(treeInXML);
+    if(isFirstLineXML_Declaration(treeInXML) == true){
+      drawTreeFromXML(treeInXML)
+    }
+    else {
+      alert("Format not supported.");
+    }
+  }
+  else {
+    alert("Request to the server not succesfull!" + response.status);
+    console.log(response.status);
+  }*/
 }
 
 function uploadADT() {
