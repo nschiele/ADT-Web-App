@@ -733,7 +733,7 @@ async function uploadToServer() {
       };
 
       try {
-        let response = await fetch("https://liacs.leidenuniv.nl/~s2521423/index.php", {
+        let response = await fetch("https://liacs.leidenuniv.nl/~cslocs/adt.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json;charset=utf-8"
@@ -794,7 +794,7 @@ async function retrieveFromServer() {
   treeToken = getInputFromUser("Please provide the token for your tree", "");
 
   try {
-    let response = await fetch("https://liacs.leidenuniv.nl/~s2521423/index.php?treeName=" + treeName + "&treeToken=" + treeToken);
+    let response = await fetch("https://liacs.leidenuniv.nl/~cslocs/adt.php?treeName=" + treeName + "&treeToken=" + treeToken);
     if(response.ok) {
       let result = await response.text();
       console.log(result);
