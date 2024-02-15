@@ -679,7 +679,11 @@ async function downloadPrep() {
 function isConsentGiven() {
   console.log("[*] In isConsentGiven()");
 
-  if(confirm("CONSENT MESSAGE") == true) {
+  var message = "Do you consent to your tree being used in scientific research? \n\n" 
+   + "The research is focused on the evaluation of ADT usage. \n We will collect your username, the treename, the token and your tree as a whole.\n" 
+   + "Findings from this research will be published fully anonimized.\n\n"
+   + "Please note that if you do not consent uploading to the server is NOT possible. You can still download your tree to local storage."
+  if(confirm(message) == true) {
     return(true);
   }
   else {
