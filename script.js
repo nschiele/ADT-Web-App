@@ -82,11 +82,11 @@ async function setup() {
     
     // Parent the canvas to the container DIV, this properly places it within the window
     canvasElement.parent("canvasContainer");
-    canvasElement.elt.addEventListener('mousedown', () => { mX = mouseX; mY = mouseY;
-                                                            lastActive.toggleContextMenu();
-                                                            lastActive = canvasElement;
-                                                            active = canvasElement;
-                                                            console.log(mouseX, mouseY)});
+    canvasElement.elt.addEventListener('mousedown', () => { if (active!= null) active.toggleContextMenu();
+                                                            active = null;
+                                                            mX = mouseX;
+                                                            mY = mouseY;
+                                                          });
 
     /* windowWidth/Height is in pixels; the width and height of window (not the entire display, just the html DOM!)
      * sticky-top is the class of the top bar. canvTopBar is the id of the buttons right above the canvas. (zoom in, out, export, import, etc.). 
@@ -108,6 +108,8 @@ async function setup() {
 
     // Initialize canvas with 1 node
     root = new ADTree("Target");
+    active = root;
+    active.toggleContextMenu();
 
     //    General P5-related setup
     // Tell the canvas to translate all given coordinates to be related to the entire window, not just the canvas. (so (0,0) is top left of the window, not the canvas. Helps with calculations later.)
@@ -153,7 +155,9 @@ function drawLines(node){ // Recursively draw all lines between all nodes and th
 }
 
 function moveNodes(node, moveX, moveY){ // Moves all nodes in tree
-  node.root.position(node.root.x + moveX, node.root.y + moveY); // Move node by moveX and moveY
+  console.log(node.root.x)
+  node.root.position(node.root.position().x + moveX, node.root.position().y + moveY); // Move node by moveX and moveY
+  console.log(node.root.x)
   node.oldX = node.root.x;
   node.oldY = node.root.y;
   for (let i = 0; i < node.children.length; i++) {
@@ -163,21 +167,16 @@ function moveNodes(node, moveX, moveY){ // Moves all nodes in tree
 }
 
 function mouseDragged() { // Called when mouse is clicked and dragged, standard in p5: https://p5js.org/reference/#/p5/mouseDragged
-  if (active != null){ 
-    // console.log(active);
-    if (active == canvasElement){ // If the canvas is activing, the user is scrolling the canvas
-      console.log("clear")
-      clear();
-      moveNodes(root, -(mX - mouseX), -(mY - mouseY));
-      drawLines(root);
-      mX = mouseX;
-      mY = mouseY;
-    } else { // if a node is active, drag around the node
-      console.log("clear")
-      clear();              // Clears all drawn pixels off the canvas
-      drawLines(root);      // Recurively re-draw lines every frame while dragging (as inneficient as it is, you can't re-draw an individual line while dragging)
-      active.setPos(mouseX,mouseY);
-    }
+  if (active == null){ // If nothing is active, the user is scrolling the canvas
+    clear();
+    moveNodes(root, -(mX - mouseX), -(mY - mouseY));
+    drawLines(root);
+    mX = mouseX;
+    mY = mouseY;
+  } else { // if a node is active, drag around the node
+    clear();              // Clears all drawn pixels off the canvas
+    drawLines(root);      // Recurively re-draw lines every frame while dragging (as inneficient as it is, you can't re-draw an individual line while dragging)
+    active.setPos(mouseX,mouseY);
   }
 }
 

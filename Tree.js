@@ -56,20 +56,25 @@ class ADTree{
             this.children[this.children.length-1].root.position(this.oldX + 175*(this.children.length-1), this.oldY + 200 + this.root.elt.offsetHeight);
         }
         this.root.elt.focus();
+        active.toggleContextMenu();
+        active = newChild;
+        active.toggleContextMenu();
         clear();
         drawLines(root);
     }
 
     toggleContextMenu(){
-        if (this.contextEnabled){ // If contextMenu is enabled, it should disable when toggled. So delete all btns
-            console.log("TOGGGLE CONTEXT")
+        if (this.contextEnabled){ // If contextMenu is enabled, it should disabled when toggled. So delete all btns
+            this.root.removeClass('NodeActive'); // remove styling
+            this.root.addClass('NodeInactive'); // add styling
             this.Plusbtn.remove();
             this.Refinebtn.remove();
-            this.AtkDefBtn.removeAttribute("data-feather");
-            feather.replace();
-            this.AtkDefBtn.remove();
+            // this.AtkDefBtn.removeAttribute("data-feather");
+            // feather.replace();
+            // this.AtkDefBtn.remove();
         } else {                  // ELSE, buttons are not currently active, create them
-
+            this.root.removeClass('NodeInactive'); // remove styling
+            this.root.addClass('NodeActive'); // add styling
             // Create the plus button
             this.Plusbtn = createButton("+");
             this.Plusbtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Plusbtn.width/2, this.root.position().y+this.root.elt.offsetHeight);
@@ -81,7 +86,9 @@ class ADTree{
                 this.Refinebtn = createButton("OR");
             else 
                 this.Refinebtn = createButton("AND");
-            this.Refinebtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Plusbtn.width/2, this.root.position().y-this.Refinebtn.elt.offsetHeight);
+            console.log(this.Refinebtn.elt.offsetWidth)
+            console.log(this.Plusbtn.elt.offsetWidth)
+            this.Refinebtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Refinebtn.width/2+9, this.root.position().y-this.Refinebtn.elt.offsetHeight); // TODO: WEIRD CSS BUG (+9????)
             this.Refinebtn.addClass('contextRefine');
             this.Refinebtn.mousePressed(() => {
                 this.refinementIsAnd = !this.refinementIsAnd;
@@ -93,24 +100,24 @@ class ADTree{
                     this.Refinebtn.elt.innerHTML = "AND";
             });
 
-            // Create defense/attack toggle
-            this.AtkDefBtn = createButton("");
-            if (this.isDefense)
-                this.AtkDefBtn.attribute("data-feather","shield");
-            else 
-                this.AtkDefBtn.attribute("data-feather","shield-off");
-            this.AtkDefBtn.position(this.root.position().x+this.root.elt.offsetWidth/2 + this.Refinebtn.elt.offsetWidth - this.Plusbtn.width/2, this.root.position().y-this.Refinebtn.elt.offsetHeight);
-            this.AtkDefBtn.addClass('atkDef');
-            this.AtkDefBtn.mousePressed(() => {
-                this.isDefense = !this.isDefense;
-                console.log("DEFENSE IS " + this.isDefense);
-                if (!this.isDefense)
-                    this.AtkDefBtn.attribute("data-feather","shield");
-                else 
-                    this.AtkDefBtn.attribute("data-feather","shield-off");
-                feather.replace();
-                });
-            feather.replace();
+            // // Create defense/attack toggle
+            // this.AtkDefBtn = createButton("");
+            // if (this.isDefense)
+            //     this.AtkDefBtn.attribute("data-feather","shield");
+            // else 
+            //     this.AtkDefBtn.attribute("data-feather","shield-off");
+            // this.AtkDefBtn.position(this.root.position().x+this.root.elt.offsetWidth/2 + this.Refinebtn.elt.offsetWidth - this.Plusbtn.width/2, this.root.position().y-this.Refinebtn.elt.offsetHeight);
+            // this.AtkDefBtn.addClass('atkDef');
+            // this.AtkDefBtn.mousePressed(() => {
+            //     this.isDefense = !this.isDefense;
+            //     console.log("DEFENSE IS " + this.isDefense);
+            //     if (!this.isDefense)
+            //         this.AtkDefBtn.attribute("data-feather","shield");
+            //     else 
+            //         this.AtkDefBtn.attribute("data-feather","shield-off");
+            //     feather.replace();
+            //     });
+            // feather.replace();
         }
         this.contextEnabled = !this.contextEnabled; // Toggle contextEnabled bool
     }
@@ -122,21 +129,19 @@ class ADTree{
     }
 
     inputPressed(){
+        console.log(active);
         console.log(mouseX + canvasElement.position().x, mouseY + canvasElement.position().y, this.root.position().x, this.root.position().y)
         this.oldX = this.root.x;
         this.oldY = this.root.y;
-        if (active != this){
-            active = this;
-            if (lastActive != null && lastActive != canvasElement)
-                lastActive.toggleContextMenu();
-            lastActive = this;
-            this.toggleContextMenu();
-            this.root.style("border", "2px solid #FF6464");
-        }
+        if (active != null)
+            active.toggleContextMenu();
+        active = this;
+        active.toggleContextMenu();
+        
     }
 
     inputReleased(){
-        this.toggleContextMenu();
+        // this.toggleContextMenu();
         this.isDragging = false;
         this.oldX = this.root.x;
         this.oldY = this.root.y;
@@ -145,8 +150,12 @@ class ADTree{
 
     setPos(X,Y){
         if (this.isDragging == true){
+            
+            console.log(this.Refinebtn.elt.offsetWidth)
+            console.log(this.Plusbtn.elt.offsetWidth)
             this.root.position(canvasElement.position().x+X-this.root.elt.offsetWidth/2,canvasElement.position().y+Y-this.root.elt.offsetHeight/2);
             this.Plusbtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Plusbtn.width/2, this.root.position().y+this.root.elt.offsetHeight);
+            this.Refinebtn.position(this.root.position().x+this.root.elt.offsetWidth/2+9 - this.Refinebtn.width/2, this.root.position().y-this.Refinebtn.elt.offsetHeight); // TODO: WEIRD CSS BUG (+9????)
         } else {
             if (
                 mouseX + canvasElement.position().x < this.oldX-10 ||
@@ -154,11 +163,7 @@ class ADTree{
                 mouseY + canvasElement.position().y < this.oldY-10 ||
                 mouseY + canvasElement.position().y > this.oldY+this.root.elt.offsetHeight+10
             ){
-                this.toggleContextMenu();
                 this.isDragging = true;
-                this.root.elt.blur();
-                active = this;
-                lastActive = this;
             }
         }
         

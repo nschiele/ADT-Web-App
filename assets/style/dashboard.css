@@ -496,11 +496,25 @@ footer p {
   border-radius: 4px;
 }
 
-.Node {
+.NodeInactive {
   background-color: #f4f4f4;
   width: 300px;
   text-align: center;
   border: 2px solid darkgray;
+  border-radius: 20px;
+  padding-bottom: 5px;
+  padding-top: 5px;
+  outline: none;
+  z-index: 2;
+  word-wrap: break-word;
+  resize: none;
+}
+
+.NodeActive {
+  background-color: #f4f4f4;
+  width: 300px;
+  text-align: center;
+  border: 2px solid #FF6464;
   border-radius: 20px;
   padding-bottom: 5px;
   padding-top: 5px;
