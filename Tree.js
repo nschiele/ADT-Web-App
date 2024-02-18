@@ -2,7 +2,6 @@ class ADTree{
     // Constructor ADTree
     constructor(inputVal){
         this.children = [];
-        this.name = "ROOT NODE!";
         this.root;
         this.refinementIsAnd = false;
         this.isDefense = false;
@@ -28,9 +27,6 @@ class ADTree{
         this.root.attribute('role', 'textbox');
         this.root.addClass('Node'); // add styling
         this.root.position(this.oldX - 150, this.oldY) // set pos to top-left of canvas
-        // this.root.mouseClicked(this.runtest.bind(this));
-        this.root.elt.addEventListener('focus', this.focusing.bind(this))
-        this.root.elt.addEventListener('blur', this.unfocusing.bind(this))
         this.root.elt.addEventListener('mousedown', this.inputPressed.bind(this))
         this.root.elt.addEventListener('mouseup', this.inputReleased.bind(this))
         this.root.elt.addEventListener('input', this.resizeInputBox.bind(this))
@@ -68,8 +64,8 @@ class ADTree{
             this.AtkDefBtn.attribute("data-feather","shield");
         else 
             this.AtkDefBtn.attribute("data-feather","shield-off");
-        this.AtkDefBtn.position(this.root.position().x+this.root.elt.offsetWidth/2 + this.Refinebtn.elt.offsetWidth - this.Plusbtn.width/2, this.root.position().y-this.Refinebtn.elt.offsetHeight);
         this.AtkDefBtn.addClass('atkDef');
+        this.AtkDefBtn.position(this.root.position().x+this.root.elt.offsetWidth/2 + this.Refinebtn.elt.offsetWidth - this.AtkDefBtn.width/2, this.root.position().y-this.Refinebtn.elt.offsetHeight);
         feather.replace();
         this.AtkDefBtn = document.getElementById('canvasContainer').querySelector('svg');
         this.AtkDefBtn.addEventListener('mousedown', this.clickedAtkDef.bind(this));
@@ -88,8 +84,8 @@ class ADTree{
             // Create the plus button
             this.Plusbtn = createButton("+");
             this.Plusbtn.parent('canvasContainer');
-            this.Plusbtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Plusbtn.width/2, this.root.position().y+this.root.elt.offsetHeight);
             this.Plusbtn.addClass('contextAddChild');
+            this.Plusbtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Plusbtn.width/2, this.root.position().y+this.root.elt.offsetHeight);
             this.Plusbtn.mousePressed(this.addChild.bind(this));
             
             // Create refinedment (AND/OR) button
@@ -98,8 +94,8 @@ class ADTree{
             else 
                 this.Refinebtn = createButton("AND");
             this.Refinebtn.parent('canvasContainer');
-            this.Refinebtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Refinebtn.width/2+9, this.root.position().y-this.Refinebtn.elt.offsetHeight); // TODO: WEIRD CSS BUG (+9????)
             this.Refinebtn.addClass('contextRefine');
+            this.Refinebtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Plusbtn.width/2, this.root.position().y-this.Refinebtn.elt.offsetHeight); // TODO: WEIRD CSS BUG (+9????)
             this.Refinebtn.mousePressed(() => {
                 this.refinementIsAnd = !this.refinementIsAnd;
                 clear();
@@ -132,12 +128,6 @@ class ADTree{
         this.AtkDefBtn.addEventListener('mousedown', this.clickedAtkDef.bind(this));
     }
 
-    focusing(){
-    }
-
-    unfocusing(){
-    }
-
     inputPressed(){
         this.oldX = this.root.x;
         this.oldY = this.root.y;
@@ -158,6 +148,8 @@ class ADTree{
 
     setPos(X,Y){
         if (this.isDragging == true){
+            this.root.elt.blur();
+            clearTextSelection();
             this.root.position(canvasElement.position().x+X-this.root.elt.offsetWidth/2,canvasElement.position().y+Y-this.root.elt.offsetHeight/2);
             this.Plusbtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Plusbtn.width/2, this.root.position().y+this.root.elt.offsetHeight);
             this.Refinebtn.position(this.root.position().x+this.root.elt.offsetWidth/2+9 - this.Refinebtn.width/2, this.root.position().y-this.Refinebtn.elt.offsetHeight); // TODO: WEIRD CSS BUG (+9????)

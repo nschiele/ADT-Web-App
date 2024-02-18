@@ -1,87 +1,29 @@
 let root;
-let disRoot; // Added by J
-let scaled = 1;
-let toDraw;
-let sideFrameWidth;
-
-
-let activeNode;
-let activeDis;
-let hoverNode;
-let trackNode;
-let trackNodeX;
-let trackNodeY;
-let trackMouseStart;
-let startMouseX;
-let startMouseY;
-
-let refinementDist = 0.2;
-
-let sidePanel;
-let createADTDiv;
-let activeNodeTitle;
-
-var example;
 let canvasElement;
 let canvasWidth;
 let canvasHeight;
 let canvasParentDiv;
-let scaleValue;
-let nodeTextChangeField;
-let nodeOutLineColor;
-let shapeColor = "black";
-let shapeRadious = 1;
-let fileName;
-var currNodeText;
-var newNodeText;
-let oldNodetext;
-
-// Added by C
-let widthPixels;
-let heightPixels;
-let originalCanvWidth;
-let originalCanvHeight;
-
-// Added by J
-let saveOn = false;
-let biggestHeight;
-let biggestWidth;
-let orgScaleVal;
 let active = null;
-let lastActive = null;
-
-var IDnumber = 1; // Added by J
-
 let cX = 0;
 let cY = 0;
-
 let mX;
 let mY;
+
 async function setup() {
-    console.log("[*] In setup()");
-    // noLoop();
     toDraw = true;
     trackMouseStart = true;
     frameRate(60);
     sideFrameWidth = 400;
-    var frameX = windowWidth - sideFrameWidth;
-    // var canv = createCanvas(700, 700);
-    // canv.elt.style.border = "2px solid lightgray";
-    // canv.parent("canvasContainer");
-
-    // get element by id
+    var frameX = windowWidth - sideFrameWidth; // Calculate how big the canvas should be, by compensating for the non-canvas side elements.
     var canvasParentDiv = document.getElementById('canvasContainer');
     // set height and width for the canvas
     canvasWidth = 100
     canvasHeight= 100;
-
-    // the main canvas area where the tree will go
     canvasElement = createCanvas(canvasWidth,canvasHeight);
-    noSmooth();
-  
-    
-    // Parent the canvas to the container DIV, this properly places it within the window
+    noSmooth(); // Removes rounded corners (to properly fill the canvas area)
+    // Parent the canvas to the container DIV, this properly places it within the DOM
     canvasElement.parent("canvasContainer");
+    // When canvas is clicked, setup to pan the canvas, as opposed to moving a node
     canvasElement.elt.addEventListener('mousedown', () => { if (active!= null) active.toggleContextMenu();
                                                             active = null;
                                                             mX = mouseX;
@@ -99,12 +41,11 @@ async function setup() {
     cX = canvasElement.position().x;
     cY = canvasElement.position().y;
     resizeCanvas(windowWidth-cX, windowHeight-cY-document.getElementById('botFooter').offsetHeight);
+    // Canvas and line styling
     noSmooth();
-    console.log(windowWidth, cX, windowHeight, cY);
-    
-    /* styling canvas */
-    // canvasElement.elt.style.backgroundColor = "blue";
     canvasElement.elt.style.borderRadius = "0";
+    stroke('darkgray');
+    strokeWeight(2);
 
     // Initialize canvas with 1 node
     root = new ADTree("Target");
@@ -112,11 +53,9 @@ async function setup() {
     active.toggleContextMenu();
 
     //    General P5-related setup
-    // Tell the canvas to translate all given coordinates to be related to the entire window, not just the canvas. (so (0,0) is top left of the window, not the canvas. Helps with calculations later.)
+    // Tell the canvas to translate all given coordinates to be related to the entire window, not just the canvas. 
+    // (so (0,0) is top left of the window, not the canvas. Helps with calculations later.)
     translate(-cX, -cY);
-    // Color and thickness of lines between nodes
-    stroke('darkgray');
-    strokeWeight(2);
 }
 
 
@@ -183,12 +122,22 @@ function mouseDragged() { // Called when mouse is clicked and dragged, standard 
   }
 }
 
+function clearTextSelection() { // Deselects any text that the user has selected, prevents awkward text selection while dragging nodes 
+                                // (I doubt that anyone using this tool will be using Internet Explorer, let alone IE8. Extra checks added just in case though.)
+  if (window.getSelection) {  // All modern browsers and IE9+
+      if (window.getSelection().empty) {  // Chrome, Firefox, Safari, Opera
+          window.getSelection().empty();
+      } else if (window.getSelection().removeAllRanges) {  // IE9+
+          window.getSelection().removeAllRanges();
+      }
+  } else if (document.selection) {  // IE8 and below
+      document.selection.empty();
+  }
+}
+
 function keyPressed() { // Temporary: bind anything to happen when clicking left arrow
-  if (keyCode === LEFT_ARROW) {
-    root.root.elt.focus();
-    active.refinementIsAnd = !active.refinementIsAnd;
-    clear();
-    drawLines(root);
-    console.log(active);
+  if (keyCode == LEFT_ARROW) {
+    console.log("style " + root.Refinebtn.style('width'))
+    console.log("offset " + root.Refinebtn.elt.offsetWidth)
   }
 }
