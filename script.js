@@ -130,6 +130,9 @@ function windowResized() { // Called whenever window is resized, standard in p5:
   resizeCanvas(windowWidth-cX, windowHeight-cY-document.getElementById('botFooter').offsetHeight, true);
   translate(-cX,-cY); // Re-translate relative to new canvas position
   drawLines(root); // Re-draw all lines, since they are deleted by resizeCanvas
+  if (active != null)
+  active.toggleContextMenu();
+  active.toggleContextMenu();
 }
 
 

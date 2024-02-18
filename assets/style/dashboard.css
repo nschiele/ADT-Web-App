@@ -573,9 +573,10 @@ footer p {
   justify-content: center;
   align-items: center;
   outline: none;
-  padding-bottom: 2px;
-  padding-left: 7px;
+  padding: 3px;
+  padding-left: 4px;
   z-index: 3;
+  align-items: center;
 }
 
 #canvTopBar {
