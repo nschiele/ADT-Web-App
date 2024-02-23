@@ -1,61 +1,90 @@
-let root;
-let canvasElement;
-let canvasWidth;
-let canvasHeight;
-let canvasParentDiv;
-let active = null;
-let cX = 0;
-let cY = 0;
-let mX;
-let mY;
+let root; // The first node that is always placed.
+let canvasElement; // Holds the canvas, can be used anywhere to point directly to the canvas.
+let canvasWidth = 100;
+let canvasHeight= 100;
+let canvasParentDiv; // Parented to canvas, to give it the correct position in the DOM.
+let active = null; // keeps track of CURRENTLY active element. 'null' means that no node is selected, so the canvas is panned.
+let lastActive = null; // keeps track of LAST active element. Gets set to active whenever you start dragging on not-a-node, and unset when finished.
+let cX = 0; // used to keep track of canvas' location on the page. Used when resizing window, since the 
+let cY = 0; // side/top/bottom bars can shrink/grow when resizing, as such moving the absolute position of the canvas.
+let mX; // Used to compute distance from mouse. Different from canvasOldX by being used every frame, as opposed to
+let mY; // only when having moved a sufficient distance.
+let canvasOldX = null; // X and Y are both set when you first click on something that is not a node.
+let canvasOldY = null; // That way you can compute how far the cursor has dragged since the click started.
+let moveCount = 0; // Incrementer used to not redraw elements on every frame
 
-async function setup() {
-    toDraw = true;
-    trackMouseStart = true;
-    frameRate(60);
-    sideFrameWidth = 400;
-    var frameX = windowWidth - sideFrameWidth; // Calculate how big the canvas should be, by compensating for the non-canvas side elements.
-    var canvasParentDiv = document.getElementById('canvasContainer');
-    // set height and width for the canvas
-    canvasWidth = 100
-    canvasHeight= 100;
-    canvasElement = createCanvas(canvasWidth,canvasHeight);
-    noSmooth(); // Removes rounded corners (to properly fill the canvas area)
-    // Parent the canvas to the container DIV, this properly places it within the DOM
-    canvasElement.parent("canvasContainer");
-    // When canvas is clicked, setup to pan the canvas, as opposed to moving a node
-    canvasElement.elt.addEventListener('mousedown', () => { if (active!= null) active.toggleContextMenu();
-                                                            active = null;
-                                                            mX = mouseX;
-                                                            mY = mouseY;
-                                                          });
+async function setup() { // Only called once: https://p5js.org/reference/#/p5/setup
+  toDraw = true;
+  trackMouseStart = true;
+  frameRate(60);
+  sideFrameWidth = 400;
+  var frameX = windowWidth - sideFrameWidth; // Calculate how big the canvas should be, by compensating for the non-canvas side elements.
+  var canvasParentDiv = document.getElementById('canvasContainer');
+  // set initial height and width for the canvas (will be resized to fit full screen.)
+  canvasElement = createCanvas(canvasWidth,canvasHeight);
+  noSmooth(); // Removes rounded corners (to properly fill the canvas area)
+  // Parent the canvas to the container DIV, this properly places it within the DOM
+  canvasElement.parent("canvasContainer");
+  // When canvas (or anything that is not a node, like side/top/bottom bars) is clicked, setup to pan the canvas, as opposed to moving a node
+  let nonInteractableElements = [document.getElementById("sidebarMenu"),
+                                 document.getElementById("topBar"),
+                                 canvasElement.elt, document.getElementById("canvTopBar"),
+                                 document.getElementById("botFooter")];
+  for (let i = 0; i < nonInteractableElements.length; i++){ // loop over nonInteractables
+    nonInteractableElements[i].addEventListener('mousedown', () => // when clicked DOWN, unset active. And store the old active in lastActive
+    { 
+      lastActive = active;
+      active = null; // active = null means that when mouse is dragged sufficient distance, the canvas is dragged.
+      mX = mouseX;
+      mY = mouseY;
+      canvasOldX = mouseX;
+      canvasOldY = mouseY;
+    });
 
-    /* windowWidth/Height is in pixels; the width and height of window (not the entire display, just the html DOM!)
-     * sticky-top is the class of the top bar. canvTopBar is the id of the buttons right above the canvas. (zoom in, out, export, import, etc.). 
-     * The heights of these elements are considered when setting canvas position and dimensions.
-     * 0.25 is used to multiply the width, since the left-sidebar has a width of 25%.
-     */
-    select("#canvTopBar").position(windowWidth*0.25, select("#topBar").offsetHeight);
-    canvasElement.position(windowWidth*0.25, select("#topBar").offsetHeight + select("#canvTopBar").offsetHeight+26);
-    
-    cX = canvasElement.position().x;
-    cY = canvasElement.position().y;
-    resizeCanvas(windowWidth-cX, windowHeight-cY-document.getElementById('botFooter').offsetHeight);
-    // Canvas and line styling
-    noSmooth();
-    canvasElement.elt.style.borderRadius = "0";
-    stroke('darkgray');
-    strokeWeight(2);
+    nonInteractableElements[i].addEventListener('mouseup', () =>  // when clicked UP (released click), set active back to old active like nothing happened.
+    { 
+      if (mouseX == canvasOldX && mouseY == canvasOldY ){ // If NO dragging occured, simply unselect the selected node (like clicking away from a node to stop selecting it)
+        if (lastActive != null){
+          lastActive.toggleContextMenu();
+          lastActive = null;
+        }
+        if (active != null)
+          active = null;
+      } else {
+        if (lastActive != null){
+          active = lastActive;
+          lastActive = null;
+        } else {
+          console.log("In Setup()! LastActive has been miss-set somewhere! This error should never occur.")
+        }
+      }
+    });
+  }
 
-    // Initialize canvas with 1 node
-    root = new ADTree("Target");
-    active = root;
-    active.toggleContextMenu();
+  /* windowWidth/Height is in pixels; the width and height of window (not the entire display, just the html DOM!)
+    * sticky-top is the class of the top bar. canvTopBar is the id of the buttons right above the canvas. (zoom in, out, export, import, etc.). 
+    * The heights of these elements are considered when setting canvas position and dimensions.
+    * 0.25 is used to multiply the width, since the left-sidebar has a width of 25%.
+    */
+  select("#canvTopBar").position(windowWidth*0.25, select("#topBar").offsetHeight);
+  canvasElement.position(windowWidth*0.25, select("#topBar").offsetHeight + select("#canvTopBar").offsetHeight+26);
+  
+  cX = canvasElement.position().x;
+  cY = canvasElement.position().y;
+  resizeCanvas(windowWidth-cX, windowHeight-cY-document.getElementById('botFooter').offsetHeight);
+  // Canvas and line styling
+  noSmooth();
+  canvasElement.elt.style.borderRadius = "0";
+  stroke('darkgray');
+  strokeWeight(2);
 
-    //    General P5-related setup
-    // Tell the canvas to translate all given coordinates to be related to the entire window, not just the canvas. 
-    // (so (0,0) is top left of the window, not the canvas. Helps with calculations later.)
-    translate(-cX, -cY);
+  // Initialize canvas with 1 node
+  root = new ADTree("Target");
+  active = root;
+  active.toggleContextMenu();
+  // Tell the canvas to translate all given coordinates to be related to the entire window, not just the canvas. 
+  // (so (0,0) is top left of the window, not the canvas. Helps with calculations later.)
+  translate(-cX, -cY);
 }
 
 
@@ -97,9 +126,13 @@ function drawLines(node){ // Recursively draw all lines between all nodes and th
 }
 
 function moveNodes(node, moveX, moveY){ // Moves all nodes in tree
-  console.log(node.root.x)
   node.root.position(node.root.position().x + moveX, node.root.position().y + moveY); // Move node by moveX and moveY
-  console.log(node.root.x)
+  if (moveCount == 4){ // Small optimisation, redraw the contextMenu every 4 'frames', as opposed to every 'frame'.
+    node.toggleContextMenu();
+    node.toggleContextMenu();
+    moveCount = 0;
+  }
+  moveCount++;
   node.oldX = node.root.x;
   node.oldY = node.root.y;
   for (let i = 0; i < node.children.length; i++) {
@@ -110,11 +143,16 @@ function moveNodes(node, moveX, moveY){ // Moves all nodes in tree
 
 function mouseDragged() { // Called when mouse is clicked and dragged, standard in p5: https://p5js.org/reference/#/p5/mouseDragged
   if (active == null){ // If nothing is active, the user is scrolling the canvas
-    clear();
-    moveNodes(root, -(mX - mouseX), -(mY - mouseY));
-    drawLines(root);
-    mX = mouseX;
-    mY = mouseY;
+    if ((canvasOldX - mouseX) > 25 || (canvasOldX - mouseX) < -25 || (canvasOldY - mouseY) > 25 || (canvasOldY - mouseY) < -25){
+      canvasOldX = -100; // Once any dragging has occured (user dragged far enough), stop keeping track of where drag started. Otherwise, whenever you move cursor back
+      canvasOldY = -100; // into the starting area of the drag, it momentarily stops dragging. By moving off screen, cursor is always outside margin once dragging starts.
+      clearTextSelection();
+      clear();
+      moveNodes(root, -(mX - mouseX), -(mY - mouseY));
+      drawLines(root);
+      mX = mouseX;
+      mY = mouseY;
+    }
   } else { // if a node is active, drag around the node
     clear();              // Clears all drawn pixels off the canvas
     drawLines(root);      // Recurively re-draw lines every frame while dragging (as inneficient as it is, you can't re-draw an individual line while dragging)
@@ -135,9 +173,11 @@ function clearTextSelection() { // Deselects any text that the user has selected
   }
 }
 
-function keyPressed() { // Temporary: bind anything to happen when clicking left arrow
+function keyPressed() { // Temporary: bind anything to happen when clicking left arrow, for debugging
   if (keyCode == LEFT_ARROW) {
-    console.log("style " + root.Refinebtn.style('width'))
-    console.log("offset " + root.Refinebtn.elt.offsetWidth)
+    if (active != null)
+      console.log(active.root.elt.innerHTML);
+    else
+      console.log("none");
   }
 }

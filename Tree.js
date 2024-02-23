@@ -7,6 +7,7 @@ class ADTree{
         this.isDefense = false;
         this.isDragging = false;
         this.contextEnabled = false;
+        // Buttons
         let Plusbtn = null;
         let Refinebtn = null;
         let AtkDefBtn = null;
@@ -39,10 +40,10 @@ class ADTree{
     }
 
     addChild(){
-        let newChild = new ADTree("Child");
+        let newChild = new ADTree("Child" + active.children.length);
         this.children.push(newChild);
         if (this.children.length == 1){
-            this.children[this.children.length-1].root.position(this.oldX, this.oldY + 200 + this.root.elt.offsetHeight);
+            this.children[this.children.length-1].root.position(this.root.position().x, this.root.position().y + 200 + this.root.elt.offsetHeight);
         } else {
             for (let i = 0; i < this.children.length-1; i++){
                 this.children[i].root.position(this.children[i].root.x - 175, this.oldY + 200 + this.root.elt.offsetHeight);
@@ -65,7 +66,7 @@ class ADTree{
         else 
             this.AtkDefBtn.attribute("data-feather","shield-off");
         this.AtkDefBtn.addClass('atkDef');
-        this.AtkDefBtn.position(this.root.position().x+this.root.elt.offsetWidth/2 + this.Refinebtn.elt.offsetWidth - this.AtkDefBtn.width/2, this.root.position().y-this.Refinebtn.elt.offsetHeight);
+        this.AtkDefBtn.position(this.root.position().x+this.root.elt.offsetWidth/2 + this.Refinebtn.elt.offsetWidth/2, this.root.position().y-this.Refinebtn.elt.offsetHeight);
         feather.replace();
         this.AtkDefBtn = document.getElementById('canvasContainer').querySelector('svg');
         this.AtkDefBtn.addEventListener('mousedown', this.clickedAtkDef.bind(this));
@@ -96,7 +97,8 @@ class ADTree{
             this.Refinebtn.parent('canvasContainer');
             this.Refinebtn.addClass('contextRefine');
             this.Refinebtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Plusbtn.width/2, this.root.position().y-this.Refinebtn.elt.offsetHeight); // TODO: WEIRD CSS BUG (+9????)
-            this.Refinebtn.mousePressed(() => {
+            this.Refinebtn.mousePressed(() => 
+            {
                 this.refinementIsAnd = !this.refinementIsAnd;
                 clear();
                 drawLines(root);
@@ -117,12 +119,12 @@ class ADTree{
         this.AtkDefBtn.remove();
         this.AtkDefBtn = createButton("");
         this.AtkDefBtn.parent('canvasContainer');
+        this.AtkDefBtn.addClass('atkDef');
         if (this.isDefense)
             this.AtkDefBtn.attribute("data-feather","shield");
         else 
             this.AtkDefBtn.attribute("data-feather","shield-off");
-        this.AtkDefBtn.position(this.root.position().x+this.root.elt.offsetWidth/2 + this.Refinebtn.elt.offsetWidth - this.Plusbtn.width/2, this.root.position().y-this.Refinebtn.elt.offsetHeight);
-        this.AtkDefBtn.addClass('atkDef');
+        this.AtkDefBtn.position(this.root.position().x+this.root.elt.offsetWidth/2 + this.Refinebtn.elt.offsetWidth/2, this.root.position().y-this.Refinebtn.elt.offsetHeight);
         feather.replace();
         this.AtkDefBtn = document.getElementById('canvasContainer').querySelector('svg');
         this.AtkDefBtn.addEventListener('mousedown', this.clickedAtkDef.bind(this));
@@ -144,6 +146,10 @@ class ADTree{
         this.oldX = this.root.x;
         this.oldY = this.root.y;
         this.root.elt.focus();
+        if (lastActive != null){
+            active = lastActive;
+            lastActive = null;
+        }
     }
 
     setPos(X,Y){
@@ -152,7 +158,7 @@ class ADTree{
             clearTextSelection();
             this.root.position(canvasElement.position().x+X-this.root.elt.offsetWidth/2,canvasElement.position().y+Y-this.root.elt.offsetHeight/2);
             this.Plusbtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Plusbtn.width/2, this.root.position().y+this.root.elt.offsetHeight);
-            this.Refinebtn.position(this.root.position().x+this.root.elt.offsetWidth/2+9 - this.Refinebtn.width/2, this.root.position().y-this.Refinebtn.elt.offsetHeight); // TODO: WEIRD CSS BUG (+9????)
+            this.Refinebtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Refinebtn.width/2, this.root.position().y-this.Refinebtn.elt.offsetHeight); // TODO: WEIRD CSS BUG (+9????)
             this.AtkDefBtn.remove();
             this.createAtkDefBtn();
         } else {
@@ -165,7 +171,5 @@ class ADTree{
                 this.isDragging = true;
             }
         }
-        
-        
     }
 }
