@@ -1,6 +1,7 @@
 class ADTree{
     // Constructor ADTree
     constructor(inputVal){
+        let parent = null;
         this.children = [];
         this.root;
         this.refinementIsAnd = false;
@@ -11,6 +12,7 @@ class ADTree{
         let Plusbtn = null;
         let Refinebtn = null;
         let AtkDefBtn = null;
+        let DeleteBtn = null;
         this.oldX = width/2 + cX;
         this.oldY = height/8 + cY;
         if (inputVal == null) { // if input NOT given, use nodeChildTextInput. Else, use input.
@@ -39,14 +41,44 @@ class ADTree{
         drawLines(root);
     }
 
-    addChild(){
+    deleteSubTree() {
+        for (let i = this.children.length-1; i >= 0; i--){
+            this.children[i].deleteSubTree();
+        }
+        if (active == this)
+            this.toggleContextMenu();
+        this.root.remove();
+
+        for (let i = 0; i < this.parent.children.length; i++){
+            if (this.parent.children[i] == this){
+                delete this.parent.children[i];
+            }
+        }
+        
+    }
+
+    parentDeleteSubTree(i) {
+        this.children[i].deleteSubTree();
+        this.children.splice(i, 1);
+        clear();
+        drawLines(this);
+        active = this;
+        this.toggleContextMenu();
+    }
+
+    addChild(){ // FIX THIS LATER, SEPERATE FUNC FOR POS CHILDREN
         let newChild = new ADTree("Child" + active.children.length);
+        newChild.parent = this;
         this.children.push(newChild);
         if (this.children.length == 1){
             this.children[this.children.length-1].root.position(this.root.position().x, this.root.position().y + 200 + this.root.elt.offsetHeight);
         } else {
+            let j = 0;
             for (let i = 0; i < this.children.length-1; i++){
-                this.children[i].root.position(this.children[i].root.x - 175, this.oldY + 200 + this.root.elt.offsetHeight);
+                if (this.children[i] != undefined){
+                    this.children[i].root.position(this.children[j].root.x - 175, this.oldY + 200 + this.root.elt.offsetHeight);
+                    j++;
+                }
             }
             this.children[this.children.length-1].root.position(this.oldX + 175*(this.children.length-1), this.oldY + 200 + this.root.elt.offsetHeight);
         }
@@ -64,12 +96,29 @@ class ADTree{
         if (this.isDefense)
             this.AtkDefBtn.attribute("data-feather","shield");
         else 
-            this.AtkDefBtn.attribute("data-feather","shield-off");
+            this.AtkDefBtn.attribute("data-feather","flag");
         this.AtkDefBtn.addClass('atkDef');
         this.AtkDefBtn.position(this.root.position().x+this.root.elt.offsetWidth/2 + this.Refinebtn.elt.offsetWidth/2, this.root.position().y-this.Refinebtn.elt.offsetHeight);
         feather.replace();
-        this.AtkDefBtn = document.getElementById('canvasContainer').querySelector('svg');
+        this.AtkDefBtn = document.getElementsByClassName('atkDef')[0];
         this.AtkDefBtn.addEventListener('mousedown', this.clickedAtkDef.bind(this));
+    }
+
+    createDeleteBtn(){
+        this.DeleteBtn = createButton("");
+        this.DeleteBtn.parent('canvasContainer');
+        this.DeleteBtn.attribute("data-feather", "x-circle"); // Feather.js icon (feathericons.com)
+        this.DeleteBtn.addClass('deleteBtn');
+        this.DeleteBtn.position(this.root.position().x+this.root.elt.offsetWidth, this.root.position().y-this.DeleteBtn.elt.offsetHeight);
+        feather.replace();
+        this.DeleteBtn = document.getElementsByClassName('deleteBtn')[0]; // Have to re-locate the button, since feather completely replaces the elements it 
+                                                                          // introduced svgs into. Index 0 since there SHOULD only be 1 button on screen at a time.
+        this.DeleteBtn.addEventListener('mousedown', () => {
+            for (let i = 0; i < this.parent.children.length; i++)
+                if (this.parent.children[i] == this)
+                    this.parent.parentDeleteSubTree(i)
+            
+        });
     }
 
     toggleContextMenu(){
@@ -79,6 +128,7 @@ class ADTree{
             this.Plusbtn.remove();
             this.Refinebtn.remove();
             this.AtkDefBtn.remove();
+            this.DeleteBtn.remove();
         } else {                  // ELSE, buttons are not currently active, create them
             this.root.removeClass('NodeInactive'); // remove styling
             this.root.addClass('NodeActive'); // add styling
@@ -110,7 +160,11 @@ class ADTree{
 
             // Create defense/attack toggle
             this.createAtkDefBtn();
-        }
+
+            // Create delete button
+            this.createDeleteBtn();
+        }   
+
         this.contextEnabled = !this.contextEnabled; // Toggle contextEnabled bool
     }
 
@@ -123,17 +177,18 @@ class ADTree{
         if (this.isDefense)
             this.AtkDefBtn.attribute("data-feather","shield");
         else 
-            this.AtkDefBtn.attribute("data-feather","shield-off");
+            this.AtkDefBtn.attribute("data-feather","flag");
         this.AtkDefBtn.position(this.root.position().x+this.root.elt.offsetWidth/2 + this.Refinebtn.elt.offsetWidth/2, this.root.position().y-this.Refinebtn.elt.offsetHeight);
         feather.replace();
-        this.AtkDefBtn = document.getElementById('canvasContainer').querySelector('svg');
+        this.AtkDefBtn = document.getElementsByClassName('atkDef')[0];
         this.AtkDefBtn.addEventListener('mousedown', this.clickedAtkDef.bind(this));
     }
 
     inputPressed(){
+        allowDragging = true;
         this.oldX = this.root.x;
         this.oldY = this.root.y;
-        if (active != null)
+        if (active != null) // If some other node was selected previously, unselect it and select the current node
             active.toggleContextMenu();
         active = this;
         active.toggleContextMenu();
@@ -141,7 +196,6 @@ class ADTree{
     }
 
     inputReleased(){
-        // this.toggleContextMenu();
         this.isDragging = false;
         this.oldX = this.root.x;
         this.oldY = this.root.y;
@@ -158,9 +212,11 @@ class ADTree{
             clearTextSelection();
             this.root.position(canvasElement.position().x+X-this.root.elt.offsetWidth/2,canvasElement.position().y+Y-this.root.elt.offsetHeight/2);
             this.Plusbtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Plusbtn.width/2, this.root.position().y+this.root.elt.offsetHeight);
-            this.Refinebtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Refinebtn.width/2, this.root.position().y-this.Refinebtn.elt.offsetHeight); // TODO: WEIRD CSS BUG (+9????)
+            this.Refinebtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Plusbtn.width/2, this.root.position().y-this.Refinebtn.elt.offsetHeight); // TODO: WEIRD CSS BUG (+9????)
             this.AtkDefBtn.remove();
             this.createAtkDefBtn();
+            this.DeleteBtn.remove();
+            this.createDeleteBtn();
         } else {
             if (
                 mouseX + canvasElement.position().x < this.oldX-10 ||

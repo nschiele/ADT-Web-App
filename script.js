@@ -12,6 +12,8 @@ let mY; // only when having moved a sufficient distance.
 let canvasOldX = null; // X and Y are both set when you first click on something that is not a node.
 let canvasOldY = null; // That way you can compute how far the cursor has dragged since the click started.
 let moveCount = 0; // Incrementer used to not redraw elements on every frame
+let allowDragging = false;
+let redrawLines = false;
 
 async function setup() { // Only called once: https://p5js.org/reference/#/p5/setup
   toDraw = true;
@@ -39,7 +41,10 @@ async function setup() { // Only called once: https://p5js.org/reference/#/p5/se
       mY = mouseY;
       canvasOldX = mouseX;
       canvasOldY = mouseY;
+      allowDragging = (nonInteractableElements[i] == canvasElement.elt); // Allow dragging only if dragging the canvas, so non-canvas elts
+                                                                         // are ignored
     });
+      
 
     nonInteractableElements[i].addEventListener('mouseup', () =>  // when clicked UP (released click), set active back to old active like nothing happened.
     { 
@@ -54,8 +59,6 @@ async function setup() { // Only called once: https://p5js.org/reference/#/p5/se
         if (lastActive != null){
           active = lastActive;
           lastActive = null;
-        } else {
-          console.log("In Setup()! LastActive has been miss-set somewhere! This error should never occur.")
         }
       }
     });
@@ -87,7 +90,6 @@ async function setup() { // Only called once: https://p5js.org/reference/#/p5/se
   translate(-cX, -cY);
 }
 
-
 function windowResized() { // Called whenever window is resized, standard in p5: https://p5js.org/reference/#/p5/windowResized
   canvasElement.position(windowWidth*0.25, select("#topBar").offsetHeight + select("#canvTopBar").offsetHeight+26);
   resetMatrix(); // Reset any translation
@@ -110,16 +112,18 @@ function manAddChild(inputVal) { // Manually add a child, inputVal is a string t
 
 function drawLines(node){ // Recursively draw all lines between all nodes and their children
   for (let i = 0; i < node.children.length; i++) {
-    // Draw line between root of sub-tree and child i
-    line(node.root.x + node.root.elt.offsetWidth/2, node.root.y + node.root.elt.offsetHeight, node.children[i].root.x + node.children[i].root.elt.offsetWidth/2, node.children[i].root.y);
-    // recursively call drawLines on sub-trees
-    drawLines(node.children[i]);
-    if (i > 0){
-      if (node.refinementIsAnd){
-        line(node.root.x + node.root.elt.offsetWidth/2 + ((node.children[i-1].root.x + node.children[i-1].root.elt.offsetWidth/2) - (node.root.x + node.root.elt.offsetWidth/2))*refinementDist, // middle of current node - 1/10th x-distance to left node of current pair
-             node.root.y + node.root.elt.offsetHeight + (node.children[i-1].root.y - (node.root.y + node.root.elt.offsetHeight))*refinementDist,  // bottom of current node - 1/10th u-distance to top of left node of current pair
-             node.root.x + node.root.elt.offsetWidth/2 + ((node.children[i].root.x + node.children[i].root.elt.offsetWidth/2) - (node.root.x + node.root.elt.offsetWidth/2))*refinementDist,  // middle of current node - 1/10th distance to right node of current pair
-             node.root.y + node.root.elt.offsetHeight + (node.children[i].root.y - (node.root.y + node.root.elt.offsetHeight))*refinementDist)  // bottom of current node - 1/10th distance to top of left node of current pair
+    if (node.children[i] != undefined){ // Only consider children that were not deleted
+      // Draw line between root of sub-tree and child i
+      line(node.root.x + node.root.elt.offsetWidth/2, node.root.y + node.root.elt.offsetHeight, node.children[i].root.x + node.children[i].root.elt.offsetWidth/2, node.children[i].root.y);
+      // recursively call drawLines on sub-trees
+      drawLines(node.children[i]);
+      if (i > 0){
+        if (node.refinementIsAnd){
+          line(node.root.x + node.root.elt.offsetWidth/2 + ((node.children[i-1].root.x + node.children[i-1].root.elt.offsetWidth/2) - (node.root.x + node.root.elt.offsetWidth/2))*refinementDist, // middle of current node - 1/10th x-distance to left node of current pair
+              node.root.y + node.root.elt.offsetHeight + (node.children[i-1].root.y - (node.root.y + node.root.elt.offsetHeight))*refinementDist,  // bottom of current node - 1/10th u-distance to top of left node of current pair
+              node.root.x + node.root.elt.offsetWidth/2 + ((node.children[i].root.x + node.children[i].root.elt.offsetWidth/2) - (node.root.x + node.root.elt.offsetWidth/2))*refinementDist,  // middle of current node - 1/10th distance to right node of current pair
+              node.root.y + node.root.elt.offsetHeight + (node.children[i].root.y - (node.root.y + node.root.elt.offsetHeight))*refinementDist)  // bottom of current node - 1/10th distance to top of left node of current pair
+        }
       }
     }
   }
@@ -142,22 +146,23 @@ function moveNodes(node, moveX, moveY){ // Moves all nodes in tree
 }
 
 function mouseDragged() { // Called when mouse is clicked and dragged, standard in p5: https://p5js.org/reference/#/p5/mouseDragged
-  if (active == null){ // If nothing is active, the user is scrolling the canvas
-    if ((canvasOldX - mouseX) > 25 || (canvasOldX - mouseX) < -25 || (canvasOldY - mouseY) > 25 || (canvasOldY - mouseY) < -25){
-      canvasOldX = -100; // Once any dragging has occured (user dragged far enough), stop keeping track of where drag started. Otherwise, whenever you move cursor back
-      canvasOldY = -100; // into the starting area of the drag, it momentarily stops dragging. By moving off screen, cursor is always outside margin once dragging starts.
-      clearTextSelection();
-      clear();
-      moveNodes(root, -(mX - mouseX), -(mY - mouseY));
-      drawLines(root);
-      mX = mouseX;
-      mY = mouseY;
+  if (allowDragging)
+    if (active == null){ // If nothing is active, the user is scrolling the canvas
+      if ((canvasOldX - mouseX) > 25 || (canvasOldX - mouseX) < -25 || (canvasOldY - mouseY) > 25 || (canvasOldY - mouseY) < -25){
+        canvasOldX = -100; // Once any dragging has occured (user dragged far enough), stop keeping track of where drag started. Otherwise, whenever you move cursor back
+        canvasOldY = -100; // into the starting area of the drag, it momentarily stops dragging. By moving off screen, cursor is always outside margin once dragging starts.
+        clearTextSelection();
+        clear();
+        moveNodes(root, -(mX - mouseX), -(mY - mouseY));
+        drawLines(root);
+        mX = mouseX;
+        mY = mouseY;
+      }
+    } else { // if a node is active, drag around the node
+      clear();              // Clears all drawn pixels off the canvas
+      drawLines(root);      // Recurively re-draw lines every frame while dragging (as inneficient as it is, you can't re-draw an individual line while dragging)
+      active.setPos(mouseX,mouseY);
     }
-  } else { // if a node is active, drag around the node
-    clear();              // Clears all drawn pixels off the canvas
-    drawLines(root);      // Recurively re-draw lines every frame while dragging (as inneficient as it is, you can't re-draw an individual line while dragging)
-    active.setPos(mouseX,mouseY);
-  }
 }
 
 function clearTextSelection() { // Deselects any text that the user has selected, prevents awkward text selection while dragging nodes 
@@ -175,9 +180,7 @@ function clearTextSelection() { // Deselects any text that the user has selected
 
 function keyPressed() { // Temporary: bind anything to happen when clicking left arrow, for debugging
   if (keyCode == LEFT_ARROW) {
-    if (active != null)
-      console.log(active.root.elt.innerHTML);
-    else
-      console.log("none");
+    drawLines(root)
+    console.log('redrawing')
   }
 }

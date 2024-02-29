@@ -561,7 +561,7 @@ footer p {
 }
 
 .atkDef {
-  background-color: pink;
+  background-color: lightsalmon;
   border: none;
   border-radius: 50% 50% 0% 0%;
   color: #FFF;
@@ -575,6 +575,25 @@ footer p {
   outline: none;
   padding: 3px;
   padding-left: 4px;
+  z-index: 3;
+  align-items: center;
+}
+
+.deleteBtn {
+  background-color: #ff5252;
+  border: none;
+  border-radius: 50% 50% 50% 50%;
+  color: #FFF;
+  font-size: 10px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  outline: none;
+  padding: 3px;
+  padding-left: 3px;
   z-index: 3;
   align-items: center;
 }
