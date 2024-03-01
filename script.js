@@ -14,6 +14,7 @@ let canvasOldY = null; // That way you can compute how far the cursor has dragge
 let moveCount = 0; // Incrementer used to not redraw elements on every frame
 let allowDragging = false;
 let redrawLines = false;
+let refinementDist = 0.3;
 
 async function setup() { // Only called once: https://p5js.org/reference/#/p5/setup
   toDraw = true;
@@ -100,9 +101,10 @@ function windowResized() { // Called whenever window is resized, standard in p5:
   resizeCanvas(windowWidth-cX, windowHeight-cY-document.getElementById('botFooter').offsetHeight, true);
   translate(-cX,-cY); // Re-translate relative to new canvas position
   drawLines(root); // Re-draw all lines, since they are deleted by resizeCanvas
-  if (active != null)
-  active.toggleContextMenu();
-  active.toggleContextMenu();
+  if (active != null){
+    active.toggleContextMenu();
+    active.toggleContextMenu();
+  }
 }
 
 

@@ -8,6 +8,7 @@ class ADTree{
         this.isDefense = false;
         this.isDragging = false;
         this.contextEnabled = false;
+        this.movedChildren = false;
         // Buttons
         let Plusbtn = null;
         let Refinebtn = null;
@@ -66,21 +67,25 @@ class ADTree{
         this.toggleContextMenu();
     }
 
-    addChild(){ // FIX THIS LATER, SEPERATE FUNC FOR POS CHILDREN
+    addChild(){
         let newChild = new ADTree("Child" + active.children.length);
         newChild.parent = this;
         this.children.push(newChild);
-        if (this.children.length == 1){
-            this.children[this.children.length-1].root.position(this.root.position().x, this.root.position().y + 200 + this.root.elt.offsetHeight);
-        } else {
-            let j = 0;
-            for (let i = 0; i < this.children.length-1; i++){
-                if (this.children[i] != undefined){
-                    this.children[i].root.position(this.children[j].root.x - 175, this.oldY + 200 + this.root.elt.offsetHeight);
-                    j++;
+        if (!this.movedChildren) {
+            if (this.children.length == 1){
+                this.children[this.children.length-1].root.position(this.root.position().x, this.root.position().y + 200 + this.root.elt.offsetHeight);
+            } else {
+                let j = 0;
+                for (let i = 0; i < this.children.length-1; i++){
+                    if (this.children[i] != undefined){
+                        this.children[i].root.position(this.children[j].root.x - 175, this.oldY + 200 + this.root.elt.offsetHeight);
+                        j++;
+                    }
                 }
+                this.children[this.children.length-1].root.position(this.oldX + 175*(this.children.length-1), this.oldY + 200 + this.root.elt.offsetHeight);
             }
-            this.children[this.children.length-1].root.position(this.oldX + 175*(this.children.length-1), this.oldY + 200 + this.root.elt.offsetHeight);
+        } else {
+            newChild.root.position(this.root.position().x, this.root.position().y + 200 + this.root.elt.offsetHeight);
         }
         this.root.elt.focus();
         active.toggleContextMenu();
@@ -109,7 +114,7 @@ class ADTree{
         this.DeleteBtn.parent('canvasContainer');
         this.DeleteBtn.attribute("data-feather", "x-circle"); // Feather.js icon (feathericons.com)
         this.DeleteBtn.addClass('deleteBtn');
-        this.DeleteBtn.position(this.root.position().x+this.root.elt.offsetWidth, this.root.position().y-this.DeleteBtn.elt.offsetHeight);
+        this.DeleteBtn.position(this.root.position().x+this.root.elt.offsetWidth - this.DeleteBtn.elt.offsetWidth/3, this.root.position().y-this.DeleteBtn.elt.offsetHeight);
         feather.replace();
         this.DeleteBtn = document.getElementsByClassName('deleteBtn')[0]; // Have to re-locate the button, since feather completely replaces the elements it 
                                                                           // introduced svgs into. Index 0 since there SHOULD only be 1 button on screen at a time.
@@ -217,6 +222,7 @@ class ADTree{
             this.createAtkDefBtn();
             this.DeleteBtn.remove();
             this.createDeleteBtn();
+            this.parent.movedChildren = true;
         } else {
             if (
                 mouseX + canvasElement.position().x < this.oldX-10 ||
