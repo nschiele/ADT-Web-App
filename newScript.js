@@ -713,6 +713,154 @@ async function downloadPrep() {
     }
 }
 
+function isConsentGiven() {
+  console.log("[*] In isConsentGiven()");
+
+  var message = "Do you consent to your tree being used in scientific research? \n\n" 
+   + "The research is focused on the evaluation of ADT usage. \n We will collect your username, the treename, the token and your tree as a whole.\n" 
+   + "Findings from this research will be published fully anonimized.\n\n"
+   + "Please note that if you do not consent uploading to the server is NOT possible. You can still download your tree to local storage."
+  if(confirm(message) == true) {
+    return(true);
+  }
+  else {
+    alert("No consent given; tree NOT uploaded to server.")
+    return (false);
+  }
+}
+
+function isInputlengthWithinLimit(limit, string) {
+  if(string.length <= limit) {
+    return(true);
+  }
+  else {
+    alert("Your input is too long ("+ limit +" characters allowed), please try again.")
+    return(false);
+  }
+}
+
+function getInputFromUser(promptMessage, defaultValue) {
+  inputFromUser = prompt(promptMessage, defaultValue);
+  if(inputFromUser == null) {
+    inputFromUser = defaultValue;
+  }
+  return(inputFromUser);
+}
+
+async function uploadToServer() {
+  console.log("[*] In uploadToServer()");
+
+  if(isConsentGiven() == true) {
+    let treeInXML = await downloadADT("");
+    if((treeInXML.length <= 65408) ==  true) {
+      treeName = getInputFromUser("Please name your tree", "TreeName");
+      while(isInputlengthWithinLimit(64, treeName) == false) {
+        treeName = getInputFromUser("Please name your tree", "TreeName");
+      }
+
+      userName = getInputFromUser("Please provide your name", "UserName");
+      while(isInputlengthWithinLimit(32, userName) == false) {
+        userName = getInputFromUser("Please provide your name", "UserName");
+      }
+
+      //Generate the token of the tree; between 1 (inclusive) and 99999 (inclusive)
+      treeToken = Math.floor(Math.random() * 100000) + 1;
+      
+      let treeData = {
+        userName: userName,
+        treeName: treeName,
+        treeToken: treeToken,
+        treeInXML: treeInXML
+      };
+
+      try {
+        let response = await fetch("https://liacs.leidenuniv.nl/~cslocs/adt.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json;charset=utf-8"
+        },
+        body: JSON.stringify(treeData)
+        });
+
+        if(response.ok) {
+          let result = await response.text();
+          if(result.startsWith("ERROR") ==  false) {
+            alert("Your tree identifier consists of: \n TreeName: " + treeName + "\n Token: " + treeToken
+             + "\n \nPlease remember this as you will need it to retrieve your tree later.");
+          }
+          else alert(result);
+        }
+        else {
+          alert("Request to the server not succesfull!" + response.status);
+          console.log(response.status);
+        }
+
+      } catch(err) {
+        alert(err);
+      }
+    }
+    else alert("Your tree is too large to be uploaded to the server (limit is roughly 600 nodes).")
+  }
+}
+
+function isFirstLineXML_Declaration(text) {
+  console.log("[*] In isFirstLineXML_Declaration()");
+  var xmlDeclaration = text.substring(0,5);
+  if(xmlDeclaration == "<?xml") {
+    return(true);
+  }
+  else return(false);
+}
+
+async function drawTreeFromXML(treeInXML) {
+  console.log("[*] In drawTreeFromXML()");
+  try {
+    var input = await getJson(0, treeInXML);
+    buildFromMultiset(input);
+    root.initialColor();
+    draw();
+    toDraw = true;
+    // Needed to be able to select nodes after uploading the file:
+    windowResized();
+    resetScaleCoordinates(root, 1);
+  } catch(error) {
+      console.error("Error:", error);
+  }
+}
+
+async function retrieveFromServer() {
+  console.log("[*] In retrieveFromServer()");
+
+  treeName = getInputFromUser("Please provide your tree name", "");
+  treeToken = getInputFromUser("Please provide the token for your tree", "");
+
+  try {
+    let response = await fetch("https://liacs.leidenuniv.nl/~cslocs/adt.php?treeName=" + treeName + "&treeToken=" + treeToken);
+    if(response.ok) {
+      let result = await response.text();
+      console.log(result);
+      if(result.startsWith("ERROR") ==  false) {
+        if(isFirstLineXML_Declaration(result) == true){
+          drawTreeFromXML(result)
+        }
+        else alert("Format not supported; xml expected.");
+      }
+      else {
+        if(result.startsWith("ERROR: Fetch")) {
+          alert("Tree not found; please check tree name and token.");
+        }
+        else alert(result);
+      }
+    }
+    else {
+      alert("Request to the server not succesfull!" + response.status);
+      console.log(response.status);
+    }
+  } catch(err) {
+    alert(err);
+  }
+}
+
 function uploadADT() {
     console.log("[*] In uploadADT()");
     return new Promise(function(resolve, reject) {

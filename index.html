@@ -317,6 +317,18 @@
                   <li><button class="dropdown-item" type="button" id="jpgBtn">jpg</button></li>
                 </ul> -->
               </span>
+              
+              <span data-bs-toggle="tooltip" data-bs-title="UploadToServer">
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="UploadToServerBtn" data-bs-toggle="dropdown" aria-expanded="false" onclick="uploadToServer()">
+                  <span data-feather="upload-cloud" class="align-text-bottom"></span>
+                </button>
+              </span>
+
+              <span data-bs-toggle="tooltip" data-bs-title="RetrieveFromServer">
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="RetrieveFromServerBtn" data-bs-toggle="dropdown" aria-expanded="false" onclick="retrieveFromServer()">
+                  <span data-feather="download-cloud" class="align-text-bottom"></span>
+                </button>
+              </span>
             <!-- </div> -->
           </div>
 
@@ -366,6 +378,8 @@
     <script src="json_func.js"></script>
 
     <script src="ADTLang/Compiler/bundle.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
 
   </body>
 </html>
