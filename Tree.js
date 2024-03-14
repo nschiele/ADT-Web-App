@@ -70,7 +70,9 @@ class ADTree{
     addChild(){
         let newChild = new ADTree("Child" + active.children.length);
         newChild.parent = this;
+        newChild.root.addClass('NodeInactive'); // add styling
         this.children.push(newChild);
+        allNodes.push(newChild);
         if (!this.movedChildren) {
             if (this.children.length == 1){
                 this.children[this.children.length-1].root.position(this.root.position().x, this.root.position().y + 200 + this.root.elt.offsetHeight);
@@ -82,15 +84,15 @@ class ADTree{
                         j++;
                     }
                 }
-                this.children[this.children.length-1].root.position(this.oldX + 175*(this.children.length-1), this.oldY + 200 + this.root.elt.offsetHeight);
+                this.children[this.children.length-1].root.position(this.root.position().x + 175*(this.children.length-1), this.oldY + 200 + this.root.elt.offsetHeight);
             }
         } else {
             newChild.root.position(this.root.position().x, this.root.position().y + 200 + this.root.elt.offsetHeight);
         }
         this.root.elt.focus();
-        active.toggleContextMenu();
-        active = newChild;
-        active.toggleContextMenu();
+        // active.toggleContextMenu();
+        // active = newChild;
+        // active.toggleContextMenu();
         clear();
         drawLines(root);
     }

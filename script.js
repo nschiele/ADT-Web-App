@@ -16,6 +16,8 @@ let allowDragging = false;
 let redrawLines = false;
 let refinementDist = 0.3;
 
+let allNodes = [];
+
 async function setup() { // Only called once: https://p5js.org/reference/#/p5/setup
   toDraw = true;
   trackMouseStart = true;
@@ -84,8 +86,12 @@ async function setup() { // Only called once: https://p5js.org/reference/#/p5/se
 
   // Initialize canvas with 1 node
   root = new ADTree("Target");
+  allNodes.push(root);
   active = root;
   active.toggleContextMenu();
+  // for (let i = 0; i < 100; i++)
+  //   root.addChild();
+
   // Tell the canvas to translate all given coordinates to be related to the entire window, not just the canvas. 
   // (so (0,0) is top left of the window, not the canvas. Helps with calculations later.)
   translate(-cX, -cY);
@@ -137,14 +143,10 @@ function drawLines(node){ // Recursively draw all lines between all nodes and th
 
 function moveNodes(node, moveX, moveY){ // Moves all nodes in tree
   node.root.position(node.root.position().x + moveX, node.root.position().y + moveY); // Move node by moveX and moveY
-  // if (moveCount == 4){ // Small optimisation, redraw the contextMenu every 4 'frames', as opposed to every 'frame'.
   if (node.contextEnabled){
-    node.toggleContextMenu();
-    node.toggleContextMenu();
+      node.toggleContextMenu();
+      node.toggleContextMenu();
   }
-  //   moveCount = 0;
-  // }
-  // moveCount++;
   node.oldX = node.root.x;
   node.oldY = node.root.y;
   for (let i = 0; i < node.children.length; i++) {
@@ -160,12 +162,11 @@ function mouseDragged() { // Called when mouse is clicked and dragged, standard 
         canvasOldX = -100; // Once any dragging has occured (user dragged far enough), stop keeping track of where drag started. Otherwise, whenever you move cursor back
         canvasOldY = -100; // into the starting area of the drag, it momentarily stops dragging. By moving off screen, cursor is always outside margin once dragging starts.
         clearTextSelection();
-        clear();
         moveNodes(root, -(mX - mouseX), -(mY - mouseY));
+        clear();
         drawLines(root);
         mX = mouseX;
         mY = mouseY;
-        console.log("drag")
       }
     } else { // if a node is active, drag around the node
       clear();              // Clears all drawn pixels off the canvas
