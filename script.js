@@ -138,11 +138,13 @@ function drawLines(node){ // Recursively draw all lines between all nodes and th
 function moveNodes(node, moveX, moveY){ // Moves all nodes in tree
   node.root.position(node.root.position().x + moveX, node.root.position().y + moveY); // Move node by moveX and moveY
   // if (moveCount == 4){ // Small optimisation, redraw the contextMenu every 4 'frames', as opposed to every 'frame'.
+  if (node.contextEnabled){
     node.toggleContextMenu();
     node.toggleContextMenu();
+  }
   //   moveCount = 0;
   // }
-  moveCount++;
+  // moveCount++;
   node.oldX = node.root.x;
   node.oldY = node.root.y;
   for (let i = 0; i < node.children.length; i++) {
@@ -163,6 +165,7 @@ function mouseDragged() { // Called when mouse is clicked and dragged, standard 
         drawLines(root);
         mX = mouseX;
         mY = mouseY;
+        console.log("drag")
       }
     } else { // if a node is active, drag around the node
       clear();              // Clears all drawn pixels off the canvas
