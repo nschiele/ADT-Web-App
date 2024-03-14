@@ -105,8 +105,17 @@ class ADTree{
         this.AtkDefBtn.addClass('atkDef');
         this.AtkDefBtn.position(this.root.position().x+this.root.elt.offsetWidth/2 + this.Refinebtn.elt.offsetWidth/2, this.root.position().y-this.Refinebtn.elt.offsetHeight);
         feather.replace();
-        this.AtkDefBtn = document.getElementsByClassName('atkDef')[0];
+        let atkdefBtns = document.getElementsByClassName('atkDef');
+        this.AtkDefBtn = atkdefBtns[atkdefBtns.length-1] // Have to re-locate the button, since feather completely replaces the elements it 
+                                                         // introduced svgs into. Index 0 since there SHOULD only be 1 button on screen at a time.
+        // Loops over all previous instances of the AtkDefBtn and removes them (SHOULD be 1, the last one), but does all but the last just in case :)
+        for (let i = 0; i < atkdefBtns.length-2; i++){
+            atkdefBtns[i].remove();
+        }
+
+        // this.AtkDefBtn = document.getElementsByClassName('atkDef')[0];
         this.AtkDefBtn.addEventListener('mousedown', this.clickedAtkDef.bind(this));
+        
     }
 
     createDeleteBtn(){
@@ -116,8 +125,13 @@ class ADTree{
         this.DeleteBtn.addClass('deleteBtn');
         this.DeleteBtn.position(this.root.position().x+this.root.elt.offsetWidth - this.DeleteBtn.elt.offsetWidth/3, this.root.position().y-this.DeleteBtn.elt.offsetHeight);
         feather.replace();
-        this.DeleteBtn = document.getElementsByClassName('deleteBtn')[0]; // Have to re-locate the button, since feather completely replaces the elements it 
+        let delBtns = document.getElementsByClassName('deleteBtn');
+        this.DeleteBtn = delBtns[delBtns.length-1] // Have to re-locate the button, since feather completely replaces the elements it 
                                                                           // introduced svgs into. Index 0 since there SHOULD only be 1 button on screen at a time.
+        // Loops over all previous instances of the DeleteBtn and removes them (SHOULD be 1, the last one), but does all but the last just in case :)
+        for (let i = 0; i < delBtns.length-2; i++){
+            delBtns[i].remove();
+        }
         this.DeleteBtn.addEventListener('mousedown', () => {
             for (let i = 0; i < this.parent.children.length; i++)
                 if (this.parent.children[i] == this)
@@ -175,6 +189,8 @@ class ADTree{
 
     clickedAtkDef(){
         this.isDefense = !this.isDefense;
+        clear();
+        drawLines(root);
         this.AtkDefBtn.remove();
         this.AtkDefBtn = createButton("");
         this.AtkDefBtn.parent('canvasContainer');
@@ -216,12 +232,8 @@ class ADTree{
             this.root.elt.blur();
             clearTextSelection();
             this.root.position(canvasElement.position().x+X-this.root.elt.offsetWidth/2,canvasElement.position().y+Y-this.root.elt.offsetHeight/2);
-            this.Plusbtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Plusbtn.width/2, this.root.position().y+this.root.elt.offsetHeight);
-            this.Refinebtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Plusbtn.width/2, this.root.position().y-this.Refinebtn.elt.offsetHeight); // TODO: WEIRD CSS BUG (+9????)
-            this.AtkDefBtn.remove();
-            this.createAtkDefBtn();
-            this.DeleteBtn.remove();
-            this.createDeleteBtn();
+            this.toggleContextMenu();
+            this.toggleContextMenu();
             this.parent.movedChildren = true;
         } else {
             if (

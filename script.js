@@ -115,6 +115,10 @@ function manAddChild(inputVal) { // Manually add a child, inputVal is a string t
 function drawLines(node){ // Recursively draw all lines between all nodes and their children
   for (let i = 0; i < node.children.length; i++) {
     if (node.children[i] != undefined){ // Only consider children that were not deleted
+      if (node.children[i].isDefense != node.isDefense)
+        drawingContext.setLineDash([5]);
+      else 
+        drawingContext.setLineDash([0]);
       // Draw line between root of sub-tree and child i
       line(node.root.x + node.root.elt.offsetWidth/2, node.root.y + node.root.elt.offsetHeight, node.children[i].root.x + node.children[i].root.elt.offsetWidth/2, node.children[i].root.y);
       // recursively call drawLines on sub-trees
@@ -133,11 +137,11 @@ function drawLines(node){ // Recursively draw all lines between all nodes and th
 
 function moveNodes(node, moveX, moveY){ // Moves all nodes in tree
   node.root.position(node.root.position().x + moveX, node.root.position().y + moveY); // Move node by moveX and moveY
-  if (moveCount == 4){ // Small optimisation, redraw the contextMenu every 4 'frames', as opposed to every 'frame'.
+  // if (moveCount == 4){ // Small optimisation, redraw the contextMenu every 4 'frames', as opposed to every 'frame'.
     node.toggleContextMenu();
     node.toggleContextMenu();
-    moveCount = 0;
-  }
+  //   moveCount = 0;
+  // }
   moveCount++;
   node.oldX = node.root.x;
   node.oldY = node.root.y;
