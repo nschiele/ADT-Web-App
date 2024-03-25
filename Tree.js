@@ -71,6 +71,7 @@ class ADTree{
         let newChild = new ADTree("Child" + active.children.length);
         newChild.parent = this;
         newChild.root.addClass('NodeInactive'); // add styling
+        newChild.isDefense = this.isDefense
         this.children.push(newChild);
         allNodes.push(newChild);
         if (!this.movedChildren) {
@@ -205,6 +206,8 @@ class ADTree{
         feather.replace();
         this.AtkDefBtn = document.getElementsByClassName('atkDef')[0];
         this.AtkDefBtn.addEventListener('mousedown', this.clickedAtkDef.bind(this));
+        // console.log("CHECKING")
+        checkLocalTree(this)
     }
 
     inputPressed(){
