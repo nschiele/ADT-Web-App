@@ -614,3 +614,15 @@ footer p {
 #treeName {
   margin-left: 0.6vw;
 }
+#btn-groupwarningIcon{
+  width: auto;
+  display: none;
+}
+.feather-alert-triangle{
+  width: 70px;
+  height: 36px;
+  background: red;
+  padding: 5px;
+  border-radius: 5px;
+}
+

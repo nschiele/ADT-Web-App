@@ -155,9 +155,27 @@ function moveNodes(node, moveX, moveY){ // Moves all nodes in tree
   }
 }
 
+function checkFullTree(node){
+  for (let i = 0; i < node.children.length; i++){
+    if (node.children[i].root.elt.classList.contains('ErrorNode'))
+      return false
+  }
+
+  for (let i = 0; i < node.children.length; i++){
+    if (!checkFullTree(node.children[i]))
+      return false
+  }
+  return true
+}
+
 function checkLocalTree(node){ // Check 1 layer above and below current tree
   if (node.parent) checkNode(node.parent)
   checkNode(node)
+  if (!checkFullTree(root)){
+    document.getElementById('btn-groupwarningIcon').style.display = 'block';
+  } else {
+    document.getElementById('btn-groupwarningIcon').style.display = 'none';
+  }
 }
 
 function checkNode(node){
