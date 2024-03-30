@@ -119,25 +119,25 @@ function manAddChild(inputVal) { // Manually add a child, inputVal is a string t
 }
 
 function drawLines(node){ // Recursively draw all lines between all nodes and their children
+  let lastFoundSameTypeChildIndex = null;
   for (let i = 0; i < node.children.length; i++) {
-    // if (node.children[i] != undefined){ // Only consider children that were not deleted
-      if (node.children[i].isDefense != node.isDefense)
-        drawingContext.setLineDash([5]);
-      // Draw line between root of sub-tree and child i
-      line(node.root.x + node.root.elt.offsetWidth/2, node.root.y + node.root.elt.offsetHeight, node.children[i].root.x + node.children[i].root.elt.offsetWidth/2, node.children[i].root.y);
-      // recursively call drawLines on sub-trees
-      drawingContext.setLineDash([0]);
-      drawLines(node.children[i]);
-      if (i > 0){
-        if (node.refinementIsAnd){
-          if (node.children[i].isDefense == node.children[i-1].isDefense)
-            line(node.root.x + node.root.elt.offsetWidth/2 + ((node.children[i-1].root.x + node.children[i-1].root.elt.offsetWidth/2) - (node.root.x + node.root.elt.offsetWidth/2))*refinementDist, // middle of current node - 1/10th x-distance to left node of current pair
-                node.root.y + node.root.elt.offsetHeight + (node.children[i-1].root.y - (node.root.y + node.root.elt.offsetHeight))*refinementDist,  // bottom of current node - 1/10th u-distance to top of left node of current pair
+    if (node.children[i].isDefense != node.isDefense)
+      drawingContext.setLineDash([5]);
+    // Draw line between root of sub-tree and child i
+    line(node.root.x + node.root.elt.offsetWidth/2, node.root.y + node.root.elt.offsetHeight, node.children[i].root.x + node.children[i].root.elt.offsetWidth/2, node.children[i].root.y);
+    // recursively call drawLines on sub-trees
+    drawingContext.setLineDash([0]);
+    drawLines(node.children[i]);
+    if (node.refinementIsAnd)
+      if (node.children[i].isDefense == node.isDefense){
+        if (lastFoundSameTypeChildIndex != null){
+          line(node.root.x + node.root.elt.offsetWidth/2 + ((node.children[lastFoundSameTypeChildIndex].root.x + node.children[lastFoundSameTypeChildIndex].root.elt.offsetWidth/2) - (node.root.x + node.root.elt.offsetWidth/2))*refinementDist, // middle of current node - 1/10th x-distance to left node of current pair
+                node.root.y + node.root.elt.offsetHeight + (node.children[lastFoundSameTypeChildIndex].root.y - (node.root.y + node.root.elt.offsetHeight))*refinementDist,  // bottom of current node - 1/10th u-distance to top of left node of current pair
                 node.root.x + node.root.elt.offsetWidth/2 + ((node.children[i].root.x + node.children[i].root.elt.offsetWidth/2) - (node.root.x + node.root.elt.offsetWidth/2))*refinementDist,  // middle of current node - 1/10th distance to right node of current pair
                 node.root.y + node.root.elt.offsetHeight + (node.children[i].root.y - (node.root.y + node.root.elt.offsetHeight))*refinementDist)  // bottom of current node - 1/10th distance to top of left node of current pair
         }
+        lastFoundSameTypeChildIndex = i;
       }
-    // }
   }
 }
 
@@ -229,6 +229,8 @@ function clearTextSelection() { // Deselects any text that the user has selected
 
 function keyPressed() { // Temporary: bind anything to happen when clicking left arrow, for debugging
   if (keyCode == LEFT_ARROW) {
+    clear()
+    drawLines(root)
     console.log(active.isDefense)
   }
 }
