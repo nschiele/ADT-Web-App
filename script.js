@@ -126,6 +126,7 @@ function drawLines(node){ // Recursively draw all lines between all nodes and th
       // Draw line between root of sub-tree and child i
       line(node.root.x + node.root.elt.offsetWidth/2, node.root.y + node.root.elt.offsetHeight, node.children[i].root.x + node.children[i].root.elt.offsetWidth/2, node.children[i].root.y);
       // recursively call drawLines on sub-trees
+      drawingContext.setLineDash([0]);
       drawLines(node.children[i]);
       if (i > 0){
         if (node.refinementIsAnd){
@@ -136,7 +137,6 @@ function drawLines(node){ // Recursively draw all lines between all nodes and th
                 node.root.y + node.root.elt.offsetHeight + (node.children[i].root.y - (node.root.y + node.root.elt.offsetHeight))*refinementDist)  // bottom of current node - 1/10th distance to top of left node of current pair
         }
       }
-      drawingContext.setLineDash([0]);
     // }
   }
 }
