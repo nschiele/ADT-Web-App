@@ -29,7 +29,6 @@ class ADTree{
         } 
         this.root.attribute('contenteditable', 'true');
         this.root.attribute('role', 'textbox');
-        this.root.addClass('Node'); // add styling
         this.root.position(this.oldX - 150, this.oldY) // set pos to top-left of canvas
         this.root.elt.addEventListener('mousedown', this.inputPressed.bind(this))
         this.root.elt.addEventListener('mouseup', this.inputReleased.bind(this))
@@ -70,8 +69,11 @@ class ADTree{
     addChild(){
         let newChild = new ADTree("Child" + active.children.length);
         newChild.parent = this;
-        newChild.root.addClass('NodeInactive'); // add styling
         newChild.isDefense = this.isDefense
+        if (newChild.isDefense)
+            newChild.root.addClass('NodeInactiveDef'); // add Def styling
+        else 
+            newChild.root.addClass('NodeInactiveAtk'); // add Atk styling
         this.children.push(newChild);
         allNodes.push(newChild);
         if (!this.movedChildren) {
@@ -101,10 +103,12 @@ class ADTree{
     createAtkDefBtn(){
         this.AtkDefBtn = createButton("");
         this.AtkDefBtn.parent('canvasContainer');
-        if (this.isDefense)
+        if (this.isDefense){
             this.AtkDefBtn.attribute("data-feather","shield");
-        else 
+        }
+        else {
             this.AtkDefBtn.attribute("data-feather","flag");
+        }
         this.AtkDefBtn.addClass('atkDef');
         this.AtkDefBtn.position(this.root.position().x+this.root.elt.offsetWidth/2 + this.Refinebtn.elt.offsetWidth/2, this.root.position().y-this.Refinebtn.elt.offsetHeight);
         feather.replace();
@@ -145,15 +149,25 @@ class ADTree{
 
     toggleContextMenu(){
         if (this.contextEnabled){ // If contextMenu is enabled, it should disabled when toggled. So delete all btns
-            this.root.removeClass('NodeActive'); // remove styling
-            this.root.addClass('NodeInactive'); // add styling
+            if (this.isDefense){
+                this.root.removeClass('NodeActiveDef'); // remove active styling
+                this.root.addClass('NodeInactiveDef'); // add inactive styling
+            } else {
+                this.root.removeClass('NodeActiveAtk'); // remove active styling
+                this.root.addClass('NodeInactiveAtk'); // add inactive styling
+            }
             this.Plusbtn.remove();
             this.Refinebtn.remove();
             this.AtkDefBtn.remove();
             this.DeleteBtn.remove();
         } else {                  // ELSE, buttons are not currently active, create them
-            this.root.removeClass('NodeInactive'); // remove styling
-            this.root.addClass('NodeActive'); // add styling
+            if (this.isDefense){
+                this.root.removeClass('NodeInactiveDef'); // remove active styling
+                this.root.addClass('NodeActiveDef'); // add inactive styling
+            } else {
+                this.root.removeClass('NodeInactiveAtk'); // remove active styling
+                this.root.addClass('NodeActiveAtk'); // add inactive styling
+            }
             // Create the plus button
             this.Plusbtn = createButton("+");
             this.Plusbtn.parent('canvasContainer');
@@ -198,10 +212,16 @@ class ADTree{
         this.AtkDefBtn = createButton("");
         this.AtkDefBtn.parent('canvasContainer');
         this.AtkDefBtn.addClass('atkDef');
-        if (this.isDefense)
+        if (this.isDefense){
             this.AtkDefBtn.attribute("data-feather","shield");
-        else 
+            this.root.removeClass('NodeActiveAtk');
+            this.root.addClass('NodeActiveDef');
+        }
+        else {
             this.AtkDefBtn.attribute("data-feather","flag");
+            this.root.removeClass('NodeActiveDef');
+            this.root.addClass('NodeActiveAtk');
+        }
         this.AtkDefBtn.position(this.root.position().x+this.root.elt.offsetWidth/2 + this.Refinebtn.elt.offsetWidth/2, this.root.position().y-this.Refinebtn.elt.offsetHeight);
         feather.replace();
         this.AtkDefBtn = document.getElementsByClassName('atkDef')[0];

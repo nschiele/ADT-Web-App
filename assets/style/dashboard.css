@@ -500,11 +500,11 @@ footer p {
   filter: drop-shadow(0px 3px 5px #ec6f6f);
 }
 
-.NodeInactive {
+.NodeInactiveAtk {
   background-color: #f4f4f4;
   width: 300px;
   text-align: center;
-  border: 2px solid darkgray;
+  border: 2px solid #E28888;
   border-radius: 20px;
   padding-bottom: 5px;
   padding-top: 5px;
@@ -514,12 +514,40 @@ footer p {
   resize: none;
 }
 
-.NodeActive {
+.NodeInactiveDef {
+  background-color: #f4f4f4;
+  width: 300px;
+  text-align: center;
+  border: 2px solid #3B8D5F;
+  border-radius: 0px;
+  padding-bottom: 5px;
+  padding-top: 5px;
+  outline: none;
+  z-index: 2;
+  word-wrap: break-word;
+  resize: none;
+}
+
+.NodeActiveAtk {
   background-color: #f4f4f4;
   width: 300px;
   text-align: center;
   border: 2px solid #FF6464;
   border-radius: 20px;
+  padding-bottom: 5px;
+  padding-top: 5px;
+  outline: none;
+  z-index: 2;
+  word-wrap: break-word;
+  resize: none;
+}
+
+.NodeActiveDef {
+  background-color: #f4f4f4;
+  width: 300px;
+  text-align: center;
+  border: 2px solid #50C878;
+  border-radius: 0px;
   padding-bottom: 5px;
   padding-top: 5px;
   outline: none;

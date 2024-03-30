@@ -116,6 +116,7 @@ function windowResized() { // Called whenever window is resized, standard in p5:
 
 function manAddChild(inputVal) { // Manually add a child, inputVal is a string to be given as the text-content of the created node.
   childTree = new ADTree(inputVal);
+  childTree.root.addClass('NodeActiveAtk')
 }
 
 function drawLines(node){ // Recursively draw all lines between all nodes and their children
@@ -136,7 +137,7 @@ function drawLines(node){ // Recursively draw all lines between all nodes and th
                 node.root.x + node.root.elt.offsetWidth/2 + ((node.children[i].root.x + node.children[i].root.elt.offsetWidth/2) - (node.root.x + node.root.elt.offsetWidth/2))*refinementDist,  // middle of current node - 1/10th distance to right node of current pair
                 node.root.y + node.root.elt.offsetHeight + (node.children[i].root.y - (node.root.y + node.root.elt.offsetHeight))*refinementDist)  // bottom of current node - 1/10th distance to top of left node of current pair
         }
-        lastFoundSameTypeChildIndex = i;
+        lastFoundSameTypeChildIndex = i; // Keep track of last found non-CounterMeasure child
       }
   }
 }
