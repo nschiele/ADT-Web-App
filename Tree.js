@@ -62,7 +62,7 @@ class ADTree{
         this.children[i].deleteSubTree();
         this.children.splice(i, 1);
         clear();
-        drawLines(this);
+        drawLines(root);
         active = this;
         this.toggleContextMenu();
     }

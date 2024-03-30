@@ -120,7 +120,7 @@ function manAddChild(inputVal) { // Manually add a child, inputVal is a string t
 
 function drawLines(node){ // Recursively draw all lines between all nodes and their children
   for (let i = 0; i < node.children.length; i++) {
-    if (node.children[i] != undefined){ // Only consider children that were not deleted
+    // if (node.children[i] != undefined){ // Only consider children that were not deleted
       if (node.children[i].isDefense != node.isDefense)
         drawingContext.setLineDash([5]);
       // Draw line between root of sub-tree and child i
@@ -137,7 +137,7 @@ function drawLines(node){ // Recursively draw all lines between all nodes and th
         }
       }
       drawingContext.setLineDash([0]);
-    }
+    // }
   }
 }
 
@@ -229,9 +229,6 @@ function clearTextSelection() { // Deselects any text that the user has selected
 
 function keyPressed() { // Temporary: bind anything to happen when clicking left arrow, for debugging
   if (keyCode == LEFT_ARROW) {
-    console.log(root.children)
-    checkLocalTree(root)
-    // drawLines(root)
-    console.log('checking tree')
+    console.log(active.isDefense)
   }
 }
