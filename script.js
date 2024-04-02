@@ -171,15 +171,17 @@ function setupWarningMessages(){ // Handles behaviour when clicking warning icon
   warningsDivBody.parent(warningsDiv);
 
   let ErrorPElements = [];
-
+  // Create error header and apply styling
   let mainP = createP('One or more nodes have an error, the current tree is wrong.');
   mainP.parent(warningsDivBody);
   mainP.addClass('ErrorHeading');
+  // Counter-measure overflow message
   if (CMOverflow){
     let CMOP = createP('Too many counter-measures on node(s). Counter-measures are nodes of a different type than their parent node.')
     CMOP.parent(warningsDivBody);
     ErrorPElements.push(CMOP);
   }
+  // Apply styling to all error messages
   for (const child of ErrorPElements){
     child.addClass('ErrorMessage');
   }
