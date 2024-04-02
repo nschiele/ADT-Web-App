@@ -16,6 +16,8 @@ let allowDragging = false;
 let redrawLines = false;
 let refinementDist = 0.3;
 
+let CMOverflow = false;
+
 let allNodes = [];
 
 async function setup() { // Only called once: https://p5js.org/reference/#/p5/setup
@@ -89,8 +91,9 @@ async function setup() { // Only called once: https://p5js.org/reference/#/p5/se
   allNodes.push(root);
   active = root;
   active.toggleContextMenu();
-  // for (let i = 0; i < 100; i++)
-  //   root.addChild();
+
+  let warningIcon = document.getElementById('btn-groupwarningIcon');
+  warningIcon.addEventListener('click', setupWarningMessages)
 
   // Tell the canvas to translate all given coordinates to be related to the entire window, not just the canvas. 
   // (so (0,0) is top left of the window, not the canvas. Helps with calculations later.)
@@ -156,43 +159,82 @@ function moveNodes(node, moveX, moveY){ // Moves all nodes in tree
   }
 }
 
-function checkFullTree(node){
-  for (let i = 0; i < node.children.length; i++){
-    if (node.children[i].root.elt.classList.contains('ErrorNode'))
-      return false
+function setupWarningMessages(){ // Handles behaviour when clicking warning icon
+                                 // It's a little ugly, but it's a lot easier than (un)hiding a pre-made error with dynamic content :)
+  let warningsDiv = createDiv();
+  warningsDiv.addClass('warningDiv');
+  warningsDiv.position(select("#topBar").offsetHeight,0);
+
+  let warningsDivBody = createDiv();
+  warningsDivBody.addClass('warningDivBody');
+  warningsDiv.position(select("#topBar").offsetHeight,0);
+  warningsDivBody.parent(warningsDiv);
+
+  let ErrorPElements = [];
+
+  let mainP = createP('One or more nodes have an error, the current tree is wrong.');
+  mainP.parent(warningsDivBody);
+  mainP.addClass('ErrorHeading');
+  if (CMOverflow){
+    let CMOP = createP('Too many counter-measures on node(s). Counter-measures are nodes of a different type than their parent node.')
+    CMOP.parent(warningsDivBody);
+    ErrorPElements.push(CMOP);
+  }
+  for (const child of ErrorPElements){
+    child.addClass('ErrorMessage');
   }
 
-  for (let i = 0; i < node.children.length; i++){
-    if (!checkFullTree(node.children[i]))
-      return false
-  }
-  return true
+  warningsDiv.elt.addEventListener('click', () => {
+    // Clean up when clicking out of notification box
+    for (const element of ErrorPElements){
+      element.remove();
+    }
+    mainP.remove();
+    warningsDivBody.remove();
+    warningsDiv.remove();
+  })
+
 }
 
-function checkLocalTree(node){ // Check 1 layer above and below current tree
-  if (node.parent) checkNode(node.parent)
-  checkNode(node)
-  if (!checkFullTree(root)){
+function treeCheck(){ // Should be called whenever something happens that can cause an error (like toggle atk/def of a node)
+  // Errors / warnings list initialization:
+  CMOverflow = false; // Error: Counter-measure overflow (>1 counter-measure)
+  
+
+  // Run check with error list
+  subtreeCheck(root, CMOverflow);
+
+  //Display errors
+  if (CMOverflow){
     document.getElementById('btn-groupwarningIcon').style.display = 'block';
   } else {
     document.getElementById('btn-groupwarningIcon').style.display = 'none';
   }
 }
 
-function checkNode(node){
-  for (let i = 0; i < node.children.length; i++)
-    node.children[i].root.removeClass('ErrorNode')
-  let counterMeasures = []
-  for (let i = 0; i < node.children.length; i++)
-    if (node.children[i].isDefense != node.isDefense)
-      counterMeasures.push(i)
+function subtreeCheck(node){
+  let counterMeasures = []; // List of counter-measures for current node (if len > 1, CMOverflow)
+
+
+  //  Setup for error checks
+  // Setup CMOverflow
+  for (const child of node.children){
+    child.root.removeClass('ErrorNode'); // Assume no errors, then recheck tree
+    if (child.isDefense != node.isDefense)
+      counterMeasures.push(child);
+  }
+  //  Execute error checks
+  // Check CMOverflow
   if (counterMeasures.length > 1){
-    for (let childID of counterMeasures){
-      node.children[childID].root.addClass('ErrorNode')
-    }
-    return false
-  } else
-    return true
+    for (const errorChild of counterMeasures)
+      errorChild.root.addClass('ErrorNode');
+
+    CMOverflow = true;
+  }
+
+  // Continue with subtrees
+  for (const child of node.children)
+    subtreeCheck(child)
 }
 
 function mouseDragged() { // Called when mouse is clicked and dragged, standard in p5: https://p5js.org/reference/#/p5/mouseDragged

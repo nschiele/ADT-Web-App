@@ -64,6 +64,7 @@ class ADTree{
         drawLines(root);
         active = this;
         this.toggleContextMenu();
+        treeCheck();
     }
 
     addChild(){
@@ -227,7 +228,7 @@ class ADTree{
         this.AtkDefBtn = document.getElementsByClassName('atkDef')[0];
         this.AtkDefBtn.addEventListener('mousedown', this.clickedAtkDef.bind(this));
         // console.log("CHECKING")
-        checkLocalTree(this)
+        treeCheck();
     }
 
     inputPressed(){
@@ -259,7 +260,8 @@ class ADTree{
             this.root.position(canvasElement.position().x+X-this.root.elt.offsetWidth/2,canvasElement.position().y+Y-this.root.elt.offsetHeight/2);
             this.toggleContextMenu();
             this.toggleContextMenu();
-            this.parent.movedChildren = true;
+            if (this.parent)
+                this.parent.movedChildren = true;
         } else {
             if (
                 mouseX + canvasElement.position().x < this.oldX-10 ||
