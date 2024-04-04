@@ -48,13 +48,12 @@ class ADTree{
         if (active == this)
             this.toggleContextMenu();
         this.root.remove();
-
-        for (let i = 0; i < this.parent.children.length; i++){
-            if (this.parent.children[i] == this){
-                delete this.parent.children[i];
+        if (this.parent != null)
+            for (let i = 0; i < this.parent.children.length; i++){
+                if (this.parent.children[i] == this){
+                    delete this.parent.children[i];
+                }
             }
-        }
-        
     }
 
     parentDeleteSubTree(i) {
@@ -141,10 +140,23 @@ class ADTree{
             delBtns[i].remove();
         }
         this.DeleteBtn.addEventListener('click', () => {
-            for (let i = 0; i < this.parent.children.length; i++)
-                if (this.parent.children[i] == this)
-                    this.parent.parentDeleteSubTree(i)
-            
+            if (this.parent != null){
+                for (let i = 0; i < this.parent.children.length; i++)
+                    if (this.parent.children[i] == this)
+                        this.parent.parentDeleteSubTree(i)
+
+            }
+            else {
+                for (let i = this.children.length-1; i >= 0; i--){
+                    this.children[i].deleteSubTree();
+                    this.children.splice(i, 1);
+                }
+                clear();
+                drawLines(root);
+                treeCheck();
+            }
+                
+
         });
     }
 

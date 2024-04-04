@@ -97,7 +97,8 @@ function manAddChild(inputVal) { // Manually add a child, inputVal is a string t
 function drawLines(node){ // Recursively draw all lines between all nodes and their children
   let lastFoundSameTypeChildIndex = null;
   for (let i = 0; i < node.children.length; i++) {
-    if (node.children[i].isDefense != node.isDefense)
+    console.log("enter loop", i);
+    if (node.children[i] && node.children[i].isDefense != node.isDefense)
       drawingContext.setLineDash([5]);
     // Draw line between root of sub-tree and child i
     line(node.root.x + node.root.elt.offsetWidth/2, node.root.y + node.root.elt.offsetHeight, node.children[i].root.x + node.children[i].root.elt.offsetWidth/2, node.children[i].root.y);
@@ -286,9 +287,7 @@ function calcAngle(main, sub){
 
 function keyPressed() { // Temporary: bind anything to happen when clicking left arrow, for debugging
   if (keyCode == LEFT_ARROW) {
-    let sub = root.children[0];
-    let main = root;
-    console.log(((Math.atan2(sub.root.x - main.root.x, main.root.y - sub.root.y) * (180 / Math.PI)+360)%360));
+    console.log(root.children.length)
   }
   if (keyCode == RIGHT_ARROW) {
     let sub = active;
