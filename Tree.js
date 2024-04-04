@@ -122,7 +122,7 @@ class ADTree{
         }
 
         // this.AtkDefBtn = document.getElementsByClassName('atkDef')[0];
-        this.AtkDefBtn.addEventListener('mousedown', this.clickedAtkDef.bind(this));
+        this.AtkDefBtn.addEventListener('click', this.clickedAtkDef.bind(this));
         
     }
 
@@ -140,7 +140,7 @@ class ADTree{
         for (let i = 0; i < delBtns.length-2; i++){
             delBtns[i].remove();
         }
-        this.DeleteBtn.addEventListener('mousedown', () => {
+        this.DeleteBtn.addEventListener('click', () => {
             for (let i = 0; i < this.parent.children.length; i++)
                 if (this.parent.children[i] == this)
                     this.parent.parentDeleteSubTree(i)
@@ -174,7 +174,7 @@ class ADTree{
             this.Plusbtn.parent('canvasContainer');
             this.Plusbtn.addClass('contextAddChild');
             this.Plusbtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Plusbtn.width/2, this.root.position().y+this.root.elt.offsetHeight);
-            this.Plusbtn.mousePressed(this.addChild.bind(this));
+            this.Plusbtn.mouseClicked(this.addChild.bind(this));
             
             // Create refinedment (AND/OR) button
             if (this.refinementIsAnd)
@@ -184,7 +184,7 @@ class ADTree{
             this.Refinebtn.parent('canvasContainer');
             this.Refinebtn.addClass('contextRefine');
             this.Refinebtn.position(this.root.position().x+this.root.elt.offsetWidth/2 - this.Plusbtn.width/2, this.root.position().y-this.Refinebtn.elt.offsetHeight); // TODO: WEIRD CSS BUG (+9????)
-            this.Refinebtn.mousePressed(() => 
+            this.Refinebtn.mouseClicked(() => 
             {
                 this.refinementIsAnd = !this.refinementIsAnd;
                 clear();
@@ -200,6 +200,7 @@ class ADTree{
 
             // Create delete button
             this.createDeleteBtn();
+            disableNonInteractables([this.Plusbtn.elt, this.Refinebtn.elt, this.AtkDefBtn, this.DeleteBtn]);
         }   
 
         this.contextEnabled = !this.contextEnabled; // Toggle contextEnabled bool
@@ -226,7 +227,7 @@ class ADTree{
         this.AtkDefBtn.position(this.root.position().x+this.root.elt.offsetWidth/2 + this.Refinebtn.elt.offsetWidth/2, this.root.position().y-this.Refinebtn.elt.offsetHeight);
         feather.replace();
         this.AtkDefBtn = document.getElementsByClassName('atkDef')[0];
-        this.AtkDefBtn.addEventListener('mousedown', this.clickedAtkDef.bind(this));
+        this.AtkDefBtn.addEventListener('click', this.clickedAtkDef.bind(this));
         // console.log("CHECKING")
         treeCheck();
     }
@@ -254,16 +255,26 @@ class ADTree{
     }
 
     setPos(X,Y){
-        if (this.isDragging == true){
+        if (this.isDragging == true){ // Code that is run every 'frame' while dragging
             this.root.elt.blur();
             clearTextSelection();
             this.root.position(canvasElement.position().x+X-this.root.elt.offsetWidth/2,canvasElement.position().y+Y-this.root.elt.offsetHeight/2);
             this.toggleContextMenu();
             this.toggleContextMenu();
-            if (this.parent)
+            if (this.parent){ // Check if not the top node
                 this.parent.movedChildren = true;
-        } else {
-            if (
+                let selfIndex = this.parent.children.indexOf(this);
+                if (this.parent.children.length > 1 && selfIndex != 0 && calcAngle(this.parent, this.parent.children[selfIndex-1]) < calcAngle(this.parent, this)){
+                    this.parent.children[selfIndex] = this.parent.children[selfIndex-1];
+                    this.parent.children[selfIndex-1] = this;
+                }
+                if (this.parent.children.length > selfIndex+1 && selfIndex != this.parent.children.length-1 && calcAngle(this.parent, this.parent.children[selfIndex+1]) > calcAngle(this.parent, this)){
+                    this.parent.children[selfIndex] = this.parent.children[selfIndex+1];
+                    this.parent.children[selfIndex+1] = this;
+                }
+            }
+        } else { // Enable dragging
+            if ( // If mouse drags atleast 10 pixels outside of the boundary of the node
                 mouseX + canvasElement.position().x < this.oldX-10 ||
                 mouseX + canvasElement.position().x > this.oldX+this.root.elt.offsetWidth+10 ||
                 mouseY + canvasElement.position().y < this.oldY-10 ||

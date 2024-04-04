@@ -33,41 +33,14 @@ async function setup() { // Only called once: https://p5js.org/reference/#/p5/se
   // Parent the canvas to the container DIV, this properly places it within the DOM
   canvasElement.parent("canvasContainer");
   // When canvas (or anything that is not a node, like side/top/bottom bars) is clicked, setup to pan the canvas, as opposed to moving a node
-  let nonInteractableElements = [document.getElementById("sidebarMenu"),
-                                 document.getElementById("topBar"),
-                                 canvasElement.elt, document.getElementById("canvTopBar"),
-                                 document.getElementById("botFooter")];
-  for (let i = 0; i < nonInteractableElements.length; i++){ // loop over nonInteractables
-    nonInteractableElements[i].addEventListener('mousedown', () => // when clicked DOWN, unset active. And store the old active in lastActive
-    { 
-      lastActive = active;
-      active = null; // active = null means that when mouse is dragged sufficient distance, the canvas is dragged.
-      mX = mouseX;
-      mY = mouseY;
-      canvasOldX = mouseX;
-      canvasOldY = mouseY;
-      allowDragging = (nonInteractableElements[i] == canvasElement.elt); // Allow dragging only if dragging the canvas, so non-canvas elts
-                                                                         // are ignored
-    });
-      
-
-    nonInteractableElements[i].addEventListener('mouseup', () =>  // when clicked UP (released click), set active back to old active like nothing happened.
-    { 
-      if (mouseX == canvasOldX && mouseY == canvasOldY ){ // If NO dragging occured, simply unselect the selected node (like clicking away from a node to stop selecting it)
-        if (lastActive != null){
-          lastActive.toggleContextMenu();
-          lastActive = null;
-        }
-        if (active != null)
-          active = null;
-      } else {
-        if (lastActive != null){
-          active = lastActive;
-          lastActive = null;
-        }
-      }
-    });
-  }
+  let nonInteractableElements = [
+    document.getElementById("sidebarMenu"),
+    document.getElementById("topBar"),
+    canvasElement.elt,
+    document.getElementById("canvTopBar"),
+    document.getElementById("botFooter")
+  ];
+  disableNonInteractables(nonInteractableElements);
 
   /* windowWidth/Height is in pixels; the width and height of window (not the entire display, just the html DOM!)
     * sticky-top is the class of the top bar. canvTopBar is the id of the buttons right above the canvas. (zoom in, out, export, import, etc.). 
@@ -116,7 +89,6 @@ function windowResized() { // Called whenever window is resized, standard in p5:
   }
 }
 
-
 function manAddChild(inputVal) { // Manually add a child, inputVal is a string to be given as the text-content of the created node.
   childTree = new ADTree(inputVal);
   childTree.root.addClass('NodeActiveAtk')
@@ -159,6 +131,41 @@ function moveNodes(node, moveX, moveY){ // Moves all nodes in tree
   }
 }
 
+function disableNonInteractables(listOfElements){
+  for (let i = 0; i < listOfElements.length; i++){ // loop over nonInteractables
+    // Handle click DOWN
+    listOfElements[i].addEventListener('mousedown', () => // when clicked DOWN, unset active. And store the old active in lastActive
+    { 
+    mX = mouseX;
+    mY = mouseY;
+    canvasOldX = mouseX;
+    canvasOldY = mouseY;
+    allowDragging = (listOfElements[i] == canvasElement.elt); // Allow dragging only if dragging the canvas, so non-canvas elts
+                                                                       // are ignored
+    if (allowDragging){
+      lastActive = active;
+      active = null;
+    }
+  });
+  // Handle click UP
+  listOfElements[i].addEventListener('mouseup', () =>  // when clicked UP (released click), set active back to old active like nothing happened.
+  { 
+    if (allowDragging){
+      active = lastActive;
+      lastActive = null;
+    }
+    if (listOfElements[i] == canvasElement.elt && mouseX == canvasOldX && mouseY == canvasOldY){
+      if (lastActive != null)
+        lastActive.toggleContextMenu();
+      if (active != null)
+        active.toggleContextMenu();
+      lastActive = null;
+      active = null;
+    }
+  });
+  }
+}
+
 function setupWarningMessages(){ // Handles behaviour when clicking warning icon
                                  // It's a little ugly, but it's a lot easier than (un)hiding a pre-made error with dynamic content :)
   let warningsDiv = createDiv();
@@ -177,7 +184,7 @@ function setupWarningMessages(){ // Handles behaviour when clicking warning icon
   mainP.addClass('ErrorHeading');
   // Counter-measure overflow message
   if (CMOverflow){
-    let CMOP = createP('Too many counter-measures on node(s). Counter-measures are nodes of a different type than their parent node.')
+    let CMOP = createP('Too many counter-measures per node. Counter-measures are nodes of a different type than their parent node.')
     CMOP.parent(warningsDivBody);
     ErrorPElements.push(CMOP);
   }
@@ -272,10 +279,20 @@ function clearTextSelection() { // Deselects any text that the user has selected
   }
 }
 
+function calcAngle(main, sub){
+  return ((Math.atan2(sub.root.x - main.root.x, main.root.y - sub.root.y) * (180 / Math.PI)+360)%360);
+
+}
+
 function keyPressed() { // Temporary: bind anything to happen when clicking left arrow, for debugging
   if (keyCode == LEFT_ARROW) {
-    clear()
-    drawLines(root)
-    console.log(active.isDefense)
+    let sub = root.children[0];
+    let main = root;
+    console.log(((Math.atan2(sub.root.x - main.root.x, main.root.y - sub.root.y) * (180 / Math.PI)+360)%360));
+  }
+  if (keyCode == RIGHT_ARROW) {
+    let sub = active;
+    let main = root;
+    console.log((Math.atan2(sub.root.y - main.root.y, sub.root.x - main.root.x) * (180 / Math.PI) + 360)%360);
   }
 }
