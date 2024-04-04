@@ -240,7 +240,6 @@ class ADTree{
         feather.replace();
         this.AtkDefBtn = document.getElementsByClassName('atkDef')[0];
         this.AtkDefBtn.addEventListener('click', this.clickedAtkDef.bind(this));
-        // console.log("CHECKING")
         treeCheck();
     }
 

@@ -97,7 +97,6 @@ function manAddChild(inputVal) { // Manually add a child, inputVal is a string t
 function drawLines(node){ // Recursively draw all lines between all nodes and their children
   let lastFoundSameTypeChildIndex = null;
   for (let i = 0; i < node.children.length; i++) {
-    console.log("enter loop", i);
     if (node.children[i] && node.children[i].isDefense != node.isDefense)
       drawingContext.setLineDash([5]);
     // Draw line between root of sub-tree and child i
