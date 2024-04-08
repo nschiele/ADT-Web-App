@@ -335,6 +335,62 @@ function zoomOut() {
     }
 }
 
+function autoFormat() {
+    autoFormatTree(root);
+    clear();
+    drawLines(root)
+}
+
+function autoFormatTree(rootNode) {
+    let totalChildren = 0;
+    let childWidths = [];
+    let cumulativeChildWidths = [];
+    let childrenWithChildren = [];
+    if (rootNode.children.length > 0){
+        for (let i = 0; i < rootNode.children.length; i++){
+            let childCountSubTree = autoFormatTree(rootNode.children[i])
+            if (rootNode.children[i].children.length > 0)
+                childrenWithChildren.push(true)
+            else
+                childrenWithChildren.push(false)
+            if (i > 0){
+                cumulativeChildWidths.push(childCountSubTree*350+cumulativeChildWidths[i-1]);
+            } else {
+                cumulativeChildWidths.push(childCountSubTree*350);
+                
+            }
+            childWidths.push(childCountSubTree*350);
+            totalChildren += childCountSubTree
+        }
+        // moving
+        for (let i = 0; i < rootNode.children.length; i++){
+            let child = rootNode.children[i];
+            if (i == 0){
+                let offset = -(cumulativeChildWidths[cumulativeChildWidths.length-1]/2);
+                relPosX = rootNode.root.x + offset + (childWidths[i]-350)/2 + 175;
+                currPosX = child.root.x;
+                XDifference = relPosX - currPosX;
+                console.log(XDifference);
+                moveNodes(child, XDifference, 0);
+            } else {
+                let offset = -(cumulativeChildWidths[cumulativeChildWidths.length-1]/2) + cumulativeChildWidths[i-1];
+                relPosX = rootNode.root.x + offset + (childWidths[i]-350)/2 + 175;
+                currPosX = child.root.x;
+                XDifference = relPosX - currPosX;
+                console.log(XDifference);
+                moveNodes(child, XDifference, 0);
+            }
+        }
+        return totalChildren;
+    } else {
+        return 1;
+    }
+    
+}
+
+
+
+
 function keyPressed() { // Temporary: bind anything to happen when clicking left arrow, for debugging
     if (keyCode == LEFT_ARROW) {
         console.log(lastActive)

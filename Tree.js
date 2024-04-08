@@ -80,7 +80,7 @@ class ADTree {
         this.toggleContextMenu();
         treeCheck();
     }
-
+    
     addChild() {
         let newChild = new ADTree("Child" + active.children.length);
         newChild.parent = this;
@@ -235,6 +235,7 @@ class ADTree {
     clickedAtkDef() {
         this.isDefense = !this.isDefense;
         clear();
+        console.log("cleared")
         drawLines(root);
         this.AtkDefBtn.remove();
         this.AtkDefBtn = createButton("");
@@ -309,4 +310,4 @@ class ADTree {
             }
         }
     }
-}
+    }
