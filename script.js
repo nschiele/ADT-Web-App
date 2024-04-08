@@ -367,18 +367,18 @@ function autoFormatTree(rootNode) {
             let child = rootNode.children[i];
             if (i == 0){
                 let offset = -(cumulativeChildWidths[cumulativeChildWidths.length-1]/2);
-                relPosX = rootNode.root.x + offset + (childWidths[i]-350)/2 + 175;
+                relPosX = rootNode.root.x + (offset + (childWidths[i]-350)/2 + 175)*scalar;
                 currPosX = child.root.x;
                 XDifference = relPosX - currPosX;
-                relPosY = rootNode.root.y + 200;
+                relPosY = rootNode.root.y + rootNode.root.elt.offsetHeight + 200*scalar;
                 YDifference = relPosY - child.root.y;
                 moveNodes(child, XDifference, YDifference);
             } else {
                 let offset = -(cumulativeChildWidths[cumulativeChildWidths.length-1]/2) + cumulativeChildWidths[i-1];
-                relPosX = rootNode.root.x + offset + (childWidths[i]-350)/2 + 175;
+                relPosX = rootNode.root.x + (offset + (childWidths[i]-350)/2 + 175)*scalar;
                 currPosX = child.root.x;
                 XDifference = relPosX - currPosX;
-                relPosY = rootNode.root.y + 200;
+                relPosY = rootNode.root.y + rootNode.root.elt.offsetHeight + 200*scalar;
                 YDifference = relPosY - child.root.y;
                 moveNodes(child, XDifference, YDifference);
             }
