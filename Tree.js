@@ -41,10 +41,12 @@ class ADTree {
         this.root.elt.addEventListener('input', this.resizeInputBox.bind(this))
     }
 
-    resizeInputBox() {
-        if (active == this)
+    resizeInputBox() { // Called when someone types into a node
+        if (active == this) // Pin the PlusBtn to the bottom of the active node, even when the node expands when written in
             this.Plusbtn.position(this.root.position().x + this.root.elt.offsetWidth / 2 - this.Plusbtn.width / 2, this.root.position().y + this.root.elt.offsetHeight);
+        // Scale width to new width
         this.root.elt.style.width = standardWidth * scalar + "px";
+        // If not rescaled, use standard fontsize. Otherwise, use modified scalar that works a little better with fontsize (0.97 is arbitraty and just kinda works)
         if ( scalar == 1){
             this.root.elt.style.fontSize = standardFontSize * scalar + "rem";
         } else {

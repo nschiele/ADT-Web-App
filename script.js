@@ -135,37 +135,46 @@ function moveNodes(node, moveX, moveY) { // Moves all nodes in tree
 }
 
 function disableNonInteractables(listOfElements) {
+    if (listOfElements.length == 4)
     for (let i = 0; i < listOfElements.length; i++) { // loop over nonInteractables
         // Handle click DOWN
-        listOfElements[i].addEventListener('mousedown', () => // when clicked DOWN, unset active. And store the old active in lastActive
-        {
-            mX = mouseX;
-            mY = mouseY;
-            canvasOldX = mouseX;
-            canvasOldY = mouseY;
-            allowDragging = (listOfElements[i] == canvasElement.elt); // Allow dragging only if dragging the canvas, so non-canvas elts
-            // are ignored
-            if (allowDragging) {
-                lastActive = active;
-                active = null;
+        listOfElements[i].addEventListener('mousedown', (event) => // when clicked DOWN, unset active. And store the old active in lastActive
+        {  
+            allowDragging = false;
+            if (event.button === 0){
+                mX = mouseX;
+                mY = mouseY;
+                canvasOldX = mouseX;
+                canvasOldY = mouseY;
+                allowDragging = (listOfElements[i] == canvasElement.elt); // Allow dragging only if dragging the canvas, so non-canvas elts
+                // are ignored
+                if (allowDragging) {
+                    lastActive = active;
+                    active = null;
+                }
             }
+            
         });
         // Handle click UP
-        listOfElements[i].addEventListener('mouseup', () =>  // when clicked UP (released click), set active back to old active like nothing happened.
+        listOfElements[i].addEventListener('mouseup', (event) =>  // when clicked UP (released click), set active back to old active like nothing happened.
         {
-            if (allowDragging) {
-                active = lastActive;
-                lastActive = null;
-            }
-            if (listOfElements[i] == canvasElement.elt && mouseX == canvasOldX && mouseY == canvasOldY) {
-                if (lastActive != null)
-                    lastActive.toggleContextMenu();
-                if (active != null)
-                    active.toggleContextMenu();
-                lastActive = null;
-                active = null;
+            if (event.button === 0){
+                if (allowDragging) {
+                    if (lastActive != null)
+                        active = lastActive;
+                    lastActive = null;
+                }
+                if (listOfElements[i] == canvasElement.elt && mouseX == canvasOldX && mouseY == canvasOldY) {
+                    if (lastActive != null)
+                        lastActive.toggleContextMenu();
+                    if (active != null)
+                        active.toggleContextMenu();
+                    lastActive = null;
+                    active = null;
+                }
             }
         });
+
     }
 }
 
@@ -249,14 +258,14 @@ function subtreeCheck(node) {
         subtreeCheck(child)
 }
 
-function mouseDragged() { // Called when mouse is clicked and dragged, standard in p5: https://p5js.org/reference/#/p5/mouseDragged
-    if (allowDragging)
+function mouseDragged(event) { // Called when mouse is clicked and dragged, standard in p5: https://p5js.org/reference/#/p5/mouseDragged
+    if (allowDragging && mouseButton === LEFT){
         if (active == null) { // If nothing is active, the user is scrolling the canvas
             if ((canvasOldX - mouseX) > 25 || (canvasOldX - mouseX) < -25 || (canvasOldY - mouseY) > 25 || (canvasOldY - mouseY) < -25) {
                 canvasOldX = -100; // Once any dragging has occured (user dragged far enough), stop keeping track of where drag started. Otherwise, whenever you move cursor back
                 canvasOldY = -100; // into the starting area of the drag, it momentarily stops dragging. By moving off screen, cursor is always outside margin once dragging starts.
                 clearTextSelection();
-                moveNodes(root, -(mX - mouseX), -(mY - mouseY));
+                moveNodes(root, event.movementX, event.movementY);
                 clear();
                 drawLines(root);
                 mX = mouseX;
@@ -267,6 +276,8 @@ function mouseDragged() { // Called when mouse is clicked and dragged, standard 
             drawLines(root);      // Recurively re-draw lines every frame while dragging (as inneficient as it is, you can't re-draw an individual line while dragging)
             active.setPos(mouseX, mouseY);
         }
+
+    }    
 }
 
 function clearTextSelection() { // Deselects any text that the user has selected, prevents awkward text selection while dragging nodes 
@@ -287,17 +298,6 @@ function calcAngle(main, sub) {
 
 }
 
-function keyPressed() { // Temporary: bind anything to happen when clicking left arrow, for debugging
-    if (keyCode == LEFT_ARROW) {
-        console.log(root.children.length)
-    }
-    if (keyCode == RIGHT_ARROW) {
-        let sub = active;
-        let main = root;
-        console.log((Math.atan2(sub.root.y - main.root.y, sub.root.x - main.root.x) * (180 / Math.PI) + 360) % 360);
-    }
-}
-
 function rescaleTree(node, growing) {
     // Rescale the distance of nodes from the center
     let distanceScalar;
@@ -310,18 +310,10 @@ function rescaleTree(node, growing) {
     let canvasCenterY = canvasElement.position().y+canvasElement.elt.offsetHeight/2;
     let distanceX = node.root.x - canvasCenterX;
     let distanceY = node.root.y - canvasCenterY;
-    // console.log("canvasElement.position().x", canvasElement.position().x);
-    // console.log("distanceX", distanceX);
-    // console.log("canvasElement.position().x + distanceX * scalar", canvasElement.position().x + distanceX * (1-scalar))
-    // console.log("canvasElement.position().y", canvasElement.position().y);
-    // console.log("distanceY", distanceY);
-    // console.log("canvasElement.position().y + distanceY * scalar", canvasElement.position().y + distanceY * (1-scalar))
-    console.log(distanceScalar);
     node.root.position(canvasCenterX + distanceX * distanceScalar, canvasCenterY + distanceY * distanceScalar);
 
     // Rescale styling (size of  nodes)
     node.resizeInputBox();
-    circle(canvasCenterX, canvasCenterY, 10)
     if (node == active) {
         node.toggleContextMenu();
         node.toggleContextMenu();
@@ -341,5 +333,17 @@ function zoomOut() {
     if (scalar > 0.55){
         scalar = scalar * 0.9;
         rescaleTree(root, false);
+    }
+}
+
+function keyPressed() { // Temporary: bind anything to happen when clicking left arrow, for debugging
+    if (keyCode == LEFT_ARROW) {
+        console.log(lastActive)
+        console.log(active)
+    }
+    if (keyCode == RIGHT_ARROW) {
+        let sub = active;
+        let main = root;
+        console.log((Math.atan2(sub.root.y - main.root.y, sub.root.x - main.root.x) * (180 / Math.PI) + 360) % 360);
     }
 }
