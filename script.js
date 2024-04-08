@@ -370,15 +370,17 @@ function autoFormatTree(rootNode) {
                 relPosX = rootNode.root.x + offset + (childWidths[i]-350)/2 + 175;
                 currPosX = child.root.x;
                 XDifference = relPosX - currPosX;
-                console.log(XDifference);
-                moveNodes(child, XDifference, 0);
+                relPosY = rootNode.root.y + 200;
+                YDifference = relPosY - child.root.y;
+                moveNodes(child, XDifference, YDifference);
             } else {
                 let offset = -(cumulativeChildWidths[cumulativeChildWidths.length-1]/2) + cumulativeChildWidths[i-1];
                 relPosX = rootNode.root.x + offset + (childWidths[i]-350)/2 + 175;
                 currPosX = child.root.x;
                 XDifference = relPosX - currPosX;
-                console.log(XDifference);
-                moveNodes(child, XDifference, 0);
+                relPosY = rootNode.root.y + 200;
+                YDifference = relPosY - child.root.y;
+                moveNodes(child, XDifference, YDifference);
             }
         }
         return totalChildren;
