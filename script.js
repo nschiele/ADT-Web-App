@@ -298,28 +298,48 @@ function keyPressed() { // Temporary: bind anything to happen when clicking left
     }
 }
 
-function rescaleTree(node) {
-    node.resizeInputBox();
+function rescaleTree(node, growing) {
+    // Rescale the distance of nodes from the center
+    let distanceScalar;
+    if (growing)
+        distanceScalar = 1.1;
+    else
+        distanceScalar = 0.9;
 
+    let canvasCenterX = canvasElement.position().x+canvasElement.elt.offsetWidth/2;
+    let canvasCenterY = canvasElement.position().y+canvasElement.elt.offsetHeight/2;
+    let distanceX = node.root.x - canvasCenterX;
+    let distanceY = node.root.y - canvasCenterY;
+    // console.log("canvasElement.position().x", canvasElement.position().x);
+    // console.log("distanceX", distanceX);
+    // console.log("canvasElement.position().x + distanceX * scalar", canvasElement.position().x + distanceX * (1-scalar))
+    // console.log("canvasElement.position().y", canvasElement.position().y);
+    // console.log("distanceY", distanceY);
+    // console.log("canvasElement.position().y + distanceY * scalar", canvasElement.position().y + distanceY * (1-scalar))
+    console.log(distanceScalar);
+    node.root.position(canvasCenterX + distanceX * distanceScalar, canvasCenterY + distanceY * distanceScalar);
+
+    // Rescale styling (size of  nodes)
+    node.resizeInputBox();
+    circle(canvasCenterX, canvasCenterY, 10)
     if (node == active) {
         node.toggleContextMenu();
         node.toggleContextMenu();
     }
 
     for (const child of node.children) {
-        rescaleTree(child);
+        rescaleTree(child, growing);
     }
 }
 
 function zoomIn() {
     scalar = scalar * 1.1;
-    rescaleTree(root)
+    rescaleTree(root, true)
 }
 
 function zoomOut() {
-    console.log(scalar)
     if (scalar > 0.55){
         scalar = scalar * 0.9;
-        rescaleTree(root);
+        rescaleTree(root, false);
     }
 }
