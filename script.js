@@ -105,7 +105,7 @@ function drawLines(node) { // Recursively draw all lines between all nodes and t
         // Draw line between root of sub-tree and child i
         line(node.root.x + node.root.elt.offsetWidth / 2, node.root.y + node.root.elt.offsetHeight, node.children[i].root.x + node.children[i].root.elt.offsetWidth / 2, node.children[i].root.y);
         // recursively call drawLines on sub-trees
-        drawingContext.setLineDash([0]);
+        drawingContext.setLineDash([]);
         drawLines(node.children[i]);
         if (node.refinementIsAnd)
             if (node.children[i].isDefense == node.isDefense) {
