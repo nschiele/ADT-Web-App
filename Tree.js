@@ -8,7 +8,6 @@ class ADTree {
         this.isDefense = false;
         this.isDragging = false;
         this.contextEnabled = false;
-        this.movedChildren = false;
         this.level = 0;
         this.xmlNode = null;
         // Buttons
@@ -18,6 +17,7 @@ class ADTree {
         let DeleteBtn = null;
         this.oldX = width / 2 + cX;
         this.oldY = height / 8 + cY;
+        this.unmoved = true;
         if (inputVal == null)
             this.root = createSpan("");
         else
@@ -76,10 +76,32 @@ class ADTree {
         treeCheck();
     }
     
+    positionNewChild(newChild){
+        // Loops over children to detemine how many haven't been moved, and places the next
+        // child a bit off to the right and below the last unmoved child. If all moved already,
+        // it is simply placed 200 px below the parent.
+        let baseX = this.root.position().x;
+        let baseY = this.root.position().y;
+        if (this.children.length > 1){
+            for (const child of this.children){
+                if (child.unmoved && child.root.y >= baseY){
+                    baseX = child.root.x;
+                    baseY = child.root.y;
+                }
+            }
+            newChild.root.position(baseX + 50, baseY + 50);
+        } else {
+            newChild.root.position(baseX, baseY + this.root.elt.offsetHeight + 200);
+        }
+    }
+
     addChild(name = null) {
         let newChild;
         if (name == null){
-            newChild = new ADTree("Child" + active.children.length);
+            if (this.isDefense)
+                newChild = new ADTree("Defense node");
+            else
+                newChild = new ADTree("Attack node");
         }
         else{
             newChild = new ADTree(name);
@@ -93,18 +115,9 @@ class ADTree {
             newChild.root.addClass('NodeInactiveAtk'); // add Atk styling
         this.children.push(newChild);
         allNodes.push(newChild);
-        if (this.children.length > 1){
-            newChild.root.position(this.children[this.children.length-2].root.x + this.root.elt.offsetWidth + 50 * scalar, this.root.position().y + 200*scalar + this.root.elt.offsetHeight);
-            console.log(this.children[this.children.length-1].root.x)
-            console.log(this.children.length-1)
-        }
-        else{
-            newChild.root.position(this.root.position().x, this.root.position().y + 200 + this.root.elt.offsetHeight);
-        }
+        this.positionNewChild(newChild)
+        // newChild.root.position(this.root.position().x, this.root.position().y + 200 + this.root.elt.offsetHeight);
         this.root.elt.focus();
-        // active.toggleContextMenu();
-        // active = newChild;
-        // active.toggleContextMenu();
         clear();
         drawLines(root);
     }
@@ -276,6 +289,7 @@ class ADTree {
 
     setPos(X, Y) {
         if (this.isDragging == true) { // Code that is run every 'frame' while dragging
+            this.unmoved = false;
             this.root.elt.blur();
             clearTextSelection();
             this.root.position(canvasElement.position().x + X - this.root.elt.offsetWidth / 2, canvasElement.position().y + Y - this.root.elt.offsetHeight / 2);
