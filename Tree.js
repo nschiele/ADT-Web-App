@@ -95,7 +95,7 @@ class ADTree {
         }
     }
 
-    addChild(name = null) {
+    addChild(name = null, defType = null) {
         let newChild;
         if (name == null){
             if (this.isDefense)
@@ -107,7 +107,11 @@ class ADTree {
             newChild = new ADTree(name);
         }
         newChild.parent = this;
-        newChild.isDefense = this.isDefense
+        if (defType == null){
+            newChild.isDefense = this.isDefense;
+        } else {
+            newChild.isDefense = defType;
+        }
         newChild.level = this.level+1;
         if (newChild.isDefense)
             newChild.root.addClass('NodeInactiveDef'); // add Def styling

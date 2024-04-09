@@ -104,7 +104,8 @@ function generateTree() {
     // Data, 1, Physical, 1, Network, 0, Employee, Social, Fairwall, Training
     var jsonTextInput = select("#textAreaADTLang").value();
     buildFromMultiset(jsonTextInput.replace(/['"]+/g, ''));
-
+    clear();
+    drawLines(root);
 }
 
 function deleteTree() {
@@ -549,9 +550,8 @@ async function buildFromMultiset(toBuild, parent=null){
     // Tree Exists, adding subtrees
     } else {
       if(!(toBuild === null || toBuild === undefined) && Object.keys(toBuild).length-7 != 0){ // This was 6, with 7 it works, because 7 array elements for normal intermediate node
-            parent.addChild(toBuild.label);
+            parent.addChild(toBuild.label, toBuild.swith_role);
             parent.children[parent.children.length-1].refinementIsAnd = toBuild.refinement;
-            parent.children[parent.children.length-1].isDefense = toBuild.swith_role;
 
             // Make defense node the last node in the JSON.
             for (let i = 0; i < (Object.keys(toBuild).length-7); i++){ // Loop through all children
@@ -560,8 +560,8 @@ async function buildFromMultiset(toBuild, parent=null){
 
       //Leaf Node
       } else if (!(toBuild == null || toBuild == undefined)){
-            parent.addChild(toBuild.label);
-            parent.children[parent.children.length-1].isDefense = toBuild.swith_role;
+            parent.addChild(toBuild.label, toBuild.swith_role);
         }
     }
+    autoFormat()
 }
