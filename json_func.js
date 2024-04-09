@@ -13,15 +13,12 @@ class Node {
 
 // Function for returning JSON
 function getJson(temp, input) {
-    console.log("[*] In getJson()");
 
     return convert(temp, input);
 }
 
 // Open the XML testfile
 async function getXML(input){
-    console.log("[*] In getXML()");
-    console.log(typeof input);
     // let url = "https://raw.githubusercontent.com/nschiele/ADT-Web-App/main/xml%20examples/fig13.xml";
     // let resp = await fetch(url);
     var check = "";
@@ -35,13 +32,10 @@ async function getXML(input){
     }
 
     let xml = await input.text();
-
-    console.log("wat: ", xml)
     return xml;
 }
 
 async function to_json(item, adtree){
-    console.log("[*] In to_json()");
     let codes = item.code.split('-');
     let parent = adtree;
 
@@ -69,10 +63,6 @@ async function to_json(item, adtree){
 // 0-0-2-1-0
 // 0-1
 async function insert(root, label, refinement, swith_role, parameters, depth, lastNode, seen){ // assign code to nodes without building tree example: 0-0-1
-  console.log("[*] In insert()");
-    // console.log("insert");
-    // console.log(parameters[0].parameter_name);
-    // console.log(parameters[0].parameter_value);
     var order = null;
     var node = new Node();
     node.label = label;
@@ -157,7 +147,6 @@ async function find_label(items, i){
 
 // hc pos todo
 async function find_ref_rol(item, j, r){
-    console.log("[*] In find_ref_rol()");
     var ref_swi;
     while (item[j] != '"'){ // Find the refinement
         j++;
@@ -196,9 +185,6 @@ async function find_ref_rol(item, j, r){
 
 
 async function find_par(items, i){ // todo category
-    console.log("[*] In find_par()");
-
-
     var j = 0;
     var start = i;
     var parameters = {};
@@ -208,8 +194,6 @@ async function find_par(items, i){ // todo category
 
 
     while (item[j] != "<"){ // kan crashen
-        console.log("the: ", item[j]);
-
         j++;
         if (item[j] == "p"){
             break;
@@ -260,17 +244,12 @@ async function find_par(items, i){ // todo category
 // Add parameters as elements of the json
 // Builds the json object as a string
 async function build_json(input_text){
-    console.log("[*] In build_json()");
 
     // wanneer var en wanneer const (variabelen)
     const items = input_text.split("\n"); // Put the XML lines into a list of strings
 
     if (items[items.length - 1] == "")
       items.pop();
-
-
-    console.log("digging deeper: ");
-    console.dir(items);
 
     var item; // Single line of the XML file
     var j, k; // Counting variables
@@ -329,16 +308,11 @@ async function build_json(input_text){
     seen.forEach(item => {
         to_json(item, json);
       });
-
-    console.log("JSON result in build_json():" + json);
     return json;
 }
 
 
 function add_child(node, temp_string, download){
-    console.log("[*] In add_child()");
-
-    ///console.log(node);
     temp_string += '\n';
     temp_string += "  ";
     for (var i = 0; i < node.depth; i++){
@@ -388,8 +362,6 @@ function add_child(node, temp_string, download){
 }
 
 function build_xml(input_text){
-    console.log("[*] In build_xml()");
-
     var parser = new DOMParser();
     var temp_string = '<?xml version="1.0" encoding="UTF-8"?><adtree>';
     var xml = null;
@@ -397,15 +369,12 @@ function build_xml(input_text){
     temp_string = add_child(input_text[0], temp_string, 0);
 
     temp_string += '</adtree>';
-    console.log("eerst: ", temp_string);
     xml = parser.parseFromString(temp_string, "text/xml");
     return xml;
 }
 
 //Converts XML to JSON and JSON to XML
 async function convert(XorJ, input){
-    console.log("[*] In convert()");
-
     var input_text;
 
     if (XorJ == 0){ // XorJ == 0 gives that input_file contains a XML

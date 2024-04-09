@@ -242,7 +242,6 @@ class ADTree {
     clickedAtkDef() {
         this.isDefense = !this.isDefense;
         clear();
-        console.log("cleared")
         drawLines(root);
         this.AtkDefBtn.remove();
         this.AtkDefBtn = createButton("");

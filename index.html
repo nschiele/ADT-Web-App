@@ -11,6 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"
         integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE"
         crossorigin="anonymous"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <link href="assets/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/style/dashboard.css" rel="stylesheet">
 
@@ -18,7 +19,7 @@
     <link rel="icon" href="assets/images/logo.png" type="image/png">
 </head>
 
-<body>
+<body id="capture">
 
     <header class="navbar-custom sticky-top  flex-md-nowrap p-0" id="topBar">
         <div class="px-3">
@@ -311,7 +312,7 @@
                     </h5>
                     <ul class="nav flex-column mb-2">
                         <li class="nav-item">
-                            <a class="nav-link otherToolTab" href="#" id="downloadBtn">
+                            <a class="nav-link otherToolTab" href="#" id="downloadBtn" onclick="saveScreenshot()">
                                 <span data-feather="download" class="align-text-bottom"></span>
                                 Download ADT
                             </a>
@@ -363,7 +364,7 @@
                             <!-- <div> -->
                             <span data-bs-toggle="tooltip" data-bs-title="Upload">
                                 <button type="button" class="btn btn-sm btn-outline-secondary" id="uploadBtn"
-                                    data-bs-toggle="dropdown" aria-expanded="false" onclick="buildFromUpload()">
+                                    onclick="buildFromUpload()">
                                     <span data-feather="upload" class="align-text-bottom"></span>
                                 </button>
                                 <!-- <ul class="dropdown-menu dropdown-menu-end">
@@ -393,7 +394,8 @@
 
                         <div class="btn-group me-2">
                             <span data-bs-toggle="tooltip" data-bs-title="Delete">
-                                <button type="button" class="btn btn-sm btn-outline-secondary" id="deleteBtn">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="deleteBtn"
+                                onclick="deleteTree()">
                                     <span data-feather="trash" class="align-text-bottom"></span>
                                 </button>
                             </span>

@@ -67,6 +67,11 @@ async function setup() { // Only called once: https://p5js.org/reference/#/p5/se
     allNodes.push(root);
     active = root;
     active.toggleContextMenu();
+    // Replace temporary node with a pre-loaded tree
+    let url = "https://raw.githubusercontent.com/nschiele/ADT-Web-App/main/xml%20examples/fig13.xml";
+    let resp = await fetch(url);
+    var example = await getJson(0, resp); // Call json_junc.js
+    buildFromMultiset(example);
 
     let warningIcon = document.getElementById('btn-groupwarningIcon');
     warningIcon.addEventListener('click', setupWarningMessages)
@@ -74,6 +79,9 @@ async function setup() { // Only called once: https://p5js.org/reference/#/p5/se
     // Tell the canvas to translate all given coordinates to be related to the entire window, not just the canvas. 
     // (so (0,0) is top left of the window, not the canvas. Helps with calculations later.)
     translate(-cX, -cY);
+    autoFormat();
+    clear();
+    drawLines(root);
 }
 
 function windowResized() { // Called whenever window is resized, standard in p5: https://p5js.org/reference/#/p5/windowResized
@@ -91,6 +99,43 @@ function windowResized() { // Called whenever window is resized, standard in p5:
         active.toggleContextMenu();
     }
 }
+
+function deleteTree() {
+    if (root.parent != null) {
+        for (let i = 0; i < root.parent.children.length; i++)
+            if (root.parent.children[i] == this)
+            root.parent.parentDeleteSubTree(i)
+
+    }
+    else {
+        for (let i = root.children.length - 1; i >= 0; i--) {
+            root.children[i].deleteSubTree();
+            root.children.splice(i, 1);
+        }
+        clear();
+        drawLines(root);
+        treeCheck();
+    }
+    root.root.elt.innerHTML="Target";
+}
+
+function saveScreenshot() {
+    const captureElement = document.querySelector('body') // Select the element you want to capture. Select the <body> element to capture full page.
+    html2canvas(captureElement)
+        .then(canvas => {
+            canvas.style.display = 'none'
+            document.body.appendChild(canvas)
+            return canvas
+        })
+        .then(canvas => {
+            const image = canvas.toDataURL('image/png')
+            const a = document.createElement('a')
+            a.setAttribute('download', 'my-image.png')
+            a.setAttribute('href', image)
+            a.click()
+            canvas.remove()
+        })
+  }
 
 function manAddChild(inputVal) { // Manually add a child, inputVal is a string to be given as the text-content of the created node.
     childTree = new ADTree(inputVal);
@@ -342,6 +387,8 @@ function autoFormat() {
 }
 
 function autoFormatTree(rootNode) {
+    // TO-DO: Write documentation
+    // This whole thing is a thesis of its own im not gonna lie
     let totalChildren = 0;
     let childWidths = [];
     let cumulativeChildWidths = [];
@@ -357,7 +404,6 @@ function autoFormatTree(rootNode) {
                 cumulativeChildWidths.push(childCountSubTree*350+cumulativeChildWidths[i-1]);
             } else {
                 cumulativeChildWidths.push(childCountSubTree*350);
-                
             }
             childWidths.push(childCountSubTree*350);
             totalChildren += childCountSubTree
@@ -391,10 +437,8 @@ function autoFormatTree(rootNode) {
 }
 
 function downloadADT(selectedFormat) {
-    console.log("[*] In downloadADT()");
     return new Promise(function(resolve) {
         root.convertADTtoNode(null);
-        // root.setNodeStruc(null);
 
         var parser = new DOMParser();
         var temp_string = '<?xml version="1.0"?>'
@@ -404,28 +448,9 @@ function downloadADT(selectedFormat) {
         temp_string = root.addChildInXML(temp_string);
         temp_string += '\n';
         temp_string += '</adtree>';
-        console.log("DAAR GAAN WE: ", temp_string);
         xml = parser.parseFromString(temp_string, "text/xml");
-        console.log("Final: ", xml);
         resolve(temp_string);
-
-        // if (selectedFormat === "xml") {
-        //     var blob = new Blob([temp_string], { type: "text/plain;charset=utf-8"});
-        //     var downloadLink = document.createElement("a");
-        //     downloadLink.href = URL.createObjectURL(blob);
-        //     downloadLink.download = "SavedADT.xml";
-        //     downloadLink.click();
-        // } else if (selectedFormat === "json") {
-        //     jsonfile = await getJson(0, temp_string);
-
-        // }
     });
-    // jsonObject = new Node();
-    // jsonObject.label = root.label;
-    // jsonObject.refinement = root.refinement;
-    // jsonObject.depth = root.level;
-    // jsonObject.parent = null;
-
 }
 
 async function downloadPrep() {
@@ -433,7 +458,6 @@ async function downloadPrep() {
     var selectedFormat = "xml";
     try {
       var file = await downloadADT(selectedFormat);
-      console.log("yayayayay: ", file);
       var input;
       input = file;
       var blob = new Blob([input], { type: "text/plain"});
@@ -460,10 +484,8 @@ function keyPressed() { // Temporary: bind anything to happen when clicking left
 }
 
 function uploadADT() {
-    console.log("[*] In uploadADT()");
     return new Promise(function(resolve, reject) {
       var ADTInput = document.getElementById('ADTInput');
-      console.log(ADTInput);
       ADTInput.click();
       ADTInput.addEventListener('change', function(event) {
         var file = event.target.files[0];
@@ -472,10 +494,8 @@ function uploadADT() {
           var fileExt = fileName.split('.').pop();
 
           if (fileExt === 'xml') {
-              console.log("XML");
               resolve(file);
           } else {
-              console.log("Unsupported");
               reject(new Error("Unsupported file type"));
           }
         } else {
@@ -492,7 +512,6 @@ async function buildFromUpload() {
         var input;
         if (fileExt === 'xml') {
             input = await getJson(0, file);
-            console.log("YA: ", file);
         }
         buildFromMultiset(input);
     } catch(error) {
@@ -502,16 +521,8 @@ async function buildFromUpload() {
 }
 
 async function buildFromMultiset(toBuild, parent=null){
-    console.log("[*] In buildFromMultiset()");
-    console.log("JSON");
-    console.log(toBuild);
-
-
-    ///console.log(root)
-
     // First Run of Function
     if(parent == null){
-        ///console.log("hier: ", toBuild);
         root.deleteSubTree();
         root.root.remove();
         root = new ADTree(toBuild[0].label); // Get label of root
@@ -519,31 +530,23 @@ async function buildFromMultiset(toBuild, parent=null){
             active.toggleContextMenu();
         active = root;
         active.toggleContextMenu();
-        ///disRoot = new Display(toBuild[0].label/*adtree.node.label*/, 0, 0, 2); // Added by J
 
         root.refinementIsAnd = toBuild[0].refinement;
         root.isDefense = toBuild[0].swith_role;
 
-        ///console.log("Root: ", root); // Added by J
-
-        console.log("Keys: " + Object.keys(toBuild[0])); // Added by C
-
         // Make defense node the last node in the JSON.
-
         for(let i = 0; i < Object.keys(toBuild[0]).length-6; i++){ // Loop through all children
             buildFromMultiset(toBuild[0][i], root);
         }
 
     // Tree Exists, adding subtrees
     } else {
-
       if(!(toBuild === null || toBuild === undefined) && Object.keys(toBuild).length-7 != 0){ // This was 6, with 7 it works, because 7 array elements for normal intermediate node
             parent.addChild(toBuild.label);
             parent.children[parent.children.length-1].refinementIsAnd = toBuild.refinement;
             parent.children[parent.children.length-1].isDefense = toBuild.swith_role;
 
             // Make defense node the last node in the JSON.
-
             for (let i = 0; i < (Object.keys(toBuild).length-7); i++){ // Loop through all children
                 buildFromMultiset(toBuild[i], parent.children[parent.children.length-1]);
             }
@@ -552,7 +555,6 @@ async function buildFromMultiset(toBuild, parent=null){
       } else if (!(toBuild == null || toBuild == undefined)){
             parent.addChild(toBuild.label);
             parent.children[parent.children.length-1].isDefense = toBuild.swith_role;
-            // console.log("a leafje", toBuild.label);
         }
     }
 }
