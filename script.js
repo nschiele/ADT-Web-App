@@ -450,12 +450,109 @@ async function downloadPrep() {
 
 function keyPressed() { // Temporary: bind anything to happen when clicking left arrow, for debugging
     if (keyCode == LEFT_ARROW) {
-        console.log(lastActive)
-        console.log(active)
+        console.log(root)
     }
     if (keyCode == RIGHT_ARROW) {
         let sub = active;
         let main = root;
         console.log((Math.atan2(sub.root.y - main.root.y, sub.root.x - main.root.x) * (180 / Math.PI) + 360) % 360);
+    }
+}
+
+function uploadADT() {
+    console.log("[*] In uploadADT()");
+    return new Promise(function(resolve, reject) {
+      var ADTInput = document.getElementById('ADTInput');
+      console.log(ADTInput);
+      ADTInput.click();
+      ADTInput.addEventListener('change', function(event) {
+        var file = event.target.files[0];
+        if (file) {
+          var fileName = file.name;
+          var fileExt = fileName.split('.').pop();
+
+          if (fileExt === 'xml') {
+              console.log("XML");
+              resolve(file);
+          } else {
+              console.log("Unsupported");
+              reject(new Error("Unsupported file type"));
+          }
+        } else {
+            reject(new Error("No file selected"));
+        }
+      });
+    });
+}
+
+async function buildFromUpload() {
+    try {
+        var file = await uploadADT();
+        var fileExt = file.name.split('.').pop();
+        var input;
+        if (fileExt === 'xml') {
+            input = await getJson(0, file);
+            console.log("YA: ", file);
+        }
+        buildFromMultiset(input);
+    } catch(error) {
+        console.error("Error:", error);
+    }
+    autoFormat();
+}
+
+async function buildFromMultiset(toBuild, parent=null){
+    console.log("[*] In buildFromMultiset()");
+    console.log("JSON");
+    console.log(toBuild);
+
+
+    ///console.log(root)
+
+    // First Run of Function
+    if(parent == null){
+        ///console.log("hier: ", toBuild);
+        root.deleteSubTree();
+        root.root.remove();
+        root = new ADTree(toBuild[0].label); // Get label of root
+        if (active != null)
+            active.toggleContextMenu();
+        active = root;
+        active.toggleContextMenu();
+        ///disRoot = new Display(toBuild[0].label/*adtree.node.label*/, 0, 0, 2); // Added by J
+
+        root.refinementIsAnd = toBuild[0].refinement;
+        root.isDefense = toBuild[0].swith_role;
+
+        ///console.log("Root: ", root); // Added by J
+
+        console.log("Keys: " + Object.keys(toBuild[0])); // Added by C
+
+        // Make defense node the last node in the JSON.
+
+        for(let i = 0; i < Object.keys(toBuild[0]).length-6; i++){ // Loop through all children
+            buildFromMultiset(toBuild[0][i], root);
+        }
+
+    // Tree Exists, adding subtrees
+    } else {
+
+      if(!(toBuild === null || toBuild === undefined) && Object.keys(toBuild).length-7 != 0){ // This was 6, with 7 it works, because 7 array elements for normal intermediate node
+            parent.addChild(toBuild.label);
+            parent.children[parent.children.length-1].refinementIsAnd = toBuild.refinement;
+            parent.children[parent.children.length-1].isDefense = toBuild.swith_role;
+
+            // Make defense node the last node in the JSON.
+
+            for (let i = 0; i < (Object.keys(toBuild).length-7); i++){ // Loop through all children
+                buildFromMultiset(toBuild[i], parent.children[parent.children.length-1]);
+            }
+
+      //Leaf Node
+      } else if (!(toBuild == null || toBuild == undefined)){
+            parent.addChild(toBuild.label);
+            parent.children[parent.children.length-1].isDefense = toBuild.swith_role;
+            // console.log("a leafje", toBuild.label);
+        }
     }
 }

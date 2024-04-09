@@ -18,17 +18,10 @@ class ADTree {
         let DeleteBtn = null;
         this.oldX = width / 2 + cX;
         this.oldY = height / 8 + cY;
-        if (inputVal == null) { // if input NOT given, use nodeChildTextInput. Else, use input.
-            let textVal = select("#nodeChildTextInput").elt.value;
-            if (!textVal) { // if nodeChildTextInput empty, use placeholder
-                this.root = createSpan("Placeholder"); // placeholder
-            }
-            else {
-                this.root = createSpan(textVal); // textval
-            }
-        } else {
-            this.root = createSpan(inputVal); // inputval
-        }
+        if (inputVal == null)
+            this.root = createSpan("");
+        else
+            this.root = createSpan(inputVal);
         this.root.attribute('contenteditable', 'true');
         this.root.attribute('role', 'textbox');
         this.root.position(this.oldX - 150, this.oldY) // set pos to top-left of canvas
@@ -83,8 +76,14 @@ class ADTree {
         treeCheck();
     }
     
-    addChild() {
-        let newChild = new ADTree("Child" + active.children.length);
+    addChild(name = null) {
+        let newChild;
+        if (name == null){
+            newChild = new ADTree("Child" + active.children.length);
+        }
+        else{
+            newChild = new ADTree(name);
+        }
         newChild.parent = this;
         newChild.isDefense = this.isDefense
         newChild.level = this.level+1;
@@ -94,20 +93,12 @@ class ADTree {
             newChild.root.addClass('NodeInactiveAtk'); // add Atk styling
         this.children.push(newChild);
         allNodes.push(newChild);
-        if (!this.movedChildren) {
-            if (this.children.length == 1) {
-                this.children[this.children.length - 1].root.position(this.root.position().x, this.root.position().y + 200 + this.root.elt.offsetHeight);
-            } else {
-                let j = 0;
-                for (let i = 0; i < this.children.length - 1; i++) {
-                    if (this.children[i] != undefined) {
-                        this.children[i].root.position(this.children[j].root.x - 175, this.oldY + 200 + this.root.elt.offsetHeight);
-                        j++;
-                    }
-                }
-                this.children[this.children.length - 1].root.position(this.root.position().x + 175 * (this.children.length - 1), this.oldY + 200 + this.root.elt.offsetHeight);
-            }
-        } else {
+        if (this.children.length > 1){
+            newChild.root.position(this.children[this.children.length-2].root.x + this.root.elt.offsetWidth + 50 * scalar, this.root.position().y + 200*scalar + this.root.elt.offsetHeight);
+            console.log(this.children[this.children.length-1].root.x)
+            console.log(this.children.length-1)
+        }
+        else{
             newChild.root.position(this.root.position().x, this.root.position().y + 200 + this.root.elt.offsetHeight);
         }
         this.root.elt.focus();
@@ -204,7 +195,7 @@ class ADTree {
             this.Plusbtn.parent('canvasContainer');
             this.Plusbtn.addClass('contextAddChild');
             this.Plusbtn.position(this.root.position().x + this.root.elt.offsetWidth / 2 - this.Plusbtn.width / 2, this.root.position().y + this.root.elt.offsetHeight);
-            this.Plusbtn.mouseClicked(this.addChild.bind(this));
+            this.Plusbtn.mouseClicked(() => this.addChild());
 
             // Create refinedment (AND/OR) button
             if (this.refinementIsAnd)
