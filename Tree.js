@@ -9,6 +9,8 @@ class ADTree {
         this.isDragging = false;
         this.contextEnabled = false;
         this.movedChildren = false;
+        this.level = 0;
+        this.xmlNode = null;
         // Buttons
         let Plusbtn = null;
         let Refinebtn = null;
@@ -85,6 +87,7 @@ class ADTree {
         let newChild = new ADTree("Child" + active.children.length);
         newChild.parent = this;
         newChild.isDefense = this.isDefense
+        newChild.level = this.level+1;
         if (newChild.isDefense)
             newChild.root.addClass('NodeInactiveDef'); // add Def styling
         else
@@ -310,4 +313,48 @@ class ADTree {
             }
         }
     }
+
+    convertADTtoNode(parent) {
+        var newNode;
+        if (this == root) {
+            var nodeRoot = new Node();
+            nodeRoot.label = this.root.elt.innerHTML;
+            nodeRoot.refinement = this.refinementIsAnd;
+            nodeRoot.depth = this.level;
+            nodeRoot.swith_role = this.isDefense;
+            nodeRoot.parent = null;
+            newNode = nodeRoot;
+            this.xmlNode = nodeRoot;
+        } else {
+            var ADTnode = new Node();
+            ADTnode.label = this.root.elt.innerHTML;
+            ADTnode.refinement = this.refinementIsAnd;
+            ADTnode.depth = this.level;
+            ADTnode.swith_role = this.isDefense;
+            ADTnode.parent = this.parent;
+            newNode = ADTnode;
+            this.xmlNode = ADTnode;
+        }
+        if (this.children && this.children.length > 0) {
+            for (let i = 0; i < this.children.length; i++) {
+                this.children[i].convertADTtoNode(newNode);
+            }
+        }
     }
+
+    addChildInXML(temp_string){
+        temp_string = add_child(this.xmlNode, temp_string, 1);
+        if (this.children && this.children.length > 0) {
+            for (let i = 0; i < this.children.length; i++) {
+                temp_string = this.children[i].addChildInXML(temp_string);
+            }
+        }
+        temp_string += '\n';
+        temp_string += "  ";
+        for (var i = 0; i < this.xmlNode.depth; i++){
+            temp_string += "    ";
+        }
+        temp_string += '</node>';
+        return temp_string;
+    }
+}

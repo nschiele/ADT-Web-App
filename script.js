@@ -390,8 +390,63 @@ function autoFormatTree(rootNode) {
     
 }
 
+function downloadADT(selectedFormat) {
+    console.log("[*] In downloadADT()");
+    return new Promise(function(resolve) {
+        root.convertADTtoNode(null);
+        // root.setNodeStruc(null);
 
+        var parser = new DOMParser();
+        var temp_string = '<?xml version="1.0"?>'
+        temp_string += '\n';
+        temp_string += '<adtree>';
+        var xml = null;
+        temp_string = root.addChildInXML(temp_string);
+        temp_string += '\n';
+        temp_string += '</adtree>';
+        console.log("DAAR GAAN WE: ", temp_string);
+        xml = parser.parseFromString(temp_string, "text/xml");
+        console.log("Final: ", xml);
+        resolve(temp_string);
 
+        // if (selectedFormat === "xml") {
+        //     var blob = new Blob([temp_string], { type: "text/plain;charset=utf-8"});
+        //     var downloadLink = document.createElement("a");
+        //     downloadLink.href = URL.createObjectURL(blob);
+        //     downloadLink.download = "SavedADT.xml";
+        //     downloadLink.click();
+        // } else if (selectedFormat === "json") {
+        //     jsonfile = await getJson(0, temp_string);
+
+        // }
+    });
+    // jsonObject = new Node();
+    // jsonObject.label = root.label;
+    // jsonObject.refinement = root.refinement;
+    // jsonObject.depth = root.level;
+    // jsonObject.parent = null;
+
+}
+
+async function downloadPrep() {
+    // var selectedFormat = document.getElementById("formatDropdown").value;
+    var selectedFormat = "xml";
+    try {
+      var file = await downloadADT(selectedFormat);
+      console.log("yayayayay: ", file);
+      var input;
+      input = file;
+      var blob = new Blob([input], { type: "text/plain"});
+      var downloadLink = document.createElement("a");
+      downloadLink.href = URL.createObjectURL(blob);
+      downloadLink.download = "SavedADT." + selectedFormat;
+      if (document.getElementById('btn-groupwarningIcon').style.display == 'block')
+        alert("Caution! You are trying to download a tree that is incorrect. This tree likely will not be compatible with other ADTree related software.")
+      downloadLink.click();
+    } catch(error) {
+        console.error("Error:", error);
+    }
+}
 
 function keyPressed() { // Temporary: bind anything to happen when clicking left arrow, for debugging
     if (keyCode == LEFT_ARROW) {
