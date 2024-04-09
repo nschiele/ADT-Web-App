@@ -100,6 +100,13 @@ function windowResized() { // Called whenever window is resized, standard in p5:
     }
 }
 
+function generateTree() {
+    // Data, 1, Physical, 1, Network, 0, Employee, Social, Fairwall, Training
+    var jsonTextInput = select("#textAreaADTLang").value();
+    buildFromMultiset(jsonTextInput.replace(/['"]+/g, ''));
+
+}
+
 function deleteTree() {
     if (root.parent != null) {
         for (let i = 0; i < root.parent.children.length; i++)
