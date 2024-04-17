@@ -7138,9 +7138,9 @@ test.addEventListener("click", async function() {
 
     buildFromMultiset(out);
     root.initialColor();
-    notificationShowAlertADTLang('noti-alert', 'noti-body-alert', true);
+    // notificationShowAlertADTLang('noti-alert', 'noti-body-alert', true);
   } catch(error) {
-    notificationShowAlertADTLang('noti-alert', 'noti-body-alert', false);
+    // notificationShowAlertADTLang('noti-alert', 'noti-body-alert', false);
   }
   
 

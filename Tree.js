@@ -1,279 +1,368 @@
-class Tree {
-  constructor(text, x = 0, y = 0, radius = 2, dist = 50){
-    this.x = x;
-    this.y = y;
-    this.t = text;
-    this.r = radius;
-    this.x_range; //X_range of just this node
-    this.width; //Total width of the subtree
-    this.y_range;
-    this.lines = 1;
-    this.level = 0;
-    this.children = [];
-    this.parent = null;
-    this.root = this;
-    this.refinement = 0; //defaults to OR;
-    this.dist = dist;//Distance of children
-    this.active = false; //Checks if node is currently selected
-    this.hover = false;
-    this.c = color(255, 255, 255);
-    this.stroke = color("black");
-    this.strokeWeight = 2;
-    this.lineList = [1]; // dashed lines
-    this.freeMove = false; //Tracks if the node is unlocked and can move freely
-    // console.log(this.x)
-
-    var let_width;
-    var let_height;
-    var text_space;
-    if(this.t.length < 20){
-      textSize(32);
-      let_height = 30;
-      text_space = this.t.length/2;
-    } else {
-      textSize(16);
-      let_height = 20;
-      text_space = this.t.length/2;
-    }
-
-    if(this.t.length > 40){
-      console.log(this.t)
-      for(let i = parseInt(this.t.length/2 - 10); i<parseInt(this.t.length/2 + 10); i++){
-        console.log(i, this.t[i])
-          //First space in the middle of the text
-          if(this.t[i] == ' '){
-            var newString = this.t.slice(0, i) + '\n' + this.t.slice(i+1, this.t.length);
-            this.t = newString
-            break;
-          }
-
+class ADTree {
+    // Constructor ADTree
+    constructor(inputVal) {
+        let parent = null;
+        this.children = [];
+        this.root;
+        this.refinementIsAnd = false;
+        this.isDefense = false;
+        this.isDragging = false;
+        this.contextEnabled = false;
+        this.level = 0;
+        this.xmlNode = null;
+        // Buttons
+        let Plusbtn = null;
+        let Refinebtn = null;
+        let AtkDefBtn = null;
+        let DeleteBtn = null;
+        this.oldX = width / 2 + cX;
+        this.oldY = height / 8 + cY;
+        this.unmoved = true;
+        if (inputVal == null)
+            this.root = createSpan("");
+        else
+            this.root = createSpan(inputVal);
+        this.root.attribute('contenteditable', 'true');
+        this.root.attribute('role', 'textbox');
+        this.root.position(this.oldX - 150, this.oldY) // set pos to top-left of canvas
+        this.root.elt.style.width = standardWidth * scalar + "px";
+        if ( scalar == 1){
+            this.root.elt.style.fontSize = standardFontSize * scalar + "rem";
+        } else {
+            this.root.elt.style.fontSize = standardFontSize * scalar * 0.97 + "rem";
         }
-      }
+        this.root.elt.addEventListener('mousedown', this.inputPressed.bind(this))
+        this.root.elt.addEventListener('mouseup', this.inputReleased.bind(this))
+        this.root.elt.addEventListener('input', this.resizeInputBox.bind(this))
+    }
 
-
-    if(this.t.includes("\n")){
-      var nlSplit = this.t.split("\n");
-      var longest = 0;
-      for(let i = 0; i < nlSplit.length; i++){
-        if(nlSplit[i].length > nlSplit[longest].length){
-          longest = i;
+    resizeInputBox() { // Called when someone types into a node
+        if (active == this) // Pin the PlusBtn to the bottom of the active node, even when the node expands when written in
+            this.Plusbtn.position(this.root.position().x + this.root.elt.offsetWidth / 2 - this.Plusbtn.width / 2, this.root.position().y + this.root.elt.offsetHeight);
+        // Scale width to new width
+        this.root.elt.style.width = standardWidth * scalar + "px";
+        // If not rescaled, use standard fontsize. Otherwise, use modified scalar that works a little better with fontsize (0.97 is arbitraty and just kinda works)
+        if ( scalar == 1){
+            this.root.elt.style.fontSize = standardFontSize * scalar + "rem";
+        } else {
+            this.root.elt.style.fontSize = standardFontSize * scalar * 0.97 + "rem";
         }
-        this.lines = nlSplit.length;
-        console.log(longest, nlSplit)
-      }
-      this.x_range = textWidth(nlSplit[longest]) + text_space;
-    } else {
-      this.x_range = textWidth(this.t) + text_space;
+        clear();
+        drawLines(root);
     }
-    this.y_range = let_height * this.lines;
-    this.width = this.x_range;
 
-  }
-
-  getMultiArray(){
-    var toReturn = [this.t];
-
-    if(this.children.length > 0){
-      toReturn.push(this.refinement);
-      toReturn.push([]);
-      for(let i = 0; i < this.children.length; i++){
-        toReturn[2].push(this.children[i].getMultiArray());
-      }
-    }
-    return toReturn;
-  }
-
-  adjust_text(){
-    console.log("text: ", this.t);
-    if(this.t.length > 40){
-      for(let i = parseInt(this.t.length/2 - 10); i<parseInt(this.t.length/2 + 10); i++){
-          //First space in the middle of the text
-          if(this.t[i] == ' '){
-            var newString = this.t.slice(0, i) + '\n' + this.t.slice(i+1, this.t.length);
-            this.t.length = newString
-          }
-          break;
+    deleteSubTree() {
+        for (let i = this.children.length - 1; i >= 0; i--) {
+            this.children[i].deleteSubTree();
         }
-      }
-  }
-  //Updates Child Width of node
-  update_width(){
-    var child_width = -1*this.dist;
-    for(let i = 0; i < this.children.length; i++){
-      child_width += this.children[i].width + this.dist;
-    }
-    if(child_width > this.x_range){
-          this.width = child_width;
-    }
-    if(this.parent != null){
-      this.parent.update_width();
+        if (active == this)
+            this.toggleContextMenu();
+        this.root.remove();
+        if (this.parent != null)
+            for (let i = 0; i < this.parent.children.length; i++) {
+                if (this.parent.children[i] == this) {
+                    delete this.parent.children[i];
+                }
+            }
     }
 
-  }
-
-  add_child(n){
-    n.parent = this;
-    n.root = this.root;
-    // while(n.root.parent != null){
-    //     n.root = n.root.parent;
-    // }
-    this.children.push(n);
-    // if(this.children.length == 1){
-    //   this.children[0].x = this.x;
-    // } else if (this.children.length % 2 == 0){
-    //   for(let i = 0; i < this.children.length/2; i++){
-    //     console.log(this.x - (this.children[i].x_range - 50)*(this.children.length/2 - i))
-    //     this.children[i].x = this.x - (this.children[i].x_range - 50)*(this.children.length/2 - i);
-    //   }
-    //   for(let i = this.children.length/2; i<this.children.length; i++){
-    //     this.children[i].x = this.x + (this.children[i].x_range + 50)*(this.children.length/2 + i);
-    //   }
-    // }
-    this.update_width();
-      //Handling Width
-    this.root.adjust_children();
-    }
-
-
-  checkCoordinates(x, y){
-    if(x >= this.x && x <= this.x + this.x_range && y >= this.y && y <= this.y+  this.y_range ){
-      this.hover = true;
-      return this;
-    } else {
-      // console.log(this.x, x, this.x + this.x_range, "  ", this.y, y, this.y + this.y_range)
-      this.hover = false;
-      for(let i = 0; i < this.children.length; i++){
-        var toReturn = this.children[i].checkCoordinates(x, y);
-        if(toReturn != null){
-          return toReturn
-        }
-      }
-      return null;
-    }
-
-  }
-
-  clearActive(){
-    this.active = false;
-    for(let i = 0; i < this.children.length; i++){
-      this.children[i].clearActive();
-    }
-  }
-
-  getActive(){
-    if(this.active == true){
-      return this;
-    } else {
-      for(let i = 0; i<this.children.length; i++){
-        var toReturn = this.children[i].getActive();
-        if(toReturn != null){
-          return toReturn;
-        }
-      }
-      return null;
-    }
-  }
-
-    //Adjusts the locations of children dependent on size
-  adjust_children(){
-
-      var curr_x = this.x + this.x_range/2 - this.width/2;
-      // console.log(this.child_width(dist))
-      for(let i = 0; i < this.children.length; i++){
-        //Handling Child X Location
-        this.children[i].x = curr_x;
-        // if(this.children[i].children.length == 0){
-          this.children[i].x += this.children[i].width/2
-          this.children[i].x -= this.children[i].x_range/2
-        // }
-        curr_x += this.children[i].width + this.dist;
-        //Handling Child Y Location
-        this.children[i].y = this.y + 100;
-        this.children[i].level = this.level + 1;
-        console.log("AAA", curr_x);
-    }
-    for(let i = 0; i < this.children.length; i++){
-      this.children[i].adjust_children();
-    }
-
-  }
-
-  set_refinement(r){
-    this.refinement = r;
-  }
-
-
-  // reset the lines at the end of the draw
-  resetLines() {
-    stroke("black");
-    strokeWeight(1);
-  }
-  // dashed lines
-  setLineDash(list) {
-    drawingContext.setLineDash(list);
-  }
-
-  display(){
-
-    if(this.t.length < 20){
-      textSize(32);
-    } else {
-      textSize(16);
+    parentDeleteSubTree(i) {
+        this.children[i].deleteSubTree();
+        this.children.splice(i, 1);
+        clear();
+        drawLines(root);
+        active = this;
+        this.toggleContextMenu();
+        treeCheck();
     }
     
-    // This node visualized
+    positionNewChild(newChild){
+        // Loops over children to detemine how many haven't been moved, and places the next
+        // child a bit off to the right and below the last unmoved child. If all moved already,
+        // it is simply placed 200 px below the parent.
+        let baseX = this.root.position().x;
+        let baseY = this.root.position().y;
+        if (this.children.length > 1){
+            for (const child of this.children){
+                if (child.unmoved && child.root.y >= baseY){
+                    baseX = child.root.x;
+                    baseY = child.root.y;
+                }
+            }
+            newChild.root.position(baseX + 50, baseY + 50);
+        } else {
+            newChild.root.position(baseX, baseY + this.root.elt.offsetHeight + 200);
+        }
+    }
 
-    // draw the strokes/lines
-    this.setLineDash(this.lineList);
-    stroke(this.stroke);
-    strokeWeight(this.strokeWeight);
+    addChild(name = null, defType = null) {
+        let newChild;
+        if (name == null){
+            if (this.isDefense)
+                newChild = new ADTree("Defense node");
+            else
+                newChild = new ADTree("Attack node");
+        }
+        else{
+            newChild = new ADTree(name);
+        }
+        newChild.parent = this;
+        if (defType == null){
+            newChild.isDefense = this.isDefense;
+        } else {
+            newChild.isDefense = defType;
+        }
+        newChild.level = this.level+1;
+        if (newChild.isDefense)
+            newChild.root.addClass('NodeInactiveDef'); // add Def styling
+        else
+            newChild.root.addClass('NodeInactiveAtk'); // add Atk styling
+        this.children.push(newChild);
+        allNodes.push(newChild);
+        this.positionNewChild(newChild)
+        // newChild.root.position(this.root.position().x, this.root.position().y + 200 + this.root.elt.offsetHeight);
+        this.root.elt.focus();
+        clear();
+        drawLines(root);
+    }
 
-    fill(this.c)
-    rect(this.x, this.y, this.x_range, this.y_range, this.r);
-    console.log("boxxie: ", this.x, this.y, this.x_range, this.y_range, this.r);
-    stroke("black"); // reset
-    strokeWeight(1); // reset
+    createAtkDefBtn() {
+        this.AtkDefBtn = createButton("");
+        this.AtkDefBtn.parent('canvasContainer');
+        if (this.isDefense) {
+            this.AtkDefBtn.attribute("data-feather", "shield");
+        }
+        else {
+            this.AtkDefBtn.attribute("data-feather", "flag");
+        }
+        this.AtkDefBtn.addClass('atkDef');
+        this.AtkDefBtn.position(this.root.position().x + this.root.elt.offsetWidth / 2 + this.Refinebtn.elt.offsetWidth / 2, this.root.position().y - this.Refinebtn.elt.offsetHeight);
+        feather.replace();
+        let atkdefBtns = document.getElementsByClassName('atkDef');
+        this.AtkDefBtn = atkdefBtns[atkdefBtns.length - 1] // Have to re-locate the button, since feather completely replaces the elements it 
+        // introduced svgs into. Index 0 since there SHOULD only be 1 button on screen at a time.
+        // Loops over all previous instances of the AtkDefBtn and removes them (SHOULD be 1, the last one), but does all but the last just in case :)
+        for (let i = 0; i < atkdefBtns.length - 2; i++) {
+            atkdefBtns[i].remove();
+        }
 
-    fill(color(255 - this.c.levels[0], 255 - this.c.levels[1], 255 - this.c.levels[2]))
-    text(this.t, this.x + this.t.length/5, this.y + this.y_range/this.lines -3);
-    //Invert colors if clicked or hovered
-    if(this.hover || this.active){
-      stroke(this.stroke);
-      strokeWeight(this.strokeWeight);
-      fill(color(255 - this.c.levels[0], 255 - this.c.levels[1], 255 - this.c.levels[2]));
-      rect(this.x, this.y, this.x_range, this.y_range, this.r);
-      stroke("black");
-      strokeWeight(1);
-      fill(this.c);
-      text(this.t, this.x + this.t.length/5, this.y + this.y_range/this.lines -3);
+        // this.AtkDefBtn = document.getElementsByClassName('atkDef')[0];
+        this.AtkDefBtn.addEventListener('click', this.clickedAtkDef.bind(this));
 
     }
 
+    createDeleteBtn() {
+        this.DeleteBtn = createButton("");
+        this.DeleteBtn.parent('canvasContainer');
+        this.DeleteBtn.attribute("data-feather", "x-circle"); // Feather.js icon (feathericons.com)
+        this.DeleteBtn.addClass('deleteBtn');
+        this.DeleteBtn.position(this.root.position().x + this.root.elt.offsetWidth - this.DeleteBtn.elt.offsetWidth / 3, this.root.position().y - this.DeleteBtn.elt.offsetHeight);
+        feather.replace();
+        let delBtns = document.getElementsByClassName('deleteBtn');
+        this.DeleteBtn = delBtns[delBtns.length - 1] // Have to re-locate the button, since feather completely replaces the elements it 
+        // introduced svgs into. Index 0 since there SHOULD only be 1 button on screen at a time.
+        // Loops over all previous instances of the DeleteBtn and removes them (SHOULD be 1, the last one), but does all but the last just in case :)
+        for (let i = 0; i < delBtns.length - 2; i++) {
+            delBtns[i].remove();
+        }
+        this.DeleteBtn.addEventListener('click', () => {
+            if (this.parent != null) {
+                for (let i = 0; i < this.parent.children.length; i++)
+                    if (this.parent.children[i] == this)
+                        this.parent.parentDeleteSubTree(i)
 
-    fill("color(255, 255, 255)")
-    // AND refinement
-    if(this.refinement == 1 && this.children.length >= 2){
-      var myX = this.x + this.x_range/2;
-      var myY = this.y + this.y_range;
-      var firstX = this.children[0].x + this.children[0].x_range/2;
-      var lastX = this.children[this.children.length - 1].x + this.children[this.children.length - 1].x_range/2
-      var childY = this.children[0].y;
+            }
+            else {
+                for (let i = this.children.length - 1; i >= 0; i--) {
+                    this.children[i].deleteSubTree();
+                    this.children.splice(i, 1);
+                }
+                clear();
+                drawLines(root);
+                treeCheck();
+            }
 
-      var percentage = .3;
-      var startX = myX - (myX - firstX)*percentage
-      var startY = myY + (childY - myY)*percentage
-      var endX = myX + (lastX - myX)*percentage
-      var endY = myY + (childY - myY)*percentage
 
-      // line(startX, startY, endX, endY)
-      curve(this.x + this.x_range/2 - this.width/2, this.y, startX,startY, endX, endY, this.x + this.x_range/2 + this.width/2, this.y)
+        });
     }
 
-    //Visualize lines to children and then visualize children
-    for (let i = 0; i < this.children.length; i++){
-      this.setLineDash(this.lineList);
-      line(this.x+this.x_range/2, this.y+this.y_range, this.children[i].x+this.children[i].x_range/2,  this.children[i].y)
-      this.children[i].display();
+    toggleContextMenu() {
+        if (this.contextEnabled) { // If contextMenu is enabled, it should disabled when toggled. So delete all btns
+            if (this.isDefense) {
+                this.root.removeClass('NodeActiveDef'); // remove active styling
+                this.root.addClass('NodeInactiveDef'); // add inactive styling
+            } else {
+                this.root.removeClass('NodeActiveAtk'); // remove active styling
+                this.root.addClass('NodeInactiveAtk'); // add inactive styling
+            }
+            this.Plusbtn.remove();
+            this.Refinebtn.remove();
+            this.AtkDefBtn.remove();
+            this.DeleteBtn.remove();
+        } else {                  // ELSE, buttons are not currently active, create them
+            if (this.isDefense) {
+                this.root.removeClass('NodeInactiveDef'); // remove active styling
+                this.root.addClass('NodeActiveDef'); // add inactive styling
+            } else {
+                this.root.removeClass('NodeInactiveAtk'); // remove active styling
+                this.root.addClass('NodeActiveAtk'); // add inactive styling
+            }
+            // Create the plus button
+            this.Plusbtn = createButton("+");
+            this.Plusbtn.parent('canvasContainer');
+            this.Plusbtn.addClass('contextAddChild');
+            this.Plusbtn.position(this.root.position().x + this.root.elt.offsetWidth / 2 - this.Plusbtn.width / 2, this.root.position().y + this.root.elt.offsetHeight);
+            this.Plusbtn.mouseClicked(() => this.addChild());
+
+            // Create refinedment (AND/OR) button
+            if (this.refinementIsAnd)
+                this.Refinebtn = createButton("OR");
+            else
+                this.Refinebtn = createButton("AND");
+            this.Refinebtn.parent('canvasContainer');
+            this.Refinebtn.addClass('contextRefine');
+            this.Refinebtn.position(this.root.position().x + this.root.elt.offsetWidth / 2 - this.Plusbtn.width / 2, this.root.position().y - this.Refinebtn.elt.offsetHeight); // TODO: WEIRD CSS BUG (+9????)
+            this.Refinebtn.mouseClicked(() => {
+                this.refinementIsAnd = !this.refinementIsAnd;
+                clear();
+                drawLines(root);
+                if (this.refinementIsAnd)
+                    this.Refinebtn.elt.innerHTML = "OR";
+                else
+                    this.Refinebtn.elt.innerHTML = "AND";
+            });
+
+            // Create defense/attack toggle
+            this.createAtkDefBtn();
+
+            // Create delete button
+            this.createDeleteBtn();
+            disableNonInteractables([this.Plusbtn.elt, this.Refinebtn.elt, this.AtkDefBtn, this.DeleteBtn]);
+        }
+
+        this.contextEnabled = !this.contextEnabled; // Toggle contextEnabled bool
     }
-  }
+
+    clickedAtkDef() {
+        this.isDefense = !this.isDefense;
+        clear();
+        drawLines(root);
+        this.AtkDefBtn.remove();
+        this.AtkDefBtn = createButton("");
+        this.AtkDefBtn.parent('canvasContainer');
+        this.AtkDefBtn.addClass('atkDef');
+        if (this.isDefense) {
+            this.AtkDefBtn.attribute("data-feather", "shield");
+            this.root.removeClass('NodeActiveAtk');
+            this.root.addClass('NodeActiveDef');
+        }
+        else {
+            this.AtkDefBtn.attribute("data-feather", "flag");
+            this.root.removeClass('NodeActiveDef');
+            this.root.addClass('NodeActiveAtk');
+        }
+        this.AtkDefBtn.position(this.root.position().x + this.root.elt.offsetWidth / 2 + this.Refinebtn.elt.offsetWidth / 2, this.root.position().y - this.Refinebtn.elt.offsetHeight);
+        feather.replace();
+        this.AtkDefBtn = document.getElementsByClassName('atkDef')[0];
+        this.AtkDefBtn.addEventListener('click', this.clickedAtkDef.bind(this));
+        treeCheck();
+    }
+
+    inputPressed() {
+        allowDragging = true;
+        this.oldX = this.root.x;
+        this.oldY = this.root.y;
+        if (active != null) // If some other node was selected previously, unselect it and select the current node
+            active.toggleContextMenu();
+        active = this;
+        active.toggleContextMenu();
+
+    }
+
+    inputReleased() {
+        this.isDragging = false;
+        this.oldX = this.root.x;
+        this.oldY = this.root.y;
+        this.root.elt.focus();
+        if (lastActive != null) {
+            active = lastActive;
+            lastActive = null;
+        }
+    }
+
+    setPos(X, Y) {
+        if (this.isDragging == true) { // Code that is run every 'frame' while dragging
+            this.unmoved = false;
+            this.root.elt.blur();
+            clearTextSelection();
+            this.root.position(canvasElement.position().x + X - this.root.elt.offsetWidth / 2, canvasElement.position().y + Y - this.root.elt.offsetHeight / 2);
+            this.toggleContextMenu();
+            this.toggleContextMenu();
+            if (this.parent) { // Check if not the top node
+                this.parent.movedChildren = true;
+                let selfIndex = this.parent.children.indexOf(this);
+                if (this.parent.children.length > 1 && selfIndex != 0 && calcAngle(this.parent, this.parent.children[selfIndex - 1]) < calcAngle(this.parent, this)) {
+                    this.parent.children[selfIndex] = this.parent.children[selfIndex - 1];
+                    this.parent.children[selfIndex - 1] = this;
+                }
+                if (this.parent.children.length > selfIndex + 1 && selfIndex != this.parent.children.length - 1 && calcAngle(this.parent, this.parent.children[selfIndex + 1]) > calcAngle(this.parent, this)) {
+                    this.parent.children[selfIndex] = this.parent.children[selfIndex + 1];
+                    this.parent.children[selfIndex + 1] = this;
+                }
+            }
+        } else { // Enable dragging
+            if ( // If mouse drags atleast 10 pixels outside of the boundary of the node
+                mouseX + canvasElement.position().x < this.oldX - 10 ||
+                mouseX + canvasElement.position().x > this.oldX + this.root.elt.offsetWidth + 10 ||
+                mouseY + canvasElement.position().y < this.oldY - 10 ||
+                mouseY + canvasElement.position().y > this.oldY + this.root.elt.offsetHeight + 10
+            ) {
+                this.isDragging = true;
+            }
+        }
+    }
+
+    convertADTtoNode(parent) {
+        var newNode;
+        if (this == root) {
+            var nodeRoot = new Node();
+            nodeRoot.label = this.root.elt.innerHTML;
+            nodeRoot.refinement = this.refinementIsAnd;
+            nodeRoot.depth = this.level;
+            nodeRoot.swith_role = this.isDefense;
+            nodeRoot.parent = null;
+            newNode = nodeRoot;
+            this.xmlNode = nodeRoot;
+        } else {
+            var ADTnode = new Node();
+            ADTnode.label = this.root.elt.innerHTML;
+            ADTnode.refinement = this.refinementIsAnd;
+            ADTnode.depth = this.level;
+            ADTnode.swith_role = this.isDefense;
+            ADTnode.parent = this.parent;
+            newNode = ADTnode;
+            this.xmlNode = ADTnode;
+        }
+        if (this.children && this.children.length > 0) {
+            for (let i = 0; i < this.children.length; i++) {
+                this.children[i].convertADTtoNode(newNode);
+            }
+        }
+    }
+
+    addChildInXML(temp_string){
+        temp_string = add_child(this.xmlNode, temp_string, 1);
+        if (this.children && this.children.length > 0) {
+            for (let i = 0; i < this.children.length; i++) {
+                temp_string = this.children[i].addChildInXML(temp_string);
+            }
+        }
+        temp_string += '\n';
+        temp_string += "  ";
+        for (var i = 0; i < this.xmlNode.depth; i++){
+            temp_string += "    ";
+        }
+        temp_string += '</node>';
+        return temp_string;
+    }
 }

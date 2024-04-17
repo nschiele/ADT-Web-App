@@ -1,420 +1,714 @@
-let root;
-let scaled;
-let toDraw;
-let sideFrameWidth;
+let root; // The first node that is always placed.
+let canvasElement; // Holds the canvas, can be used anywhere to point directly to the canvas.
+let canvasWidth = 100;
+let canvasHeight = 100;
+let canvasParentDiv; // Parented to canvas, to give it the correct position in the DOM.
+let active = null; // keeps track of CURRENTLY active element. 'null' means that no node is selected, so the canvas is panned.
+let lastActive = null; // keeps track of LAST active element. Gets set to active whenever you start dragging on not-a-node, and unset when finished.
+let cX = 0; // used to keep track of canvas' location on the page. Used when resizing window, since the 
+let cY = 0; // side/top/bottom bars can shrink/grow when resizing, as such moving the absolute position of the canvas.
+let mX; // Used to compute distance from mouse. Different from canvasOldX by being used every frame, as opposed to
+let mY; // only when having moved a sufficient distance.
+let canvasOldX = null; // X and Y are both set when you first click on something that is not a node.
+let canvasOldY = null; // That way you can compute how far the cursor has dragged since the click started.
+let moveCount = 0; // Incrementer used to not redraw elements on every frame
+let allowDragging = false;
+let redrawLines = false;
+let refinementDist = 0.3;
+let scalar = 1;
+let standardWidth = 300;
+let standardFontSize = 0.875; // 0.875 rem
 
+let CMOverflow = false;
 
-let activeNode;
-let hoverNode;
-let trackNode;
-let trackNodeX;
-let trackNodeY;
-let trackMouseStart;
-let startMouseX;
-let startMouseY;
+let allNodes = [];
 
-let sidePanel;
-let createADTDiv;
-let activeNodeTitle;
+async function setup() { // Only called once: https://p5js.org/reference/#/p5/setup
+    toDraw = true;
+    trackMouseStart = true;
+    frameRate(60);
+    sideFrameWidth = 400;
+    var frameX = windowWidth - sideFrameWidth; // Calculate how big the canvas should be, by compensating for the non-canvas side elements.
+    var canvasParentDiv = document.getElementById('canvasContainer');
+    // set initial height and width for the canvas (will be resized to fit full screen.)
+    canvasElement = createCanvas(canvasWidth, canvasHeight);
+    noSmooth(); // Removes rounded corners (to properly fill the canvas area)
+    // Parent the canvas to the container DIV, this properly places it within the DOM
+    canvasElement.parent("canvasContainer");
+    // When canvas (or anything that is not a node, like side/top/bottom bars) is clicked, setup to pan the canvas, as opposed to moving a node
+    let nonInteractableElements = [
+        document.getElementById("sidebarMenu"),
+        document.getElementById("topBar"),
+        canvasElement.elt,
+        document.getElementById("canvTopBar"),
+        document.getElementById("botFooter")
+    ];
+    disableNonInteractables(nonInteractableElements);
 
-var example;
-let canvasElement;
-let canvasWidth;
-let canvasHeight;
-let canvasParentDiv;
-let scaleValue;
-let nodeTextChangeField;
-let nodeOutLineColor;
-let shapeColor = "black";
-let shapeRadious = 1;
-let fileName;
-var currNodeText;
-var newNodeText;
-let oldNodetext;
+    /* windowWidth/Height is in pixels; the width and height of window (not the entire display, just the html DOM!)
+      * sticky-top is the class of the top bar. canvTopBar is the id of the buttons right above the canvas. (zoom in, out, export, import, etc.). 
+      * The heights of these elements are considered when setting canvas position and dimensions.
+      * 0.25 is used to multiply the width, since the left-sidebar has a width of 25%.
+      */
+    select("#canvTopBar").position(windowWidth * 0.25, select("#topBar").offsetHeight);
+    canvasElement.position(windowWidth * 0.25, select("#topBar").offsetHeight + select("#canvTopBar").offsetHeight + 26);
 
-async function setup() {
-  // noLoop();
-  toDraw = true;
-  trackMouseStart = true;
-  frameRate(60);
+    cX = canvasElement.position().x;
+    cY = canvasElement.position().y;
+    resizeCanvas(windowWidth - cX, windowHeight - cY - document.getElementById('botFooter').offsetHeight);
+    // Canvas and line styling
+    noSmooth();
+    canvasElement.elt.style.borderRadius = "0";
+    stroke('darkgray');
+    strokeWeight(2);
 
-  sideFrameWidth = 400;
-  var frameX = windowWidth - sideFrameWidth;
-  // var canv = createCanvas(700, 700);
-  // canv.elt.style.border = "2px solid lightgray";
-  // canv.parent("canvasContainer");
+    // Initialize canvas with 1 node
+    root = new ADTree("Target");
+    allNodes.push(root);
+    active = root;
+    active.toggleContextMenu();
+    // Replace temporary node with a pre-loaded tree
+    let url = "https://raw.githubusercontent.com/nschiele/ADT-Web-App/main/xml%20examples/fig13.xml";
+    let resp = await fetch(url);
+    var example = await getJson(0, resp); // Call json_junc.js
+    buildFromMultiset(example);
 
-  // get element by id
-  var canvasParentDiv = document.getElementById('canvasContainer');
-  // set height and width for the canvas
-  canvasWidth = canvasParentDiv.offsetWidth;
-  canvasHeight = canvasParentDiv.offsetHeight;
-  // the main canvas area where the tree will go
-  canvasElement = createCanvas(canvasWidth,canvasHeight);
-  canvasElement.background("lightgray");
-  // set parent div
-  canvasElement.parent("canvasContainer");
-  
-  /* styling canvas */
-  canvasElement.elt.style.border = "2px solid lightgray";
+    let warningIcon = document.getElementById('btn-groupwarningIcon');
+    warningIcon.addEventListener('click', setupWarningMessages)
 
-  // zoom in and out buttons
-  var zoomInButton = select('#zoomInBtn');
-  zoomInButton.mousePressed(zoomInFunction);
-  var zoomOutButton = select('#zoomOutBtn');
-  zoomOutButton.mousePressed(zoomOutFunction);
-  scaleValue = 1;
-  var clearTreeButton = select("#deleteBtn");
-  clearTreeButton.mousePressed(clearCurrentTree);
-
-  // // instet new json text to generate new tree
-  // var jsonTextInput = select("#textAreaJsonContent").value();
-  // var gererateTreeButton = select("#generateTreeButton");
-  // gererateTreeButton.mousePressed(function(){buildFromMultiset(jsonTextInput.replace(/['"]+/g, ''))});
-
-  // show selected node text in the textbox
-  currNodeText = select('#nodeTextInput');
-  var changeNodeTextBtn = select("#btnChangeNodeText");
-  changeNodeTextBtn.mousePressed(btnChangeNodeText);
- 
-  // change outline color and shape of the selected node
-  var nodeBlackCircle = select('#btnCircleBlackDiv');
-  nodeBlackCircle.mouseReleased(function(){ changeNodeOutlineColorShape(50,"black")});
-  var nodeGreenCircle = select('#btnCircleGreenDiv');
-  nodeGreenCircle.mouseReleased(function(){changeNodeOutlineColorShape(50,"green")});
-  var nodeRedCircle = select('#btnCircleRedDiv');
-  nodeRedCircle.mouseReleased(function(){changeNodeOutlineColorShape(50,"red")});
-  var nodeSquareBlack = select('#btnSquareBlackDiv');
-  nodeSquareBlack.mouseReleased(function(){changeNodeOutlineColorShape(1,"black")});
-  var nodeSquareGreen = select('#btnSquareGreenDiv');
-  nodeSquareGreen.mouseReleased(function(){changeNodeOutlineColorShape(1,"green")});
-  var nodeSquareRed = select('#btnSquareRedDiv');
-  nodeSquareRed.mouseReleased(function(){changeNodeOutlineColorShape(1,"red")});
-
-  // change the lines to dashed
-  var dashedLine = select('#btnLineDashedDiv');
-  dashedLine.mouseReleased(changeNodeLineToDashed);
-
-  var ContinuousLine = select('#btnLineContinueDiv');
-  ContinuousLine.mouseReleased(changeNodeLineToContinueLine);
-  
-  // save canvas
-  var saveBtnPng = select('#pngBtn');
-  var saveBtnJpg = select('#jpgBtn');
-  var downloadBtn = select("#downloadBtn")
-  saveBtnPng.mousePressed(downloadCanvasPng);
-  saveBtnJpg.mousePressed(downloadCanvasJpg);
-  downloadBtn.mousePressed(downloadCanvasJpg);
-
-  // print 
-  var printBtn = select('#printBtn');
-  printBtn.mousePressed(printCanvas);
-  // canvasElement.style("padding","3%")
-
-    // sketchCanvas.parent("canvasContainer");
-  // sidePanel = createDiv();
-  // sidePanel.position(frameX, 0);
-  // sidePanel.style('background-color', 'lightgray')
-  // sidePanel.style('width', sideFrameWidth)
-  // sidePanel.style('height', windowHeight)
-  // var titleDiv = createDiv();
-  // titleDiv.parent(sidePanel);
-  // titleDiv.style('text-align', 'center')
-  // let easyADT = createElement("h1", "Easy ADT")
-  // easyADT.parent(titleDiv);
-
-
-  // createADTDiv = createDiv();
-  // createADTDiv.parent(sidePanel);
-  // createADTDiv.style('text-align', 'center')
-  // let textArea = createElement("textarea", "");
-  // textArea.style("width", sideFrameWidth - 40);
-  // textArea.style("height", (sideFrameWidth - 40)/2.5);
-  // textArea.parent(createADTDiv);
-  // console.log(textArea);
-  // console.log(textArea);
-  // let createADTButton = createButton("Create ADT");
-  // createADTButton.parent(createADTDiv)
-  // createADTButton.style("width", sideFrameWidth - 80);
-
-
-
-
-
-  // var activeNodeTitleText = "";
-  // activeNodeTitle = createElement("h2", activeNodeTitleText)
-  // activeNodeTitle.style('text-align', 'center')
-  // activeNodeTitle.parent(sidePanel);
-
-
-
-
-/*
-  root = new Tree("Rob first Bank", 800, 400, 2);
-
-
-
-
-
-
-  // console.log("Depth: ", max_depth(root))
-  // console.log("Width: ", max_width(root, 50))
-  root.add_child(new Tree("Physical Attack"))
-  root.add_child(new Tree("Psychic Attack"))
-  root.add_child(new Tree("Computer Attack"))
-  // console.log("Depth: ", max_depth(root))
-  // console.log("Width: ", max_width(root, 50))
-  root.children[0].add_child(new Tree("Pikachu"))
-  root.children[0].add_child(new Tree("Tangela"))
-  root.children[0].add_child(new Tree("Garydos"))
-  root.children[0].add_child(new Tree("Fearow"))
-  root.children[1].add_child(new Tree("Abra"))
-  root.children[1].add_child(new Tree("Alakazam"))
-  root.children[2].add_child(new Tree("Machamp"))
-  root.children[2].add_child(new Tree("Gengar"))
-    // console.log("Depth: ", max_depth(root))
-    // console.log("Width: ", max_width(root, 50))
-  root.refinement = 1;
-  root.children[1].refinement = 1;
-  root.children[0].refinement = 1;
-  root.children[2].refinement = 1;
-  root.children[1].children[0].refinement = 1;
-  root.children[1].children[0].add_child(new Tree("OH WOW WOWOWOWOWOWOOW OW WOW WOWOWOW OWOWOOW"))
-  root.children[1].children[0].add_child(new Tree("test"))
-  root.children[1].children[0].add_child(new Tree("TEST TEST TEST"))
-  root.children[1].children[0].add_child(new Tree("CHEESE"))
-  root.children[0].children[0].add_child(new Tree("CHEESE"))
-  root.children[0].children[0].add_child(new Tree("CHEESE"))
-  console.log(root.getMultiArray());
-  canvasElement.elt.defaultValue = root.getMultiArray()
-  // console.log("Depth: ", max_depth(root))
-  // console.log("Width: ", max_width(root, 50))
-  */
-  var example = await getJson(0, null); // Call json_junc.js
-  
-  buildFromMultiset(example);
-  console.log(getJson(1, example));
-
-  // console.log(root);
-  scaled = frameX/(root.width*1.2);
-  // console.log(scaled)
-  // if(scale < 1){
-  //   scale(scale);
-  // }
-  // root.display();
+    // Tell the canvas to translate all given coordinates to be related to the entire window, not just the canvas. 
+    // (so (0,0) is top left of the window, not the canvas. Helps with calculations later.)
+    translate(-cX, -cY);
+    autoFormat();
+    clear();
+    drawLines(root);
 }
 
-function zoomInFunction(){
-  scaleValue = scaleValue + 1
-}
-function zoomOutFunction(){
-  if(scaleValue == 1)
-  scaleValue = 1;
-  else
-  scaleValue = scaleValue - 1;
-}
-
-function btnChangeNodeText(){
-  var newNodeText = select("#nodeTextInput").value();
-  // to be continued
-}
-function changeNodeOutlineColorShape(shapeRadious,shapeColor){
-    nodeOutLineColor = true;
-    activeNode.stroke = color(shapeColor);
-    activeNode.strokeWeight = 3;
-    activeNode.r = shapeRadious;
-}
-
-function changeNodeLineToContinueLine(){
-  activeNode.lineList = [0];
-}
-function changeNodeLineToDashed() {
-  activeNode.lineList = [10,10,10,10];
-}
-
-function downloadCanvasPng(){
-  fileName = select("#treeName").value();
-  console.log(fileName);
-  saveCanvas(canvasElement, fileName, 'png');
-}
-function downloadCanvasJpg(){
-  fileName = select("#treeName").value();
-  console.log(fileName);
-  saveCanvas(canvasElement, fileName, 'jpg');
-}
-
-function printCanvas(){
-  let printWindow = window.open('', '_blank');
-  printWindow.location.reload();
-  printWindow.document.open();
-  printWindow.document.write('<html><head><title>Print ADT</title>');
-  printWindow.document.write('<style>@media print { #printContent { display: block;} #printElement{width:210mm; height:auto}}</style>');
-  printWindow.document.write('</head><body>');
-  printWindow.document.write('<img id="printElement"src="' + canvasElement.elt.toDataURL() + '">');
-  printWindow.document.write('</body></html>');
-  printWindow.document.close();
-  setTimeout(function() {
-    printWindow.print();
-  }, 500);
-}
-
-function clearCurrentTree(){
-  example = [[],0,[]];
-  buildFromMultiset(example);
-}
-function max_depth(n){
-  if(n.children.length == 0){
-    return n.level;
-  } else {
-    var toReturn = n.level;
-    for(let i = 0; i < n.children.length; i++){
-      var child_level = max_depth(n.children[i]);
-      if(child_level > toReturn){
-        toReturn = child_level;
-      }
+function windowResized() { // Called whenever window is resized, standard in p5: https://p5js.org/reference/#/p5/windowResized
+    canvasElement.position(windowWidth * 0.25, select("#topBar").offsetHeight + select("#canvTopBar").offsetHeight + 26);
+    resetMatrix(); // Reset any translation
+    moveNodes(root, -(cX - canvasElement.position().x), -(cY - canvasElement.position().y));
+    cX = canvasElement.position().x;
+    cY = canvasElement.position().y;
+    select("#canvTopBar").position(windowWidth * 0.25, select("#topBar").offsetHeight);
+    resizeCanvas(windowWidth - cX, windowHeight - cY - document.getElementById('botFooter').offsetHeight, true);
+    translate(-cX, -cY); // Re-translate relative to new canvas position
+    drawLines(root); // Re-draw all lines, since they are deleted by resizeCanvas
+    if (active != null) {
+        active.toggleContextMenu();
+        active.toggleContextMenu();
     }
-    return toReturn;
-  }
 }
 
-function max_width(n, dist){
-  var toReturn = n.x_range;
-  var curr_level = 0;
-  var curr_width = -1*dist;
-  var searchOrder = [];
+function generateTree() {
+    // Data, 1, Physical, 1, Network, 0, Employee, Social, Fairwall, Training
+    var jsonTextInput = select("#textAreaADTLang").value();
+    buildFromMultiset(jsonTextInput.replace(/['"]+/g, ''));
+    clear();
+    drawLines(root);
+}
 
-  searchOrder.push(n);
-  for(let i = 0; i < searchOrder.length; i++){
-    for(let j = 0; j < searchOrder[i].children.length; j++){
-      searchOrder.push(searchOrder[i].children[j]);
-    }
-    // console.log(searchOrder[i], searchOrder)
-    if(searchOrder[i].level == curr_level){ //Still on same level
-      curr_width += searchOrder[i].x_range;
-      curr_width += dist;
-      // console.log("Same Level: ", searchOrder[i].level, curr_level, toReturn)
-    } else { //Now searching the next level
-      // console.log("New Level: ", searchOrder[i].level, curr_level, toReturn)
-      if(toReturn < curr_width){
-        toReturn = curr_width;
-      }
-      curr_width = searchOrder[i].x_range;
-      curr_level = searchOrder[i].level;
+function deleteTree() {
+    if (root.parent != null) {
+        for (let i = 0; i < root.parent.children.length; i++)
+            if (root.parent.children[i] == this)
+            root.parent.parentDeleteSubTree(i)
 
     }
-    // console.log(searchOrder[i], searchOrder[i].x_range, curr_width, curr_level, toReturn)
+    else {
+        for (let i = root.children.length - 1; i >= 0; i--) {
+            root.children[i].deleteSubTree();
+            root.children.splice(i, 1);
+        }
+        clear();
+        drawLines(root);
+        treeCheck();
+    }
+    root.root.elt.innerHTML="Target";
+}
+
+function saveScreenshot() {
+    const captureElement = document.querySelector('body') // Select the element you want to capture. Select the <body> element to capture full page.
+    html2canvas(captureElement)
+        .then(canvas => {
+            canvas.style.display = 'none'
+            document.body.appendChild(canvas)
+            return canvas
+        })
+        .then(canvas => {
+            const image = canvas.toDataURL('image/png')
+            const a = document.createElement('a')
+            a.setAttribute('download', 'my-image.png')
+            a.setAttribute('href', image)
+            a.click()
+            canvas.remove()
+        })
   }
-  if(toReturn < curr_width){
-    toReturn = curr_width;
-  }
-  return toReturn;
+
+function manAddChild(inputVal) { // Manually add a child, inputVal is a string to be given as the text-content of the created node.
+    childTree = new ADTree(inputVal);
+    childTree.root.addClass('NodeActiveAtk')
+}
+
+function drawLines(node) { // Recursively draw all lines between all nodes and their children
+    let lastFoundSameTypeChildIndex = null;
+    for (let i = 0; i < node.children.length; i++) {
+        if (node.children[i] && node.children[i].isDefense != node.isDefense)
+            drawingContext.setLineDash([5]);
+        // Draw line between root of sub-tree and child i
+        line(node.root.x + node.root.elt.offsetWidth / 2, node.root.y + node.root.elt.offsetHeight, node.children[i].root.x + node.children[i].root.elt.offsetWidth / 2, node.children[i].root.y);
+        // recursively call drawLines on sub-trees
+        drawingContext.setLineDash([]);
+        drawLines(node.children[i]);
+        if (node.refinementIsAnd)
+            if (node.children[i].isDefense == node.isDefense) {
+                if (lastFoundSameTypeChildIndex != null) {
+                    line(node.root.x + node.root.elt.offsetWidth / 2 + ((node.children[lastFoundSameTypeChildIndex].root.x + node.children[lastFoundSameTypeChildIndex].root.elt.offsetWidth / 2) - (node.root.x + node.root.elt.offsetWidth / 2)) * refinementDist, // middle of current node - 1/10th x-distance to left node of current pair
+                        node.root.y + node.root.elt.offsetHeight + (node.children[lastFoundSameTypeChildIndex].root.y - (node.root.y + node.root.elt.offsetHeight)) * refinementDist,  // bottom of current node - 1/10th u-distance to top of left node of current pair
+                        node.root.x + node.root.elt.offsetWidth / 2 + ((node.children[i].root.x + node.children[i].root.elt.offsetWidth / 2) - (node.root.x + node.root.elt.offsetWidth / 2)) * refinementDist,  // middle of current node - 1/10th distance to right node of current pair
+                        node.root.y + node.root.elt.offsetHeight + (node.children[i].root.y - (node.root.y + node.root.elt.offsetHeight)) * refinementDist)  // bottom of current node - 1/10th distance to top of left node of current pair
+                }
+                lastFoundSameTypeChildIndex = i; // Keep track of last found non-CounterMeasure child
+            }
+    }
+}
+
+function moveNodes(node, moveX, moveY) { // Moves all nodes in tree
+    node.root.position(node.root.position().x + moveX, node.root.position().y + moveY); // Move node by moveX and moveY
+    if (node.contextEnabled) {
+        node.toggleContextMenu();
+        node.toggleContextMenu();
+    }
+    node.oldX = node.root.x;
+    node.oldY = node.root.y;
+    for (let i = 0; i < node.children.length; i++) {
+        // recursively call moveNodes on sub-trees
+        moveNodes(node.children[i], moveX, moveY);
+    }
+}
+
+function disableNonInteractables(listOfElements) {
+    for (let i = 0; i < listOfElements.length; i++) { // loop over nonInteractables
+        // Handle click DOWN
+        listOfElements[i].addEventListener('mousedown', (event) => // when clicked DOWN, unset active. And store the old active in lastActive
+        {  
+            allowDragging = false;
+            if (event.button === 0){
+                mX = mouseX;
+                mY = mouseY;
+                canvasOldX = mouseX;
+                canvasOldY = mouseY;
+                allowDragging = (listOfElements[i] == canvasElement.elt); // Allow dragging only if dragging the canvas, so non-canvas elts
+                // are ignored
+                if (allowDragging) {
+                    lastActive = active;
+                    active = null;
+                }
+            }
+            
+        });
+        // Handle click UP
+        listOfElements[i].addEventListener('mouseup', (event) =>  // when clicked UP (released click), set active back to old active like nothing happened.
+        {
+            if (event.button === 0){
+                if (allowDragging) {
+                    if (lastActive != null)
+                        active = lastActive;
+                    lastActive = null;
+                }
+                if (listOfElements[i] == canvasElement.elt && mouseX == canvasOldX && mouseY == canvasOldY) {
+                    if (lastActive != null)
+                        lastActive.toggleContextMenu();
+                    if (active != null)
+                        active.toggleContextMenu();
+                    lastActive = null;
+                    active = null;
+                }
+            }
+        });
+
+    }
+}
+
+function setupWarningMessages() { // Handles behaviour when clicking warning icon
+    // It's a little ugly, but it's a lot easier than (un)hiding a pre-made error with dynamic content :)
+    let warningsDiv = createDiv();
+    warningsDiv.addClass('warningDiv');
+    warningsDiv.position(select("#topBar").offsetHeight, 0);
+
+    let warningsDivBody = createDiv();
+    warningsDivBody.addClass('warningDivBody');
+    warningsDiv.position(select("#topBar").offsetHeight, 0);
+    warningsDivBody.parent(warningsDiv);
+
+    let ErrorPElements = [];
+    // Create error header and apply styling
+    let mainP = createP('One or more nodes have an error, the current tree is wrong.');
+    mainP.parent(warningsDivBody);
+    mainP.addClass('ErrorHeading');
+    // Counter-measure overflow message
+    if (CMOverflow) {
+        let CMOP = createP('Too many counter-measures per node. Counter-measures are nodes of a different type than their parent node.')
+        CMOP.parent(warningsDivBody);
+        ErrorPElements.push(CMOP);
+    }
+    // Apply styling to all error messages
+    for (const child of ErrorPElements) {
+        child.addClass('ErrorMessage');
+    }
+
+    warningsDiv.elt.addEventListener('click', () => {
+        // Clean up when clicking out of notification box
+        for (const element of ErrorPElements) {
+            element.remove();
+        }
+        mainP.remove();
+        warningsDivBody.remove();
+        warningsDiv.remove();
+    })
+
+}
+
+function treeCheck() { // Should be called whenever something happens that can cause an error (like toggle atk/def of a node)
+    // Errors / warnings list initialization:
+    CMOverflow = false; // Error: Counter-measure overflow (>1 counter-measure)
+
+
+    // Run check with error list
+    subtreeCheck(root, CMOverflow);
+
+    //Display errors
+    if (CMOverflow) {
+        document.getElementById('btn-groupwarningIcon').style.display = 'block';
+    } else {
+        document.getElementById('btn-groupwarningIcon').style.display = 'none';
+    }
+}
+
+function subtreeCheck(node) {
+    let counterMeasures = []; // List of counter-measures for current node (if len > 1, CMOverflow)
+
+
+    //  Setup for error checks
+    // Setup CMOverflow
+    for (const child of node.children) {
+        child.root.removeClass('ErrorNode'); // Assume no errors, then recheck tree
+        if (child.isDefense != node.isDefense)
+            counterMeasures.push(child);
+    }
+    //  Execute error checks
+    // Check CMOverflow
+    if (counterMeasures.length > 1) {
+        for (const errorChild of counterMeasures)
+            errorChild.root.addClass('ErrorNode');
+
+        CMOverflow = true;
+    }
+
+    // Continue with subtrees
+    for (const child of node.children)
+        subtreeCheck(child)
+}
+
+function mouseDragged(event) { // Called when mouse is clicked and dragged, standard in p5: https://p5js.org/reference/#/p5/mouseDragged
+    if (allowDragging && mouseButton === LEFT){
+        if (active == null) { // If nothing is active, the user is scrolling the canvas
+            if ((canvasOldX - mouseX) > 25 || (canvasOldX - mouseX) < -25 || (canvasOldY - mouseY) > 25 || (canvasOldY - mouseY) < -25) {
+                canvasOldX = -100; // Once any dragging has occured (user dragged far enough), stop keeping track of where drag started. Otherwise, whenever you move cursor back
+                canvasOldY = -100; // into the starting area of the drag, it momentarily stops dragging. By moving off screen, cursor is always outside margin once dragging starts.
+                clearTextSelection();
+                moveNodes(root, event.movementX, event.movementY);
+                clear();
+                drawLines(root);
+                mX = mouseX;
+                mY = mouseY;
+            }
+        } else { // if a node is active, drag around the node
+            clear();              // Clears all drawn pixels off the canvas
+            drawLines(root);      // Recurively re-draw lines every frame while dragging (as inneficient as it is, you can't re-draw an individual line while dragging)
+            active.setPos(mouseX, mouseY);
+        }
+
+    }    
+}
+
+function clearTextSelection() { // Deselects any text that the user has selected, prevents awkward text selection while dragging nodes 
+    // (I doubt that anyone using this tool will be using Internet Explorer, let alone IE8. Extra checks added just in case though.)
+    if (window.getSelection) {  // All modern browsers and IE9+
+        if (window.getSelection().empty) {  // Chrome, Firefox, Safari, Opera
+            window.getSelection().empty();
+        } else if (window.getSelection().removeAllRanges) {  // IE9+
+            window.getSelection().removeAllRanges();
+        }
+    } else if (document.selection) {  // IE8 and below
+        document.selection.empty();
+    }
+}
+
+function calcAngle(main, sub) {
+    return ((Math.atan2(sub.root.x - main.root.x, main.root.y - sub.root.y) * (180 / Math.PI) + 360) % 360);
+
+}
+
+function rescaleTree(node, growing) {
+    // Rescale the distance of nodes from the center
+    let distanceScalar;
+    if (growing)
+        distanceScalar = 1.1;
+    else
+        distanceScalar = 0.9;
+
+    let canvasCenterX = canvasElement.position().x+canvasElement.elt.offsetWidth/2;
+    let canvasCenterY = canvasElement.position().y+canvasElement.elt.offsetHeight/2;
+    let distanceX = node.root.x - canvasCenterX;
+    let distanceY = node.root.y - canvasCenterY;
+    node.root.position(canvasCenterX + distanceX * distanceScalar, canvasCenterY + distanceY * distanceScalar);
+
+    // Rescale styling (size of  nodes)
+    node.resizeInputBox();
+    if (node == active) {
+        node.toggleContextMenu();
+        node.toggleContextMenu();
+    }
+
+    for (const child of node.children) {
+        rescaleTree(child, growing);
+    }
+}
+
+function zoomIn() {
+    scalar = scalar * 1.1;
+    rescaleTree(root, true)
+}
+
+function zoomOut() {
+    if (scalar > 0.55){
+        scalar = scalar * 0.9;
+        rescaleTree(root, false);
+    }
+}
+
+function autoFormat() {
+    autoFormatTree(root);
+    clear();
+    drawLines(root)
+}
+
+function autoFormatTree(rootNode) {
+    // TO-DO: Write documentation
+    // This whole thing is a thesis of its own im not gonna lie
+    let totalChildren = 0;
+    let childWidths = [];
+    let cumulativeChildWidths = [];
+    let childrenWithChildren = [];
+    if (rootNode.children.length > 0){
+        for (let i = 0; i < rootNode.children.length; i++){
+            let childCountSubTree = autoFormatTree(rootNode.children[i])
+            if (rootNode.children[i].children.length > 0)
+                childrenWithChildren.push(true)
+            else
+                childrenWithChildren.push(false)
+            if (i > 0){
+                cumulativeChildWidths.push(childCountSubTree*350+cumulativeChildWidths[i-1]);
+            } else {
+                cumulativeChildWidths.push(childCountSubTree*350);
+            }
+            childWidths.push(childCountSubTree*350);
+            totalChildren += childCountSubTree
+        }
+        // moving
+        for (let i = 0; i < rootNode.children.length; i++){
+            let child = rootNode.children[i];
+            if (i == 0){
+                let offset = -(cumulativeChildWidths[cumulativeChildWidths.length-1]/2);
+                relPosX = rootNode.root.x + (offset + (childWidths[i]-350)/2 + 175)*scalar;
+                currPosX = child.root.x;
+                XDifference = relPosX - currPosX;
+                relPosY = rootNode.root.y + rootNode.root.elt.offsetHeight + 200*scalar;
+                YDifference = relPosY - child.root.y;
+                moveNodes(child, XDifference, YDifference);
+            } else {
+                let offset = -(cumulativeChildWidths[cumulativeChildWidths.length-1]/2) + cumulativeChildWidths[i-1];
+                relPosX = rootNode.root.x + (offset + (childWidths[i]-350)/2 + 175)*scalar;
+                currPosX = child.root.x;
+                XDifference = relPosX - currPosX;
+                relPosY = rootNode.root.y + rootNode.root.elt.offsetHeight + 200*scalar;
+                YDifference = relPosY - child.root.y;
+                moveNodes(child, XDifference, YDifference);
+            }
+        }
+        return totalChildren;
+    } else {
+        return 1;
+    }
+    
+}
+
+function downloadADT(selectedFormat) {
+    return new Promise(function(resolve) {
+        root.convertADTtoNode(null);
+
+        var parser = new DOMParser();
+        var temp_string = '<?xml version="1.0"?>'
+        temp_string += '\n';
+        temp_string += '<adtree>';
+        var xml = null;
+        temp_string = root.addChildInXML(temp_string);
+        temp_string += '\n';
+        temp_string += '</adtree>';
+        xml = parser.parseFromString(temp_string, "text/xml");
+        resolve(temp_string);
+    });
+}
+
+async function downloadPrep() {
+    // var selectedFormat = document.getElementById("formatDropdown").value;
+    var selectedFormat = "xml";
+    try {
+      var file = await downloadADT(selectedFormat);
+      var input;
+      input = file;
+      var blob = new Blob([input], { type: "text/plain"});
+      var downloadLink = document.createElement("a");
+      downloadLink.href = URL.createObjectURL(blob);
+      downloadLink.download = "SavedADT." + selectedFormat;
+      if (document.getElementById('btn-groupwarningIcon').style.display == 'block')
+        alert("Caution! You are trying to download a tree that is incorrect. This tree likely will not be compatible with other ADTree related software.")
+      downloadLink.click();
+    } catch(error) {
+        console.error("Error:", error);
+    }
+}
+
+function keyPressed() { // Temporary: bind anything to happen when clicking left arrow, for debugging
+    if (keyCode == LEFT_ARROW) {
+        console.log(root)
+    }
+    if (keyCode == RIGHT_ARROW) {
+        let sub = active;
+        let main = root;
+        console.log((Math.atan2(sub.root.y - main.root.y, sub.root.x - main.root.x) * (180 / Math.PI) + 360) % 360);
+    }
+}
+
+function uploadADT() {
+    return new Promise(function(resolve, reject) {
+      var ADTInput = document.getElementById('ADTInput');
+      ADTInput.click();
+      ADTInput.addEventListener('change', function(event) {
+        var file = event.target.files[0];
+        if (file) {
+          var fileName = file.name;
+          var fileExt = fileName.split('.').pop();
+
+          if (fileExt === 'xml') {
+              resolve(file);
+          } else {
+              reject(new Error("Unsupported file type"));
+          }
+        } else {
+            reject(new Error("No file selected"));
+        }
+      });
+    });
+}
+
+async function buildFromUpload() {
+    try {
+        var file = await uploadADT();
+        var fileExt = file.name.split('.').pop();
+        var input;
+        if (fileExt === 'xml') {
+            input = await getJson(0, file);
+        }
+        buildFromMultiset(input);
+    } catch(error) {
+        console.error("Error:", error);
+    }
+    autoFormat();
 }
 
 async function buildFromMultiset(toBuild, parent=null){
-  // console.log(root)
-  // First Run of Function
-  if(parent == null){
-    root = new Tree(toBuild[0].label/*adtree.node.label*/, 0, 0, 2); // Get label of root
-    root.refinement = toBuild[0].refinement;
-    for(let i = 0; i < Object.keys(toBuild[0]).length-6; i++){ // Loop through all children
-      buildFromMultiset(toBuild[0][i], root);
-    }
-  // Tree Exists, adding subtrees
-  } else {
-    //Intermediate Node
-    if(Object.keys(toBuild).length-6 != 0){
-      var child = new Tree(toBuild.label, 0, 0, 2); // Get label of child
-      child.refinement = toBuild.refinement;
-      parent.add_child(child);
-      for(let i = 0; i < (Object.keys(toBuild).length-6); i++){ // Loop through all children
-        buildFromMultiset(toBuild[i], child);
-      }
+    // First Run of Function
+    if(parent == null){
+        root.deleteSubTree();
+        root.root.remove();
+        root = new ADTree(toBuild[0].label); // Get label of root
+        if (active != null)
+            active.toggleContextMenu();
+        active = root;
+        active.toggleContextMenu();
+
+        root.refinementIsAnd = toBuild[0].refinement;
+        root.isDefense = toBuild[0].swith_role;
+
+        // Make defense node the last node in the JSON.
+        for(let i = 0; i < Object.keys(toBuild[0]).length-6; i++){ // Loop through all children
+            buildFromMultiset(toBuild[0][i], root);
+        }
+
+    // Tree Exists, adding subtrees
+    } else {
+      if(!(toBuild === null || toBuild === undefined) && Object.keys(toBuild).length-7 != 0){ // This was 6, with 7 it works, because 7 array elements for normal intermediate node
+            parent.addChild(toBuild.label, toBuild.swith_role);
+            parent.children[parent.children.length-1].refinementIsAnd = toBuild.refinement;
+
+            // Make defense node the last node in the JSON.
+            for (let i = 0; i < (Object.keys(toBuild).length-7); i++){ // Loop through all children
+                buildFromMultiset(toBuild[i], parent.children[parent.children.length-1]);
+            }
+
       //Leaf Node
-    } else {
-      parent.add_child(new Tree(toBuild.label, 0, 0, 2));
+      } else if (!(toBuild == null || toBuild == undefined)){
+            parent.addChild(toBuild.label, toBuild.swith_role);
+        }
+    }
+    autoFormat()
+}
+function isConsentGiven() {
+    console.log("[*] In isConsentGiven()");
+  
+    var message = "Do you consent to your tree being used in scientific research? \n\n" 
+     + "The research is focused on the evaluation of ADT usage. \n We will collect your username, the treename, the token and your tree as a whole.\n" 
+     + "Findings from this research will be published fully anonimized.\n\n"
+     + "Please note that if you do not consent uploading to the server is NOT possible. You can still download your tree to local storage."
+    if(confirm(message) == true) {
+      return(true);
+    }
+    else {
+      alert("No consent given; tree NOT uploaded to server.")
+      return (false);
     }
   }
-}
-
-function draw(){
-  // If ADT is larger than the canvas, shrink ADT and place in center
-  if(toDraw){
-    if(scaled < 1){
-      scale(scaled);
-      root.x = root.width/2;
-      root.adjust_children();
-    } else {
-    console.log("mama mia", width);
-    root.x = (width - root.width)/2 + root.width/2;
-    root.adjust_children();
+  
+  function isInputlengthWithinLimit(limit, string) {
+    if(string.length <= limit) {
+      return(true);
     }
-
-    if(activeNode != null){
-      // activeNodeTitle.elt.innerHTML = activeNode.t;
-      oldNodetext = activeNode.t;
-      select("#nodeTextInput").attribute("value", activeNode.t);
-      // console.log(activeNodeTitle.elt.innerHTML);
-      // console.log("Check")
-
+    else {
+      alert("Your input is too long ("+ limit +" characters allowed), please try again.")
+      return(false);
     }
-    // zoom in/out
-    scale(scaleValue);
-
-    clear();
-    root.display();
-    toDraw =false;
   }
-  // console.log(root.getActive())
-  //What node is the mouse currently over
-  var mouseNode = root.checkCoordinates(mouseX/scaled, mouseY/scaled);
-
-  //If the mouse is hoving over a node
-  if(mouseNode != null && mouseNode != hoverNode){
-    // console.log(root.checkCoordinates(mouseX/scaled, mouseY/scaled))
-    hoverNode = mouseNode;
-    toDraw = true;
-  } else if (mouseNode == null && hoverNode != null){
-    hoverNode.hover = false;
-    hoverNode = null;
-    toDraw = true;
-  }
-
-  //If the mouse clicks and holds on a node
-  if(mouseIsPressed && (mouseNode != null || !trackMouseStart)){
-    if(trackMouseStart){
-      startMouseX = mouseX;
-      startMouseY = mouseY;
-      trackNode = mouseNode;
-      trackMouseStart = false;
-      trackNode.freeMove = true;
+  
+  function getInputFromUser(promptMessage, defaultValue) {
+    inputFromUser = prompt(promptMessage, defaultValue);
+    if(inputFromUser == null) {
+      inputFromUser = defaultValue;
     }
-    // trackNode.x = (-1* startMouseX + mouseX)/scaled;
-    // trackNode.y = (-1*startMouseY + mouseY)/scaled;
-    toDraw = true;
-    // console.log("Registering Mouse Press", startMouseX - mouseX, startMouseY - mouseY, trackNode.x, trackNode.y);
+    return(inputFromUser);
   }
-}
-
-function mouseReleased(){
-  var clickedNode = trackNode;
-  root.clearActive();
-  // console.log(clickedNode);
-  // console.log(clickedNode, mouseX/scaled, mouseY/scaled);
-  if(clickedNode != null){
-    clickedNode.active = true;
+  
+  async function uploadToServer() {
+    console.log("[*] In uploadToServer()");
+  
+    if(isConsentGiven() == true) {
+      let treeInXML = await downloadADT("");
+      if((treeInXML.length <= 65408) ==  true) {
+        treeName = getInputFromUser("Please name your tree", "TreeName");
+        while(isInputlengthWithinLimit(64, treeName) == false) {
+          treeName = getInputFromUser("Please name your tree", "TreeName");
+        }
+  
+        userName = getInputFromUser("Please provide your name", "UserName");
+        while(isInputlengthWithinLimit(32, userName) == false) {
+          userName = getInputFromUser("Please provide your name", "UserName");
+        }
+  
+        //Generate the token of the tree; between 1 (inclusive) and 99999 (inclusive)
+        treeToken = Math.floor(Math.random() * 100000) + 1;
+  
+        let treeData = {
+          userName: userName,
+          treeName: treeName,
+          treeToken: treeToken,
+          treeInXML: treeInXML
+        };
+  
+        try {
+          let response = await fetch("https://liacs.leidenuniv.nl/~cslocs/adt.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json;charset=utf-8"
+          },
+          body: JSON.stringify(treeData)
+          });
+  
+          if(response.ok) {
+            let result = await response.text();
+            if(result.startsWith("ERROR") ==  false) {
+              alert("Your tree identifier consists of: \n TreeName: " + treeName + "\n Token: " + treeToken
+               + "\n \nPlease remember this as you will need it to retrieve your tree later.");
+            }
+            else alert(result);
+          }
+          else {
+            alert("Request to the server not succesfull!" + response.status);
+            console.log(response.status);
+          }
+  
+        } catch(err) {
+          alert(err);
+        }
+      }
+      else alert("Your tree is too large to be uploaded to the server (limit is roughly 600 nodes).")
+    }
   }
-  activeNode = clickedNode;
-  toDraw = true;
-  trackMouseStart = true;
-  trackNode = null;
-}
-
-function windowResized() {
-  var frameX = (windowWidth - sideFrameWidth)
-  scaled = frameX/(root.width*1.2);
-  sidePanel.position(frameX, 0);
-  console.log("size: ", windowWidth, windowHeight);
-  resizeCanvas(windowWidth, windowHeight);
-  // resizeCanvas(canvasWidth,canvasHeight);
-  toDraw  = true;
-}
+  
+  function isFirstLineXML_Declaration(text) {
+    console.log("[*] In isFirstLineXML_Declaration()");
+    var xmlDeclaration = text.substring(0,5);
+    if(xmlDeclaration == "<?xml") {
+      return(true);
+    }
+    else return(false);
+  }
+  
+  async function drawTreeFromXML(treeInXML) {
+    console.log("[*] In drawTreeFromXML()");
+    try {
+      var input = await getJson(0, treeInXML);
+      buildFromMultiset(input);
+      root.initialColor();
+      draw();
+      toDraw = true;
+      // Needed to be able to select nodes after uploading the file:
+      windowResized();
+      resetScaleCoordinates(root, 1);
+    } catch(error) {
+        console.error("Error:", error);
+    }
+  }
+  
+  async function retrieveFromServer() {
+    console.log("[*] In retrieveFromServer()");
+  
+    treeName = getInputFromUser("Please provide your tree name", "");
+    treeToken = getInputFromUser("Please provide the token for your tree", "");
+  
+    try {
+      let response = await fetch("https://liacs.leidenuniv.nl/~cslocs/adt.php?treeName=" + treeName + "&treeToken=" + treeToken);
+      if(response.ok) {
+        let result = await response.text();
+        console.log(result);
+        if(result.startsWith("ERROR") ==  false) {
+          if(isFirstLineXML_Declaration(result) == true){
+            drawTreeFromXML(result)
+          }
+          else alert("Format not supported; xml expected.");
+        }
+        else {
+          if(result.startsWith("ERROR: Fetch")) {
+            alert("Tree not found; please check tree name and token.");
+          }
+          else alert(result);
+        }
+      }
+      else {
+        alert("Request to the server not succesfull!" + response.status);
+        console.log(response.status);
+      }
+    } catch(err) {
+      alert(err);
+    }
+  }
