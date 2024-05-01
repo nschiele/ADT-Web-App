@@ -27,8 +27,7 @@ async function setup() { // Only called once: https://p5js.org/reference/#/p5/se
     toDraw = true;
     trackMouseStart = true;
     frameRate(60);
-    sideFrameWidth = 400;
-    var frameX = windowWidth - sideFrameWidth; // Calculate how big the canvas should be, by compensating for the non-canvas side elements.
+    var frameX = windowWidth; // Calculate how big the canvas should be, by compensating for the non-canvas side elements.
     var canvasParentDiv = document.getElementById('canvasContainer');
     // set initial height and width for the canvas (will be resized to fit full screen.)
     canvasElement = createCanvas(canvasWidth, canvasHeight);
@@ -37,7 +36,6 @@ async function setup() { // Only called once: https://p5js.org/reference/#/p5/se
     canvasElement.parent("canvasContainer");
     // When canvas (or anything that is not a node, like side/top/bottom bars) is clicked, setup to pan the canvas, as opposed to moving a node
     let nonInteractableElements = [
-        document.getElementById("sidebarMenu"),
         document.getElementById("topBar"),
         canvasElement.elt,
         document.getElementById("canvTopBar"),
@@ -50,8 +48,8 @@ async function setup() { // Only called once: https://p5js.org/reference/#/p5/se
       * The heights of these elements are considered when setting canvas position and dimensions.
       * 0.25 is used to multiply the width, since the left-sidebar has a width of 25%.
       */
-    select("#canvTopBar").position(windowWidth * 0.25, select("#topBar").offsetHeight);
-    canvasElement.position(windowWidth * 0.25, select("#topBar").offsetHeight + select("#canvTopBar").offsetHeight + 26);
+    select("#canvTopBar").position(0, select("#topBar").offsetHeight);
+    canvasElement.position(0, select("#topBar").offsetHeight + select("#canvTopBar").offsetHeight + 26);
 
     cX = canvasElement.position().x;
     cY = canvasElement.position().y;
@@ -85,12 +83,12 @@ async function setup() { // Only called once: https://p5js.org/reference/#/p5/se
 }
 
 function windowResized() { // Called whenever window is resized, standard in p5: https://p5js.org/reference/#/p5/windowResized
-    canvasElement.position(windowWidth * 0.25, select("#topBar").offsetHeight + select("#canvTopBar").offsetHeight + 26);
+    canvasElement.position(0, select("#topBar").offsetHeight + select("#canvTopBar").offsetHeight + 26);
     resetMatrix(); // Reset any translation
     moveNodes(root, -(cX - canvasElement.position().x), -(cY - canvasElement.position().y));
     cX = canvasElement.position().x;
     cY = canvasElement.position().y;
-    select("#canvTopBar").position(windowWidth * 0.25, select("#topBar").offsetHeight);
+    select("#canvTopBar").position(0, select("#topBar").offsetHeight);
     resizeCanvas(windowWidth - cX, windowHeight - cY - document.getElementById('botFooter').offsetHeight, true);
     translate(-cX, -cY); // Re-translate relative to new canvas position
     drawLines(root); // Re-draw all lines, since they are deleted by resizeCanvas
@@ -127,23 +125,78 @@ function deleteTree() {
     root.root.elt.innerHTML="Target";
 }
 
+function createFromXML(){
+    console.log("Creating from XML");
+}
+
+let minX = 0;
+let minY = 0;
+let maxX = 0;
+let maxY = 0;
+
 function saveScreenshot() {
-    const captureElement = document.querySelector('body') // Select the element you want to capture. Select the <body> element to capture full page.
-    html2canvas(captureElement)
-        .then(canvas => {
-            canvas.style.display = 'none'
-            document.body.appendChild(canvas)
-            return canvas
-        })
-        .then(canvas => {
-            const image = canvas.toDataURL('image/png')
-            const a = document.createElement('a')
-            a.setAttribute('download', 'my-image.png')
-            a.setAttribute('href', image)
-            a.click()
-            canvas.remove()
-        })
-  }
+    // resizeCanvas(canvas.width *2, canvas.height * 2);
+    // drawLines(root);
+    // saveCanvas();
+    // windowResized();
+    minX = 0;
+    minY = 0;
+    maxX = 0;
+    maxY = 0;
+    screenshotWalk(root);
+    console.log(minX, minY, maxX, maxY);
+    let newCanvWidth = Math.abs(minX - maxX);
+    let newCanvHeight = Math.abs(minY - maxY);
+    console.log(newCanvWidth, newCanvHeight);
+    resizeCanvas(newCanvWidth + 600, newCanvHeight + 600);
+    let XdistanceToCenter = canvasElement.position().x + newCanvWidth/2 - (root.root.position().x + 150);
+    let YdistanceToCenter = canvasElement.position().y + 300 - (root.root.position().y);
+    console.log(XdistanceToCenter, YdistanceToCenter);
+    moveNodes(root, XdistanceToCenter-150, YdistanceToCenter);
+    clear();
+    background('white');
+    drawLines(root);
+    screenshotDraw(root);
+    saveCanvas();
+    clear();
+    moveNodes(root, -XdistanceToCenter, -YdistanceToCenter);
+    windowResized();
+}
+
+function screenshotDraw(node){
+    let radius = 0;
+    let boxColor = "#3B8D5F";
+    if (!node.isDefense){
+        radius = 20;
+        boxColor = "#E28888";
+    }
+    strokeWeight(2);
+    stroke(boxColor);
+    rect(node.root.x, node.root.y, node.root.elt.offsetWidth, node.root.elt.offsetHeight, radius);
+    strokeWeight(0.5);
+    stroke('#B7B7B7');
+    textStyle(NORMAL);
+    textAlign(CENTER, CENTER)
+    textSize(node.root.elt.offsetHeight*0.6);
+    text(node.root.elt.innerHTML, node.root.x + node.root.elt.offsetWidth / 2, node.root.y + node.root.elt.offsetHeight / 2);
+    for (const child of node.children){
+        screenshotDraw(child);
+    }
+}
+
+function screenshotWalk(node){
+    if (node.root.position().x+150 < minX)
+        minX = node.root.position().x;
+    if (node.root.position().y < minY)
+        minY = node.root.position().y;
+    if (node.root.position().x+150 > maxX)
+        maxX = node.root.position().x;
+    if (node.root.position().y > maxY)
+        maxY = node.root.position().y;
+    for (const child of node.children){
+        screenshotWalk(child);
+    }
+}
 
 function manAddChild(inputVal) { // Manually add a child, inputVal is a string to be given as the text-content of the created node.
     childTree = new ADTree(inputVal);
@@ -151,6 +204,8 @@ function manAddChild(inputVal) { // Manually add a child, inputVal is a string t
 }
 
 function drawLines(node) { // Recursively draw all lines between all nodes and their children
+    strokeWeight(1.5);
+    stroke('gray');
     let lastFoundSameTypeChildIndex = null;
     for (let i = 0; i < node.children.length; i++) {
         if (node.children[i] && node.children[i].isDefense != node.isDefense)
@@ -482,7 +537,7 @@ async function downloadPrep() {
 
 function keyPressed() { // Temporary: bind anything to happen when clicking left arrow, for debugging
     if (keyCode == LEFT_ARROW) {
-        console.log(root)
+        autoFormat();
     }
     if (keyCode == RIGHT_ARROW) {
         let sub = active;
@@ -545,6 +600,7 @@ async function buildFromMultiset(toBuild, parent=null){
         // Make defense node the last node in the JSON.
         for(let i = 0; i < Object.keys(toBuild[0]).length-6; i++){ // Loop through all children
             buildFromMultiset(toBuild[0][i], root);
+            autoFormat();
         }
 
     // Tree Exists, adding subtrees
@@ -556,6 +612,7 @@ async function buildFromMultiset(toBuild, parent=null){
             // Make defense node the last node in the JSON.
             for (let i = 0; i < (Object.keys(toBuild).length-7); i++){ // Loop through all children
                 buildFromMultiset(toBuild[i], parent.children[parent.children.length-1]);
+                autoFormat();
             }
 
       //Leaf Node
@@ -563,7 +620,6 @@ async function buildFromMultiset(toBuild, parent=null){
             parent.addChild(toBuild.label, toBuild.swith_role);
         }
     }
-    autoFormat()
 }
 function isConsentGiven() {
     console.log("[*] In isConsentGiven()");

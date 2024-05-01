@@ -2,6 +2,12 @@ body {
     font-size: .875rem;
     height: 100%;
     overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+* {
+    overflow: hidden;
 }
 
 .feather {
@@ -558,6 +564,7 @@ footer p {
     z-index: 2;
     word-wrap: break-word;
     resize: none;
+    position:absolute;
 }
 
 .NodeInactiveDef {
@@ -571,6 +578,7 @@ footer p {
     z-index: 2;
     word-wrap: break-word;
     resize: none;
+    position:absolute;
 }
 
 .NodeActiveAtk {
@@ -584,6 +592,7 @@ footer p {
     z-index: 2;
     word-wrap: break-word;
     resize: none;
+    position:absolute;
 }
 
 .NodeActiveDef {
@@ -597,6 +606,7 @@ footer p {
     z-index: 2;
     word-wrap: break-word;
     resize: none;
+    position:absolute;
 }
 
 .contextAddChild {
@@ -678,7 +688,7 @@ footer p {
     background-color: white;
     padding: 0;
     margin: 0;
-    width: 75vw;
+    width: 100%;
     left: -10;
 }
 
