@@ -64,11 +64,12 @@ async function setup() { // Only called once: https://p5js.org/reference/#/p5/se
     root = new ADTree("Target");
     allNodes.push(root);
     active = root;
-    active.toggleContextMenu();
     // Replace temporary node with a pre-loaded tree
     let url = "https://raw.githubusercontent.com/nschiele/ADT-Web-App/main/xml%20examples/fig13.xml";
     let resp = await fetch(url);
     var example = await getJson(0, resp); // Call json_junc.js
+    if (active.contextEnabled)
+        active.toggleContextMenu();
     buildFromMultiset(example);
 
     let warningIcon = document.getElementById('btn-groupwarningIcon');
@@ -537,7 +538,7 @@ async function downloadPrep() {
 
 function keyPressed() { // Temporary: bind anything to happen when clicking left arrow, for debugging
     if (keyCode == LEFT_ARROW) {
-        autoFormat();
+        console.log(document.getElementsByClassName('atkDef'));
     }
     if (keyCode == RIGHT_ARROW) {
         let sub = active;
@@ -576,6 +577,8 @@ async function buildFromUpload() {
         if (fileExt === 'xml') {
             input = await getJson(0, file);
         }
+        if (active.contextEnabled)
+        active.toggleContextMenu();
         buildFromMultiset(input);
     } catch(error) {
         console.error("Error:", error);
