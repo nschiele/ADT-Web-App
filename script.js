@@ -127,8 +127,6 @@ function deleteTree() {
     root.root.elt.innerHTML="Target";
 }
 
-<<<<<<< Updated upstream
-=======
 function createFromXML(){
     console.log("Creating xml")
     let adtlangDiv = createDiv();
@@ -177,7 +175,6 @@ let minY = 0;
 let maxX = 0;
 let maxY = 0;
 
->>>>>>> Stashed changes
 function saveScreenshot() {
     const captureElement = document.querySelector('body') // Select the element you want to capture. Select the <body> element to capture full page.
     html2canvas(captureElement)
