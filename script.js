@@ -127,6 +127,57 @@ function deleteTree() {
     root.root.elt.innerHTML="Target";
 }
 
+<<<<<<< Updated upstream
+=======
+function createFromXML(){
+    console.log("Creating xml")
+    let adtlangDiv = createDiv();
+    adtlangDiv.addClass('adtlangDiv');
+    adtlangDiv.position(select("#topBar").offsetHeight, 0);
+
+    let adtlangDivBody = createDiv();
+    adtlangDivBody.addClass('adtlangDivBody');
+    adtlangDiv.position(select("#topBar").offsetHeight, 0);
+    adtlangDivBody.parent(adtlangDiv);
+
+    let adtlangDivCloseButton = createButton("Close");
+    adtlangDivCloseButton.addClass('adtlangDivCloseButton');
+    adtlangDivCloseButton.parent(adtlangDivBody);
+
+    let adtlangDivInput = createInput();
+    adtlangDivInput.addClass('adtlangDivInput');
+    adtlangDivInput.parent(adtlangDivBody);
+
+    let adtlangDivButton = createButton("Generate");
+    adtlangDivButton.addClass('adtlangDivButton');
+    adtlangDivButton.parent(adtlangDivBody);
+
+    adtlangDivButton.mousePressed(function(){
+        console.log(adtlangDivInput.elt.value)
+        buildFromMultiset(adtlangDivInput.elt.value.replace(/['"]+/g, '')); 
+        adtlangDivButton.remove();
+        adtlangDivInput.remove();
+        adtlangDivBody.remove();
+        adtlangDiv.remove();
+    });
+
+    adtlangDivCloseButton.elt.addEventListener('click', () => {
+        // Clean up when clicking out of notification box
+        adtlangDivButton.remove();
+        adtlangDivCloseButton.remove();
+        adtlangDivInput.remove();
+        adtlangDivBody.remove();
+        adtlangDiv.remove();
+    })
+
+}
+
+let minX = 0;
+let minY = 0;
+let maxX = 0;
+let maxY = 0;
+
+>>>>>>> Stashed changes
 function saveScreenshot() {
     const captureElement = document.querySelector('body') // Select the element you want to capture. Select the <body> element to capture full page.
     html2canvas(captureElement)
@@ -231,7 +282,6 @@ function disableNonInteractables(listOfElements) {
 }
 
 function setupWarningMessages() { // Handles behaviour when clicking warning icon
-    // It's a little ugly, but it's a lot easier than (un)hiding a pre-made error with dynamic content :)
     let warningsDiv = createDiv();
     warningsDiv.addClass('warningDiv');
     warningsDiv.position(select("#topBar").offsetHeight, 0);
