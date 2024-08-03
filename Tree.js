@@ -264,7 +264,9 @@ class ADTree {
         this.AtkDefBtn.position(this.root.position().x + this.root.elt.offsetWidth / 2 + this.Refinebtn.elt.offsetWidth / 2, this.root.position().y - this.Refinebtn.elt.offsetHeight);
         feather.replace();
         this.AtkDefBtn = document.getElementsByClassName('atkDef')[0];
-        this.AtkDefBtn.addEventListener('click', this.clickedAtkDef.bind(this));
+        this.AtkDefBtn.addEventListener('click', () => {
+            this.clickedAtkDef();
+        });
         treeCheck();
     }
 

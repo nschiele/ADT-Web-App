@@ -56,266 +56,6 @@
 
   <div class="container-fluid adt-page">
     <div class="row" id="sideBarContainer">
-      <nav id="sidebarMenu" class="col-md-4 col-lg-3 d-md-block sidebar collapse">
-        <div class="position-sticky pt-3 sidebar-sticky" id="leftSideBar">
-          <h5
-            class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-2 mb-1 text-muted text-uppercase">
-            <span>Tools</span>
-            <a class="link-secondary" href="#" aria-label="Add a new report">
-            </a>
-          </h5>
-
-          <ul class="nav flex-column">
-            <li class="nav-item">
-              <a id="toolsTab" class="nav-link" aria-current="page" href="#submitNewTreeDiv" aria-expanded="false"
-                data-bs-toggle="collapse">
-                <span data-feather="plus-circle" class="align-text-bottom"></span>
-                Create
-              </a>
-              <!--Input for ADT Tree-->
-              <div id="submitNewTreeDiv" class="collapsed insideNavLink collapse">
-                <label for="textAreaJsonContent" class="form-label">Contents</label>
-                <textarea class="form-control" id="textAreaADTLang" rows="3"
-                  placeholder="Example: Data Confidality, 1, Physical Attack, 1, Network Attack, 0, Employee Attack, Social Engineering, Fairwall, Training"></textarea>
-                <!-- <div id="alert" class="hiddenAlert">Text is successfully submitted!</div> -->
-                <div class="noti-alert" id="noti-alert">
-                  <div class="noti-body-alert" id="noti-body-alert">
-                  </div>
-                </div>
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-2">
-                  <button type="submit" class="btn btn-sm me-md-2 mt-2 btn-warning" id="generateTreeButton"
-                    onclick="generateTree()">Generate</button>
-                </div>
-              </div>
-            </li>
-
-            <!--Children Nodes-->
-            <li class="nav-item">
-              <a id="toolsTab" class="nav-link " aria-current="page" href="#childDiv" aria-expanded="false"
-                data-bs-toggle="collapse" onclick="changeActiveNavLinkColor();">
-                <span data-feather="layers" class="align-text-bottom"></span>
-                Child
-              </a>
-              <!--Input for ADT Tree-->
-              <div id="childDiv" class="collapsed insideNavLink collapse">
-                <!-- <label for="textAreaJsonContent" class="form-label">Contents</label> -->
-
-                <span data-feather="plus-circle" class="align-text-bottom" id="addChildSymbol"></span>
-                <span class="nav-item">Add Child</span>
-                <div class="mb-2 mt-2 border-bottom">
-                  <div class="newChildDiv">
-                    <!-- Poging tot kleine notificatie-->
-                    <div class="form-check form-switch">
-                      <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
-                      <label class="form-check-label" for="flexSwitchCheckDefault">Defense
-                        Child</label>
-                    </div>
-
-
-                    <div class="input-group mb-4">
-                      <input type="text" class="form-control" placeholder="text.." id="nodeChildTextInput" value=""
-                        onkeyup="checkInputChild()">
-                      <button type="submit" class="btn btn-warning" id="addChildBtn" onclick="manAddChild()">
-                        <span data-feather="plus" class="align-text-bottom"></span></button>
-                      <div class="noti-add" id="noti-add">
-                        <div class="noti-body-add" id="noti-body-add">
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-                <div class="mb-2 mt-2">
-                  <!-- <label for="textAreaJsonContent" class="form-label">Contents</label> -->
-                  <span data-feather="x-circle" class="align-text-bottom" id="removeChildSymbol"></span>
-                  <span class="nav-item">Remove Selected Node</span>
-                  <div class="newChildDiv">
-                    <div class="input-group mb-4 mt-2">
-                      <!-- <input type="text" class="form-control" placeholder="select node to remove.." id="nodeChildInputRemove" value="" onkeyup="checkRemoveChild()"> -->
-                      <button type="submit" class="btn btn-danger custom-btn" id="RemoveChildBtn"
-                        onclick="manDeleteChild()">
-                        <span data-feather="trash" class="align-text-bottom"></span></button>
-                      <div class="noti-rem" id="noti-rem">
-                        <div class="noti-body-rem" id="noti-body-rem">
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-
-                  <!-- </div> -->
-                </div>
-              </div>
-
-            </li>
-
-            <li class="nav-item">
-              <a id="toolsTab" class="nav-link " aria-current="page" href="#customizeNodesDiv" aria-expanded="false"
-                data-bs-toggle="collapse" onclick="changeActiveNavLinkColor();">
-                <span data-feather="pen-tool" class="align-text-bottom"></span>
-                Customize
-              </a>
-              <!--Customize Nodes-->
-              <div id="customizeNodesDiv" class="collapsed insideNavLink collapse">
-                <!--Text-->
-                <div class="border-bottom mb-2">
-                  <div class="col-auto">
-                    <label for="nodeTextLabel" class="visually-hidden">Text</label>
-                    <input type="text" readonly class="form-control-plaintext" id="nodeTextLabel" value="Text">
-                  </div>
-                  <div class="input-group mb-4">
-                    <input type="text" class="form-control" placeholder="No node selected..." id="nodeTextInput"
-                      value="">
-                    <button class="btn btn-warning" type="submit" id="btnChangeNodeText" onclick="manChangeChild()">
-                      <span data-feather="refresh-cw" class="align-text-bottom"></span></button>
-                    <div class="noti-cha" id="noti-cha">
-                      <div class="noti-body-cha" id="noti-body-cha">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!--Shape-->
-                <!-- <div class="border-bottom mb-2 mt-2 ">
-                <label for="shapeTools" class="form-label">Shape</label>
-                <div class="d-grid gap-2 d-md-flex justify-content-md-center mb-2">
-                  <div class="btn-group checkBoxElement" role="group" aria-label="radio btn for shapes1">
-                    <input type="radio" class="btn-check btnShapeSelect" name="btnShape" id="btnradio1" autocomplete="off">
-                    <label class="btn btn-xl btn-outline-dark btn-circle" for="btnradio1"></label>
-                  </div>
-                  <div class="btn-group checkBoxElement" role="group" aria-label="radio btn for shapes2">
-                    <input type="radio" class="btn-check btnShapeSelect" name="btnShapeSquare" id="btnradio2" autocomplete="off">
-                    <label class="btn btn-xl btn-outline-dark btn-square" for="btnradio2"></label>
-                  </div>
-                </div>
-              </div> -->
-
-                <!--circles-->
-                <div class="border-bottom mb-2">
-                  <label for="colorTools" class="form-label">Shape & Color</label>
-                  <div class="row border colorpallet mb-4">
-                    <div class="d-grid gap-3 d-md-flex justify-content-md-center mb-2">
-                      <div class="btn-group checkBoxElement" role="group" aria-label="radio btn for color black"
-                        id="btnCircleBlackDiv">
-                        <button type="radio" class="btn-check btn-outline-dark btn-circle-color btnColorShape"
-                          name="btnColor" id="btnRadioBlack" autocomplete="off"></button>
-                        <label class="btn btn-outline-dark btn-circle-color" for="btnRadioBlack"></label>
-                      </div>
-                      <div class="btn-group checkBoxElement" role="group" aria-label="radio btn for color green"
-                        id="btnCircleGreenDiv">
-                        <button type="radio" class="btn-check btn-outline-success btn-circle-color btnColorShape"
-                          name="btnColor" id="btnRadioGreen" autocomplete="off"></button>
-                        <label class="btn btn-outline-success btn-circle-color" for="btnRadioGreen"></label>
-                      </div>
-                      <div class="btn-group checkBoxElement" role="group" aria-label="radio btn for color red"
-                        id="btnCircleRedDiv">
-                        <button type="button" class="btn-check btn-outline-danger btn-circle-color btnColorShape"
-                          name="btnColor" id="btnRadioRed" autocomplete="off"></button>
-                        <label class="btn btn-outline-danger btn-circle-color" for="btnRadioRed"></label>
-                      </div>
-                    </div>
-                    <!--squares-->
-                    <div class="d-grid gap-3 d-md-flex justify-content-md-center mb-2">
-                      <div class="btn-group checkBoxElement" role="group" aria-label="radio btn for color black"
-                        id="btnSquareBlackDiv">
-                        <button type="radio" class="btn-check btn-outline-dark btn-square-color btnColorShape"
-                          name="btnColor" id="btnRadioBlackSquare" autocomplete="off"></button>
-                        <label class="btn btn-outline-dark btn-square-color" for="btnRadioBlackSquare"></label>
-                      </div>
-                      <div class="btn-group checkBoxElement" role="group" aria-label="radio btn for color green"
-                        id="btnSquareGreenDiv">
-                        <button type="radio" class="btn-check btn-square-color btnColorShape" name="btnColor"
-                          id="btnRadioGreenSquare" autocomplete="off"></button>
-                        <label class="btn btn-outline-success btn-square-color" for="btnRadioGreenSquare"></label>
-                      </div>
-                      <div class="btn-group checkBoxElement" role="group" aria-label="radio btn for color red"
-                        id="btnSquareRedDiv">
-                        <button type="radio" class="btn-check btn-square-color btnColorShape" name="btnColor"
-                          id="btnRadioRedSquare" autocomplete="off"></button>
-                        <label class="btn btn-outline-danger btn-square-color" for="btnRadioRedSquare"></label>
-                      </div>
-                    </div>
-                    <div class="noti-shacol" id="noti-shacol">
-                      <div class="noti-body-shacol" id="noti-body-shacol">
-                      </div>
-                    </div>
-                  </div>
-
-                  <!--lines-->
-                  <div class="border-bottom mb-2">
-                  </div>
-
-                  <!--And/Or-->
-                  <label for="colorTools" class="form-label">Operator</label>
-                  <div class="d-grid gap-2 d-md-flex justify-content-md-center mb-4">
-                    <div class="btn-group checkBoxElement" role="group" aria-label="radio btn for AND refiner"
-                      id="btnAndDiv">
-                      <button type="button" class="btn-check btnLineSelect" name="btnAnd" id="btnAnd"
-                        autocomplete="off"></button>
-                      <label class="btn btnCustom" for="btnAnd">
-                        <!-- <span data-feather="minus" id="btnLineContinueIcon"></span> --> AND
-                      </label>
-                    </div>
-                    <div class="btn-group checkBoxElement" role="group" aria-label="radio btn OR refiner" id="btnOrDiv">
-                      <button type="button" class="btn-check btnLineSelect" name="btnLine" id="btnOr"
-                        autocomplete="off"></button>
-                      <label class="btn btnCustom" for="btnOr">
-                        <!-- <span data-feather="more-horizontal" id="btnLineDashedIcon"></span> -->OR
-                      </label>
-                    </div>
-                    <!-- </div> -->
-
-                  </div>
-
-            </li>
-
-            <!--data section-->
-            <li class="nav-item">
-              <a id="toolsTab" class="nav-link" aria-current="page" href="#" aria-expanded="false"
-                data-bs-toggle="collapse" onclick="changeActiveNavLinkColor();">
-                <span data-feather="file-text" class="align-text-bottom"></span>
-                Data
-              </a>
-              <!--Input for ADT Tree-->
-              <div id="reportDiv" class="collapsed insideNavLink collapse">
-                <!-- <label for="textAreaJsonContent" class="form-label">Contents</label> -->
-                <span data-feather="file-text" class="align-text-bottom"></span>
-                <span class="nav-item mt-3"> Statistics</span><br>
-                <span data-feather="file-text" class="align-text-bottom mt-3"></span>
-                <span class="nav-item mt-3">Probability</span><br>
-                <span data-feather="file-text" class="align-text-bottom mt-3"></span>
-                <span class="nav-item mt-3">Risk Estimation</span><br>
-              </div>
-            </li>
-          </ul>
-
-          <hr>
-          <h5
-            class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
-            <span>Other Tools</span>
-          </h5>
-          <ul class="nav flex-column mb-2">
-            <li class="nav-item">
-              <a class="nav-link otherToolTab" href="#" id="downloadBtn" onclick="saveScreenshot()">
-                <span data-feather="download" class="align-text-bottom"></span>
-                Download ADT
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link otherToolTab" href="#" id="printBtn">
-                <span data-feather="printer" class="align-text-bottom"></span>
-                Print ADT
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link otherToolTab" href="docs.html" target="_blank">
-                <span data-feather="help-circle" class="align-text-bottom"></span>
-                Support
-              </a>
-            </li>
-          </ul>
-        </div>
-      </nav>
-
       <main class="col-md-8 ms-sm-auto col-lg-9 px-md-3">
         <div
           class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
@@ -369,30 +109,28 @@
                   <li><button class="dropdown-item" type="button" id="jpgBtn">jpg</button></li>
                 </ul> -->
               </span>
+              <span data-bs-toggle="tooltip" data-bs-title="createFromXML">
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="createFromXML"
+                  onclick="createFromXML()">
+                  <span data-feather="plus-circle" class="align-text-bottom"></span>
+                </button>
+              </span>
+              <span data-bs-toggle="tooltip" data-bs-title="saveScreenshot">
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="saveScreenshot"
+                  data-bs-toggle="dropdown" aria-expanded="false" onclick="saveScreenshot()">
+                  <span data-feather="camera" class="align-text-bottom"></span>
+                </button>
+              </span>
               <span data-bs-toggle="tooltip" data-bs-title="UploadToServer">
                 <button type="button" class="btn btn-sm btn-outline-secondary" id="UploadToServerBtn"
-                  data-bs-toggle="dropdown" aria-expanded="false" onclick="uploadToServer()">
+                  onclick="uploadToServer()">
                   <span data-feather="upload-cloud" class="align-text-bottom"></span>
                 </button>
               </span>
 
               <span data-bs-toggle="tooltip" data-bs-title="RetrieveFromServer">
                 <button type="button" class="btn btn-sm btn-outline-secondary" id="RetrieveFromServerBtn"
-                  data-bs-toggle="dropdown" aria-expanded="false" onclick="retrieveFromServer()">
-                  <span data-feather="download-cloud" class="align-text-bottom"></span>
-                </button>
-              </span>
-
-              <span data-bs-toggle="tooltip" data-bs-title="UploadToServer">
-                <button type="button" class="btn btn-sm btn-outline-secondary" id="UploadToServerBtn"
-                  data-bs-toggle="dropdown" aria-expanded="false" onclick="uploadToServer()">
-                  <span data-feather="upload-cloud" class="align-text-bottom"></span>
-                </button>
-              </span>
-
-              <span data-bs-toggle="tooltip" data-bs-title="RetrieveFromServer">
-                <button type="button" class="btn btn-sm btn-outline-secondary" id="RetrieveFromServerBtn"
-                  data-bs-toggle="dropdown" aria-expanded="false" onclick="retrieveFromServer()">
+                  onclick="retrieveFromServer()">
                   <span data-feather="download-cloud" class="align-text-bottom"></span>
                 </button>
               </span>
