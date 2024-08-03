@@ -776,7 +776,8 @@ footer p {
     height: 30vh;
     display: none;
     justify-content: center;
-    border: darkgray;
+    border: darkgray solid 2px;
+    border-radius: 10px;
 }
 
 .adtlangDivButton {
