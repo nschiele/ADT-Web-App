@@ -219,6 +219,7 @@ function moveNodes(node, moveX, moveY) { // Moves all nodes in tree
 function disableNonInteractables(listOfElements) {
     for (let i = 0; i < listOfElements.length; i++) { // loop over nonInteractables
         // Handle click DOWN
+        console.log(i)
         listOfElements[i].addEventListener('mousedown', (event) => // when clicked DOWN, unset active. And store the old active in lastActive
         {  
             allowDragging = false;
