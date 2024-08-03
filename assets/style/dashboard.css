@@ -751,7 +751,7 @@ footer p {
     width: 100vw;
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
 }
@@ -759,7 +759,7 @@ footer p {
 .adtlangDivBody {
     width: 50vw;
     height: 50vh;
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: left;
     padding: 30px;
@@ -774,7 +774,7 @@ footer p {
     margin-left: 5%;
     width: 90%;
     height: 30vh;
-    display: flex;
+    display: none;
     justify-content: center;
     border: darkgray;
 }
@@ -793,7 +793,7 @@ footer p {
     box-sizing: border-box;
     color: #fff;
     cursor: pointer;
-    display: inline-block;
+    display: none;
     font-family: -apple-system,system-ui,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
     font-size: 14px;
     font-weight: 600;
@@ -830,6 +830,7 @@ footer p {
 }
 
 .adtlangDivCloseButton {
+    display: none;
     margin-bottom: 3%;
     margin-left: 70%;
     width: 30%;

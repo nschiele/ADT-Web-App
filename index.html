@@ -115,6 +115,9 @@
                   <span data-feather="plus-circle" class="align-text-bottom"></span>
                 </button>
               </span>
+
+              
+              
               <span data-bs-toggle="tooltip" data-bs-title="saveScreenshot">
                 <button type="button" class="btn btn-sm btn-outline-secondary" id="saveScreenshot"
                   data-bs-toggle="dropdown" aria-expanded="false" onclick="saveScreenshot()">
@@ -173,6 +176,14 @@
   <footer class="container-fluid text-center" id="botFooter">
     <p>&copy; 2023 . ADTapp . Leiden University</p>
   </footer>
+
+  <div class="adtlangDiv">
+    <div class="adtlangDivBody">
+      <button class="adtlangDivCloseButton">Close</button>
+      <input type="text" class="adtlangDivInput" id="textAreaADTLang">
+      <button class="adtlangDivButton" id="generateTreeButton" onclick="generateTree()">Generate</button>
+    </div>
+  </div>
   <script src="assets/dist/js/bootstrap.bundle.min.js"></script>
   <script src="assets/style/dashboard.js"></script>
   <script src="script.js"></script>
@@ -182,6 +193,9 @@
 
   <script src="ADTLang/Compiler/bundle.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+
+
+
 </body>
 
 

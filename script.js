@@ -27,7 +27,8 @@ async function setup() { // Only called once: https://p5js.org/reference/#/p5/se
     toDraw = true;
     trackMouseStart = true;
     frameRate(60);
-    var frameX = windowWidth; // Calculate how big the canvas should be, by compensating for the non-canvas side elements.
+    sideFrameWidth = 400;
+    var frameX = windowWidth - sideFrameWidth; // Calculate how big the canvas should be, by compensating for the non-canvas side elements.
     var canvasParentDiv = document.getElementById('canvasContainer');
     // set initial height and width for the canvas (will be resized to fit full screen.)
     canvasElement = createCanvas(canvasWidth, canvasHeight);
@@ -46,7 +47,6 @@ async function setup() { // Only called once: https://p5js.org/reference/#/p5/se
     /* windowWidth/Height is in pixels; the width and height of window (not the entire display, just the html DOM!)
       * sticky-top is the class of the top bar. canvTopBar is the id of the buttons right above the canvas. (zoom in, out, export, import, etc.). 
       * The heights of these elements are considered when setting canvas position and dimensions.
-      * 0.25 is used to multiply the width, since the left-sidebar has a width of 25%.
       */
     select("#canvTopBar").position(0, select("#topBar").offsetHeight);
     canvasElement.position(0, select("#topBar").offsetHeight + select("#canvTopBar").offsetHeight + 26);
@@ -64,13 +64,12 @@ async function setup() { // Only called once: https://p5js.org/reference/#/p5/se
     root = new ADTree("Target");
     allNodes.push(root);
     active = root;
+    active.toggleContextMenu();
     // Replace temporary node with a pre-loaded tree
-    let url = "https://raw.githubusercontent.com/nschiele/ADT-Web-App/main/xml%20examples/fig13.xml";
-    let resp = await fetch(url);
-    var example = await getJson(0, resp); // Call json_junc.js
-    if (active.contextEnabled)
-        active.toggleContextMenu();
-    buildFromMultiset(example);
+    // let url = "https://raw.githubusercontent.com/nschiele/ADT-Web-App/main/xml%20examples/fig13.xml";
+    // let resp = await fetch(url);
+    // var example = await getJson(0, resp); // Call json_junc.js
+    // buildFromMultiset(example);
 
     let warningIcon = document.getElementById('btn-groupwarningIcon');
     warningIcon.addEventListener('click', setupWarningMessages)
@@ -105,6 +104,12 @@ function generateTree() {
     buildFromMultiset(jsonTextInput.replace(/['"]+/g, ''));
     clear();
     drawLines(root);
+
+    select(".adtlangDiv").style('display', 'none')
+    select(".adtlangDivBody").style('display', 'none')
+    select(".adtlangDivCloseButton").style('display', 'none')
+    select(".adtlangDivInput").style('display', 'none')
+    select(".adtlangDivButton").style('display', 'none')
 }
 
 function deleteTree() {
@@ -128,43 +133,20 @@ function deleteTree() {
 
 function createFromXML(){
     console.log("Creating xml")
-    let adtlangDiv = createDiv();
-    adtlangDiv.addClass('adtlangDiv');
-    adtlangDiv.position(select("#topBar").offsetHeight, 0);
+    select(".adtlangDiv").position(select("#topBar").offsetHeight, 0);
+    select(".adtlangDiv").style('display', 'flex')
+    select(".adtlangDivBody").style('display', 'flex')
+    select(".adtlangDivCloseButton").style('display', 'block')
+    select(".adtlangDivInput").style('display', 'flex')
+    select(".adtlangDivButton").style('display', 'inline-block')
 
-    let adtlangDivBody = createDiv();
-    adtlangDivBody.addClass('adtlangDivBody');
-    adtlangDiv.position(select("#topBar").offsetHeight, 0);
-    adtlangDivBody.parent(adtlangDiv);
-
-    let adtlangDivCloseButton = createButton("Close");
-    adtlangDivCloseButton.addClass('adtlangDivCloseButton');
-    adtlangDivCloseButton.parent(adtlangDivBody);
-
-    let adtlangDivInput = createInput();
-    adtlangDivInput.addClass('adtlangDivInput');
-    adtlangDivInput.parent(adtlangDivBody);
-
-    let adtlangDivButton = createButton("Generate");
-    adtlangDivButton.addClass('adtlangDivButton');
-    adtlangDivButton.parent(adtlangDivBody);
-
-    adtlangDivButton.mousePressed(function(){
-        console.log(adtlangDivInput.elt.value)
-        buildFromMultiset(adtlangDivInput.elt.value.replace(/['"]+/g, '')); 
-        adtlangDivButton.remove();
-        adtlangDivInput.remove();
-        adtlangDivBody.remove();
-        adtlangDiv.remove();
-    });
-
-    adtlangDivCloseButton.elt.addEventListener('click', () => {
+    select(".adtlangDivCloseButton").elt.addEventListener('click', () => {
         // Clean up when clicking out of notification box
-        adtlangDivButton.remove();
-        adtlangDivCloseButton.remove();
-        adtlangDivInput.remove();
-        adtlangDivBody.remove();
-        adtlangDiv.remove();
+        select(".adtlangDiv").style('display', 'none')
+        select(".adtlangDivBody").style('display', 'none')
+        select(".adtlangDivCloseButton").style('display', 'none')
+        select(".adtlangDivInput").style('display', 'none')
+        select(".adtlangDivButton").style('display', 'none')
     })
 
 }
@@ -175,68 +157,22 @@ let maxX = 0;
 let maxY = 0;
 
 function saveScreenshot() {
-    // resizeCanvas(canvas.width *2, canvas.height * 2);
-    // drawLines(root);
-    // saveCanvas();
-    // windowResized();
-    minX = 0;
-    minY = 0;
-    maxX = 0;
-    maxY = 0;
-    screenshotWalk(root);
-    console.log(minX, minY, maxX, maxY);
-    let newCanvWidth = Math.abs(minX - maxX);
-    let newCanvHeight = Math.abs(minY - maxY);
-    console.log(newCanvWidth, newCanvHeight);
-    resizeCanvas(newCanvWidth + 600, newCanvHeight + 600);
-    let XdistanceToCenter = canvasElement.position().x + newCanvWidth/2 - (root.root.position().x + 150);
-    let YdistanceToCenter = canvasElement.position().y + 300 - (root.root.position().y);
-    console.log(XdistanceToCenter, YdistanceToCenter);
-    moveNodes(root, XdistanceToCenter-150, YdistanceToCenter);
-    clear();
-    background('white');
-    drawLines(root);
-    screenshotDraw(root);
-    saveCanvas();
-    clear();
-    moveNodes(root, -XdistanceToCenter, -YdistanceToCenter);
-    windowResized();
-}
-
-function screenshotDraw(node){
-    let radius = 0;
-    let boxColor = "#3B8D5F";
-    if (!node.isDefense){
-        radius = 20;
-        boxColor = "#E28888";
-    }
-    strokeWeight(2);
-    stroke(boxColor);
-    rect(node.root.x, node.root.y, node.root.elt.offsetWidth, node.root.elt.offsetHeight, radius);
-    strokeWeight(0.5);
-    stroke('#B7B7B7');
-    textStyle(NORMAL);
-    textAlign(CENTER, CENTER)
-    textSize(node.root.elt.offsetHeight*0.6);
-    text(node.root.elt.innerHTML, node.root.x + node.root.elt.offsetWidth / 2, node.root.y + node.root.elt.offsetHeight / 2);
-    for (const child of node.children){
-        screenshotDraw(child);
-    }
-}
-
-function screenshotWalk(node){
-    if (node.root.position().x+150 < minX)
-        minX = node.root.position().x;
-    if (node.root.position().y < minY)
-        minY = node.root.position().y;
-    if (node.root.position().x+150 > maxX)
-        maxX = node.root.position().x;
-    if (node.root.position().y > maxY)
-        maxY = node.root.position().y;
-    for (const child of node.children){
-        screenshotWalk(child);
-    }
-}
+    const captureElement = document.querySelector('body') // Select the element you want to capture. Select the <body> element to capture full page.
+    html2canvas(captureElement)
+        .then(canvas => {
+            canvas.style.display = 'none'
+            document.body.appendChild(canvas)
+            return canvas
+        })
+        .then(canvas => {
+            const image = canvas.toDataURL('image/png')
+            const a = document.createElement('a')
+            a.setAttribute('download', 'my-image.png')
+            a.setAttribute('href', image)
+            a.click()
+            canvas.remove()
+        })
+  }
 
 function manAddChild(inputVal) { // Manually add a child, inputVal is a string to be given as the text-content of the created node.
     childTree = new ADTree(inputVal);
@@ -244,8 +180,6 @@ function manAddChild(inputVal) { // Manually add a child, inputVal is a string t
 }
 
 function drawLines(node) { // Recursively draw all lines between all nodes and their children
-    strokeWeight(1.5);
-    stroke('gray');
     let lastFoundSameTypeChildIndex = null;
     for (let i = 0; i < node.children.length; i++) {
         if (node.children[i] && node.children[i].isDefense != node.isDefense)
@@ -326,7 +260,6 @@ function disableNonInteractables(listOfElements) {
 }
 
 function setupWarningMessages() { // Handles behaviour when clicking warning icon
-    // It's a little ugly, but it's a lot easier than (un)hiding a pre-made error with dynamic content :)
     let warningsDiv = createDiv();
     warningsDiv.addClass('warningDiv');
     warningsDiv.position(select("#topBar").offsetHeight, 0);
@@ -577,7 +510,7 @@ async function downloadPrep() {
 
 function keyPressed() { // Temporary: bind anything to happen when clicking left arrow, for debugging
     if (keyCode == LEFT_ARROW) {
-        console.log(document.getElementsByClassName('atkDef'));
+        console.log(root)
     }
     if (keyCode == RIGHT_ARROW) {
         let sub = active;
@@ -616,8 +549,6 @@ async function buildFromUpload() {
         if (fileExt === 'xml') {
             input = await getJson(0, file);
         }
-        if (active.contextEnabled)
-        active.toggleContextMenu();
         buildFromMultiset(input);
     } catch(error) {
         console.error("Error:", error);
@@ -642,7 +573,6 @@ async function buildFromMultiset(toBuild, parent=null){
         // Make defense node the last node in the JSON.
         for(let i = 0; i < Object.keys(toBuild[0]).length-6; i++){ // Loop through all children
             buildFromMultiset(toBuild[0][i], root);
-            autoFormat();
         }
 
     // Tree Exists, adding subtrees
@@ -654,7 +584,6 @@ async function buildFromMultiset(toBuild, parent=null){
             // Make defense node the last node in the JSON.
             for (let i = 0; i < (Object.keys(toBuild).length-7); i++){ // Loop through all children
                 buildFromMultiset(toBuild[i], parent.children[parent.children.length-1]);
-                autoFormat();
             }
 
       //Leaf Node
@@ -662,6 +591,7 @@ async function buildFromMultiset(toBuild, parent=null){
             parent.addChild(toBuild.label, toBuild.swith_role);
         }
     }
+    autoFormat()
 }
 function isConsentGiven() {
     console.log("[*] In isConsentGiven()");
