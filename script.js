@@ -16,7 +16,8 @@ let allowDragging = false;
 let redrawLines = false;
 let refinementDist = 0.3;
 let scalar = 1;
-let standardWidth = 300;
+let standardWidth = 250;
+let standardVerticalDist = 50;
 let standardFontSize = 0.875; // 0.875 rem
 
 let CMOverflow = false;
@@ -149,11 +150,11 @@ function saveScreenshot() {
     let newCanvWidth = Math.abs(minX - maxX);
     let newCanvHeight = Math.abs(minY - maxY);
     console.log(newCanvWidth, newCanvHeight);
-    resizeCanvas(newCanvWidth + 600, newCanvHeight + 600);
-    let XdistanceToCenter = canvasElement.position().x + newCanvWidth/2 - (root.root.position().x + 150);
-    let YdistanceToCenter = canvasElement.position().y + 300 - (root.root.position().y);
+    resizeCanvas(newCanvWidth + 800, newCanvHeight + 800);
+    let XdistanceToCenter = canvasElement.position().x + newCanvWidth / 2 - (root.root.position().x + standardWidth);
+    let YdistanceToCenter = canvasElement.position().y - (root.root.position().y);
     console.log(XdistanceToCenter, YdistanceToCenter);
-    moveNodes(root, XdistanceToCenter-150, YdistanceToCenter);
+    moveNodes(root, XdistanceToCenter, YdistanceToCenter);
     clear();
     background('white');
     drawLines(root);
@@ -178,10 +179,27 @@ function screenshotDraw(node){
     stroke('#B7B7B7');
     textStyle(NORMAL);
     textAlign(CENTER, CENTER)
-    textSize(node.root.elt.offsetHeight*0.6);
-    text(node.root.elt.innerHTML, node.root.x + node.root.elt.offsetWidth / 2, node.root.y + node.root.elt.offsetHeight / 2);
+    textSize(standardFontSize * 16 * scalar);
+    // textSize(node.root.elt.offsetHeight*0.6);
+    screenshotText(node);
+    // text(nodeText, node.root.x + node.root.elt.offsetWidth / 2, node.root.y + node.root.elt.offsetHeight / 2);
     for (const child of node.children){
         screenshotDraw(child);
+    }
+
+}
+
+function screenshotText(node) {
+    let nodeText = node.root.elt.innerHTML;
+    nodeText = nodeText.replace(/<br>/g, "");
+    // console.log(node.root.elt)
+    let sep = parseInt(standardWidth / 10) + 12;
+    if (nodeText.length < sep) {
+        text(nodeText, node.root.x + node.root.elt.offsetWidth / 2, node.root.y + node.root.elt.offsetHeight / 2);
+    } else {
+        for (let i = 0; i < nodeText.length; i += sep) {
+            text(nodeText.substr(i, sep), node.root.x + node.root.elt.offsetWidth / 2, node.root.y + node.root.elt.offsetHeight / 2 + i / 1.6 - 12);
+        }
     }
 }
 
@@ -465,11 +483,11 @@ function autoFormatTree(rootNode) {
             else
                 childrenWithChildren.push(false)
             if (i > 0){
-                cumulativeChildWidths.push(childCountSubTree*350+cumulativeChildWidths[i-1]);
+                cumulativeChildWidths.push(childCountSubTree * (standardWidth + 50) + cumulativeChildWidths[i - 1]);
             } else {
-                cumulativeChildWidths.push(childCountSubTree*350);
+                cumulativeChildWidths.push(childCountSubTree * (standardWidth + 50));
             }
-            childWidths.push(childCountSubTree*350);
+            childWidths.push(childCountSubTree * (standardWidth + 50));
             totalChildren += childCountSubTree
         }
         // moving
@@ -477,18 +495,18 @@ function autoFormatTree(rootNode) {
             let child = rootNode.children[i];
             if (i == 0){
                 let offset = -(cumulativeChildWidths[cumulativeChildWidths.length-1]/2);
-                relPosX = rootNode.root.x + (offset + (childWidths[i]-350)/2 + 175)*scalar;
+                relPosX = rootNode.root.x + (offset + (childWidths[i] - (standardWidth + 50)) / 2 + ((standardWidth + 50) / 2)) * scalar;
                 currPosX = child.root.x;
                 XDifference = relPosX - currPosX;
-                relPosY = rootNode.root.y + rootNode.root.elt.offsetHeight + 200*scalar;
+                relPosY = rootNode.root.y + rootNode.root.elt.offsetHeight + standardVerticalDist * scalar;
                 YDifference = relPosY - child.root.y;
                 moveNodes(child, XDifference, YDifference);
             } else {
                 let offset = -(cumulativeChildWidths[cumulativeChildWidths.length-1]/2) + cumulativeChildWidths[i-1];
-                relPosX = rootNode.root.x + (offset + (childWidths[i]-350)/2 + 175)*scalar;
+                relPosX = rootNode.root.x + (offset + (childWidths[i] - (standardWidth + 50)) / 2 + ((standardWidth + 50) / 2)) * scalar;
                 currPosX = child.root.x;
                 XDifference = relPosX - currPosX;
-                relPosY = rootNode.root.y + rootNode.root.elt.offsetHeight + 200*scalar;
+                relPosY = rootNode.root.y + rootNode.root.elt.offsetHeight + standardVerticalDist * scalar;
                 YDifference = relPosY - child.root.y;
                 moveNodes(child, XDifference, YDifference);
             }
