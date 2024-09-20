@@ -109,9 +109,13 @@
                   <li><button class="dropdown-item" type="button" id="jpgBtn">jpg</button></li>
                 </ul> -->
               </span>
-              <span data-bs-toggle="tooltip" data-bs-title="createFromXML">
-                <button type="button" class="btn btn-sm btn-outline-secondary" id="createFromXML"
-                  onclick="createFromXML()">
+              <span data-bs-toggle="tooltip" data-bs-title="Style">
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="style" onclick="setStyle()">
+                  <span data-feather="paperclip" class="align-text-bottom"></span>
+                </button>
+              </span>
+                  <span data-bs-toggle="tooltip" data-bs-title="createFromXML">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="createFromXML" onclick="createFromXML()">
                   <span data-feather="plus-circle" class="align-text-bottom"></span>
                 </button>
               </span>
@@ -120,7 +124,7 @@
               
               <span data-bs-toggle="tooltip" data-bs-title="saveScreenshot">
                 <button type="button" class="btn btn-sm btn-outline-secondary" id="saveScreenshot"
-                  data-bs-toggle="dropdown" aria-expanded="false" onclick="saveScreenshot()">
+                  data-bs-toggle="dropdown" aria-expanded="false" onclick="saveScreenshotOLD()">
                   <span data-feather="camera" class="align-text-bottom"></span>
                 </button>
               </span>
@@ -184,6 +188,14 @@
       <button class="adtlangDivButton" id="generateTreeButton" onclick="generateTree()">Generate</button>
     </div>
   </div>
+  <div class="styleDiv">
+    <div class="styleDivBody">
+      <button class="styleDivCloseButton">Close</button>
+      <input type="range" class="styleRange form-range" min="50" max="550" step="1" id="styleRange">
+      <button class="styleDivButton" id="updateStyleButton" onclick="updateStyle()">Update Style</button>
+    </div>
+  </div>
+
   <script src="assets/dist/js/bootstrap.bundle.min.js"></script>
   <script src="assets/style/dashboard.js"></script>
   <script src="script.js"></script>

@@ -747,7 +747,9 @@ footer p {
     color: darkred;
 }
 
-.adtlangDiv {
+.adtlangDiv,
+.styleDiv,
+.aiDiv {
     width: 100vw;
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
@@ -756,7 +758,9 @@ footer p {
     align-items: center;
 }
 
-.adtlangDivBody {
+.adtlangDivBody,
+.styleDivBody,
+.aiDivBody {
     width: 50vw;
     height: 50vh;
     display: none;
@@ -780,7 +784,9 @@ footer p {
     border-radius: 10px;
 }
 
-.adtlangDivButton {
+.adtlangDivButton,
+.styleDivButton,
+.aiDivButton {
     margin-top: 3%;
     margin-left: 5%;
     width: 40%;
@@ -810,27 +816,38 @@ footer p {
     white-space: nowrap;
 }
 
-.adtlangDivButton:focus:not(:focus-visible):not(.focus-visible) {
+.adtlangDivButton:focus:not(:focus-visible):not(.focus-visible),
+.styleButton:focus:not(:focus-visible):not(.focus-visible),
+.aiButton:focus:not(:focus-visible):not(.focus-visible) {
   box-shadow: none;
   outline: none;
 }
 
-.adtlangDivButton:hover {
+.adtlangDivButton:hover,
+.styleButton:hover,
+.aiButton:hover,
+.styleButton:hover {
   background-color: #fb8332;
 }
 
-.adtlangDivButton:focus {
+.adtlangDivButton:focus,
+.styleButton:focus,
+.aiButton:focus {
   background-color: #fb8332;
   box-shadow: rgba(0, 0, 0, 0.1) 0 0 3px;
   outline: none;
 }
 
-.adtlangDivButton:active {
+.adtlangDivButton:active,
+.styleButton:active,
+.aiButton:active {
   background-color: #fa6400;
   box-shadow: rgba(20, 70, 32, .2) 0 1px 0 inset;
 }
 
-.adtlangDivCloseButton {
+.adtlangDivCloseButton,
+.styleDivCloseButton,
+.aiDivCloseButton {
     display: none;
     margin-bottom: 3%;
     margin-left: 70%;
@@ -838,7 +855,7 @@ footer p {
     height: 20%;
     align-content: center;
     appearance: none;
-    background-color: red;
+    background-color: rgba(199, 4, 4, 0.89);
     border: 1px solid rgba(27, 31, 35, .15);
     border-radius: 6px;
     box-shadow: rgba(27, 31, 35, .1) 0 1px 0;

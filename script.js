@@ -59,6 +59,7 @@ async function setup() { // Only called once: https://p5js.org/reference/#/p5/se
     canvasElement.elt.style.borderRadius = "0";
     stroke('darkgray');
     strokeWeight(2);
+    background('white');
 
     // Initialize canvas with 1 node
     root = new ADTree("Target");
@@ -131,6 +132,31 @@ function deleteTree() {
     root.root.elt.innerHTML="Target";
 }
 
+function setStyle() {
+    console.log("Creating xml")
+    select(".styleDiv").position(select("#topBar").offsetHeight, 0);
+    select(".styleDiv").style('display', 'flex')
+    select(".styleDivBody").style('display', 'flex')
+    select(".styleDivCloseButton").style('display', 'block')
+    select(".styleDivButton").style('display', 'inline-block')
+
+    select(".styleDivCloseButton").elt.addEventListener('click', () => {
+        // Clean up when clicking out of notification box
+        select(".styleDiv").style('display', 'none')
+        select(".styleDivBody").style('display', 'none')
+        select(".styleDivCloseButton").style('display', 'none')
+        select(".styleDivButton").style('display', 'none')
+    })
+}
+
+function updateStyle() {
+    console.log(document.getElementById('styleRange').value);
+    standardWidth = document.getElementById('styleRange').value;
+    console.log(standardWidth);
+    autoFormat();
+}
+
+
 function createFromXML(){
     console.log("Creating xml")
     select(".adtlangDiv").position(select("#topBar").offsetHeight, 0);
@@ -151,11 +177,17 @@ function createFromXML(){
 
 }
 
+
+
+
 let minX = 0;
 let minY = 0;
 let maxX = 0;
 let maxY = 0;
 
+
+
+// This is currently unused due to html2canvas being bad.
 function saveScreenshot() {
     const captureElement = document.querySelector('body') // Select the element you want to capture. Select the <body> element to capture full page.
     html2canvas(captureElement)
@@ -741,3 +773,87 @@ function isConsentGiven() {
       alert(err);
     }
   }
+
+
+//   This part is the old saveScreenshot, which we'll use until a new and better screenshot tool is implement. html2canvas is terrible and doesn't work on mac.
+
+function saveScreenshotOLD() {
+    // resizeCanvas(canvas.width *2, canvas.height * 2);
+    // drawLines(root);
+    // saveCanvas();
+    // windowResized();
+    minX = 0;
+    minY = 0;
+    maxX = 0;
+    maxY = 0;
+    screenshotWalk(root);
+    console.log(minX, minY, maxX, maxY);
+    let newCanvWidth = Math.abs(minX - maxX);
+    let newCanvHeight = Math.abs(minY - maxY);
+    console.log(newCanvWidth, newCanvHeight);
+    resizeCanvas(newCanvWidth, newCanvHeight);
+    let XdistanceToCenter = canvasElement.position().x + newCanvWidth / 2 - (root.root.position().x + (standardWidth / 2));
+    let YdistanceToCenter = canvasElement.position().y - (root.root.position().y);
+    console.log(XdistanceToCenter, YdistanceToCenter);
+    moveNodes(root, XdistanceToCenter, YdistanceToCenter);
+    clear();
+    background('white');
+    drawLines(root);
+    screenshotDraw(root);
+    saveCanvas();
+    clear();
+    moveNodes(root, -XdistanceToCenter, -YdistanceToCenter);
+    windowResized();
+}
+
+function screenshotDraw(node) {
+    let radius = 0;
+    let boxColor = "#3B8D5F";
+    if (!node.isDefense) {
+        radius = 20;
+        boxColor = "#E28888";
+    }
+    strokeWeight(2);
+    stroke(boxColor);
+    rect(node.root.x, node.root.y, node.root.elt.offsetWidth, node.root.elt.offsetHeight, radius);
+    strokeWeight(0.5);
+    stroke('#B7B7B7');
+    textStyle(NORMAL);
+    textAlign(CENTER, CENTER)
+    textSize(standardFontSize * 16 * scalar);
+    // textSize(node.root.elt.offsetHeight*0.6);
+    screenshotText(node);
+    // text(nodeText, node.root.x + node.root.elt.offsetWidth / 2, node.root.y + node.root.elt.offsetHeight / 2);
+    for (const child of node.children) {
+        screenshotDraw(child);
+    }
+
+}
+
+function screenshotText(node) {
+    let nodeText = node.root.elt.innerHTML;
+    nodeText = nodeText.replace(/<br>/g, "");
+    // console.log(node.root.elt)
+    let sep = parseInt(standardWidth / 10) + 12;
+    if (nodeText.length < sep) {
+        text(nodeText, node.root.x + node.root.elt.offsetWidth / 2, node.root.y + node.root.elt.offsetHeight / 2);
+    } else {
+        for (let i = 0; i < nodeText.length; i += sep) {
+            text(nodeText.substr(i, sep), node.root.x + node.root.elt.offsetWidth / 2, node.root.y + node.root.elt.offsetHeight / 2 + i / 1.6 - 12);
+        }
+    }
+}
+
+function screenshotWalk(node) {
+    if (node.root.position().x - (standardWidth / 2) < minX)
+        minX = node.root.position().x - (standardWidth / 2);
+    if (node.root.position().y < minY)
+        minY = node.root.position().y;
+    if (node.root.position().x + (standardWidth / 2) > maxX)
+        maxX = node.root.position().x + (standardWidth / 2);
+    if (node.root.position().y > maxY)
+        maxY = node.root.position().y;
+    for (const child of node.children) {
+        screenshotWalk(child);
+    }
+}
