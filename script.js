@@ -152,8 +152,10 @@ function setStyle() {
 function updateStyle() {
     console.log(document.getElementById('styleRange').value);
     standardWidth = document.getElementById('styleRange').value;
-    console.log(standardWidth);
-    autoFormat();
+    console.log(root);
+    rescaleTree(root, true);
+    rescaleTree(root, false);
+
 }
 
 
@@ -456,12 +458,15 @@ function autoFormat() {
 }
 
 function autoFormatTree(rootNode) {
+    console.log(standardWidth)
+    console.log(int(standardWidth) + 50)
     // TO-DO: Write documentation
     // This whole thing is a thesis of its own im not gonna lie
     let totalChildren = 0;
     let childWidths = [];
     let cumulativeChildWidths = [];
     let childrenWithChildren = [];
+    let widthOffset = int(standardWidth) + 50
     if (rootNode.children.length > 0){
         for (let i = 0; i < rootNode.children.length; i++){
             let childCountSubTree = autoFormatTree(rootNode.children[i])
@@ -470,11 +475,11 @@ function autoFormatTree(rootNode) {
             else
                 childrenWithChildren.push(false)
             if (i > 0){
-                cumulativeChildWidths.push(childCountSubTree*350+cumulativeChildWidths[i-1]);
+                cumulativeChildWidths.push(childCountSubTree * widthOffset + cumulativeChildWidths[i - 1]);
             } else {
-                cumulativeChildWidths.push(childCountSubTree*350);
+                cumulativeChildWidths.push(childCountSubTree * widthOffset);
             }
-            childWidths.push(childCountSubTree*350);
+            childWidths.push(childCountSubTree * widthOffset);
             totalChildren += childCountSubTree
         }
         // moving
@@ -482,7 +487,7 @@ function autoFormatTree(rootNode) {
             let child = rootNode.children[i];
             if (i == 0){
                 let offset = -(cumulativeChildWidths[cumulativeChildWidths.length-1]/2);
-                relPosX = rootNode.root.x + (offset + (childWidths[i]-350)/2 + 175)*scalar;
+                relPosX = rootNode.root.x + (offset + (childWidths[i] - widthOffset) / 2 + widthOffset / 2) * scalar;
                 currPosX = child.root.x;
                 XDifference = relPosX - currPosX;
                 relPosY = rootNode.root.y + rootNode.root.elt.offsetHeight + 200*scalar;
@@ -490,7 +495,7 @@ function autoFormatTree(rootNode) {
                 moveNodes(child, XDifference, YDifference);
             } else {
                 let offset = -(cumulativeChildWidths[cumulativeChildWidths.length-1]/2) + cumulativeChildWidths[i-1];
-                relPosX = rootNode.root.x + (offset + (childWidths[i]-350)/2 + 175)*scalar;
+                relPosX = rootNode.root.x + (offset + (childWidths[i] - widthOffset) / 2 + widthOffset / 2) * scalar;
                 currPosX = child.root.x;
                 XDifference = relPosX - currPosX;
                 relPosY = rootNode.root.y + rootNode.root.elt.offsetHeight + 200*scalar;
