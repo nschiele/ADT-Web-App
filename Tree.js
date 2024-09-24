@@ -13,6 +13,7 @@ class ADTree {
         // Buttons
         let Plusbtn = null;
         let Refinebtn = null;
+        let AIbtn = null;
         let AtkDefBtn = null;
         let DeleteBtn = null;
         this.oldX = width / 2 + cX;
@@ -37,8 +38,10 @@ class ADTree {
     }
 
     resizeInputBox() { // Called when someone types into a node
-        if (active == this) // Pin the PlusBtn to the bottom of the active node, even when the node expands when written in
+        if (active == this) {  // Pin the PlusBtn to the bottom of the active node, even when the node expands when written in
             this.Plusbtn.position(this.root.position().x + this.root.elt.offsetWidth / 2 - this.Plusbtn.width / 2, this.root.position().y + this.root.elt.offsetHeight);
+            this.AIbtn.position(this.root.position().x + this.root.elt.offsetWidth / 2 + this.Plusbtn.width / 2, this.root.position().y + this.root.elt.offsetHeight);
+        }
         // Scale width to new width
         this.root.elt.style.width = standardWidth * scalar + "px";
         // If not rescaled, use standard fontsize. Otherwise, use modified scalar that works a little better with fontsize (0.97 is arbitraty and just kinda works)
@@ -196,6 +199,7 @@ class ADTree {
                 this.root.addClass('NodeInactiveAtk'); // add inactive styling
             }
             this.Plusbtn.remove();
+            this.AIbtn.remove();
             this.Refinebtn.remove();
             this.AtkDefBtn.remove();
             this.DeleteBtn.remove();
@@ -211,8 +215,19 @@ class ADTree {
             this.Plusbtn = createButton("+");
             this.Plusbtn.parent('canvasContainer');
             this.Plusbtn.addClass('contextAddChild');
-            this.Plusbtn.position(this.root.position().x + this.root.elt.offsetWidth / 2 - this.Plusbtn.width / 2, this.root.position().y + this.root.elt.offsetHeight);
+            this.Plusbtn.position(this.root.position().x + this.root.elt.offsetWidth / 2 - this.Plusbtn.width / 2 - 15, this.root.position().y + this.root.elt.offsetHeight);
             this.Plusbtn.mouseClicked(() => this.addChild());
+
+            // Create the AI button
+            this.AIbtn = createButton("AI");
+            this.AIbtn.parent('canvasContainer');
+            this.AIbtn.addClass('contextAddChild');
+            this.AIbtn.position(this.root.position().x + this.root.elt.offsetWidth / 2 + this.Plusbtn.width / 2, this.root.position().y + this.root.elt.offsetHeight);
+            this.AIbtn.mouseClicked(() => {
+                // console.log(this.root.elt.innerHTML)
+                generate(this.root.elt.innerHTML, this);
+
+            });
 
             // Create refinedment (AND/OR) button
             if (this.refinementIsAnd)
@@ -221,7 +236,7 @@ class ADTree {
                 this.Refinebtn = createButton("AND");
             this.Refinebtn.parent('canvasContainer');
             this.Refinebtn.addClass('contextRefine');
-            this.Refinebtn.position(this.root.position().x + this.root.elt.offsetWidth / 2 - this.Plusbtn.width / 2, this.root.position().y - this.Refinebtn.elt.offsetHeight); // TODO: WEIRD CSS BUG (+9????)
+            this.Refinebtn.position(this.root.position().x + this.root.elt.offsetWidth / 2 - this.Plusbtn.width / 2 - 15, this.root.position().y - this.Refinebtn.elt.offsetHeight); // TODO: WEIRD CSS BUG (+9????)
             this.Refinebtn.mouseClicked(() => {
                 this.refinementIsAnd = !this.refinementIsAnd;
                 clear();
@@ -367,4 +382,129 @@ class ADTree {
         temp_string += '</node>';
         return temp_string;
     }
+}
+
+
+function generate(label, node) {
+    console.log("Calling GPT3")
+    var url = "https://api.openai.com/v1/chat/completions";
+    var bearer = 'Bearer ' + "TOKEN GOES HERE"
+
+    //This part generates this children
+    prompt = "You are helping cybersecurity analysis break "
+    if (node.isDefense) {
+        prompt += "defense"
+    } else {
+        prompt += "attack"
+    }
+    prompt += " goals and components into their component parts for analysis.  Please provide 3 sub-components or sub-goals in service of " + label + ". "
+    if (node.refinementIsAnd) {
+        prompt += " All sub-component or sub-goals should will need to be completed for the overall goal to be competed."
+    } else {
+        prompt += " Only one sub-component or sub-goals should will need to be completed for the overall goal to be competed."
+    }
+    prompt += " Make each sub-component or sub-goal no longer than 10 words. Do not elaborate."
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Authorization': bearer,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            "model": "gpt-3.5-turbo",
+            "messages": [{ "role": "user", "content": prompt }]
+
+        })
+
+
+    }).then(response => {
+
+        return response.json()
+
+    }).then(data => {
+        console.log(data)
+        console.log(typeof data)
+        console.log(data.choices)
+        console.log(data.choices[0])
+        console.log(data.choices[0].message)
+        console.log(data.choices[0].message.content, label)
+        console.log(typeof data.choices)
+        console.log(Object.keys(data))
+        console.log(data['choices'][0].text)
+        let response = data.choices[0].message.content
+        console.log(response)
+        const re = /[0-9]\. /i;
+        // let response = "1. Identify and exploit vulnerabilities in the bank's physical security systems, such as alarms, locks, and surveillance cameras. 2. Gain unauthorized access to the bank's computer network and systems, in order to bypass digital security measures and obtain valuable information or funds. 3. Maintain stealth and covertness throughout the operation to minimize the risk of detection by security personnel or law enforcement."
+        response = response.split(re)
+        console.log(response)
+        for (let i = 1; i < 4; i++) {
+            node.addChild(response[i])
+        }
+
+    })
+        .catch(error => {
+            console.log('Something bad happened ' + error)
+        }).then(data => {    //This part generates the countermeasure
+            prompt = "You are helping cybersecurity analysis break "
+            if (node.isDefense) {
+                prompt += "defense"
+            } else {
+                prompt += "attack"
+            }
+            prompt += " goals and components into their component parts for analysis."
+            if (node.isDefense) {
+                prompt += " Provide one way to attack the goal or component: " + label
+            } else {
+                prompt += " Provide one way to defend against the goal or component: " + label
+            }
+            prompt += " Make your suggested"
+            if (node.isDefense) {
+                prompt += " attack"
+            } else {
+                prompt += " defense"
+            }
+            prompt += " no more than 10 words. Do not elaborate"
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Authorization': bearer,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "model": "gpt-3.5-turbo",
+                    "messages": [{ "role": "user", "content": prompt }]
+
+                })
+
+
+            }).then(response => {
+
+                return response.json()
+
+            }).then(data => {
+                console.log(data)
+                console.log(typeof data)
+                console.log(data.choices)
+                console.log(data.choices[0])
+                console.log(data.choices[0].message)
+                console.log(data.choices[0].message.content, label)
+                console.log(typeof data.choices)
+                console.log(Object.keys(data))
+                console.log(data['choices'][0].text)
+                let response = data.choices[0].message.content
+                if (node.isDefense) {
+                    node.addChild(response, false)
+                } else {
+                    node.addChild(response, true)
+                }
+
+            })
+                .catch(error => {
+                    console.log('Something bad happened ' + error)
+                });
+        });
+
+
+
+
 }
