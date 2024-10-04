@@ -388,7 +388,7 @@ class ADTree {
 function generate(label, node) {
     console.log("Calling GPT3")
     var url = "https://api.openai.com/v1/chat/completions";
-    var bearer = 'Bearer ' + "TOKEN GOES HERE"
+    var bearer = 'Bearer ' + AI_token
 
     //This part generates this children
     prompt = "You are helping cybersecurity analysis break "

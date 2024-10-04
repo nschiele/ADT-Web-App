@@ -18,6 +18,7 @@ let refinementDist = 0.3;
 let scalar = 1;
 let standardWidth = 300;
 let standardFontSize = 0.875; // 0.875 rem
+let AI_token = "";
 
 let CMOverflow = false;
 
@@ -99,6 +100,12 @@ function windowResized() { // Called whenever window is resized, standard in p5:
     }
 }
 
+function setAIKey() {
+    console.log(AI_token)
+    AI_token = select("#textAreaAI").value();
+    console.log(AI_token)
+}
+
 function generateTree() {
     // Data, 1, Physical, 1, Network, 0, Employee, Social, Fairwall, Training
     var jsonTextInput = select("#textAreaADTLang").value();
@@ -132,8 +139,25 @@ function deleteTree() {
     root.root.elt.innerHTML="Target";
 }
 
+function setAI() {
+    console.log("setting ai")
+    closeWindows();
+    select(".aiDiv").position(select("#topBar").offsetHeight, 0);
+    select(".aiDiv").style('display', 'flex')
+    select(".aiDivBody").style('display', 'flex')
+    select(".aiDivCloseButton").style('display', 'block')
+    select(".aiDivInput").style('display', 'flex')
+    select(".aiDivButton").style('display', 'inline-block')
+
+    select(".aiDivCloseButton").elt.addEventListener('click', () => {
+        // Clean up when clicking out of notification box
+        closeWindows();
+    })
+}
+
 function setStyle() {
-    console.log("Creating xml")
+    console.log("setting style")
+    closeWindows();
     select(".styleDiv").position(select("#topBar").offsetHeight, 0);
     select(".styleDiv").style('display', 'flex')
     select(".styleDivBody").style('display', 'flex')
@@ -142,10 +166,7 @@ function setStyle() {
 
     select(".styleDivCloseButton").elt.addEventListener('click', () => {
         // Clean up when clicking out of notification box
-        select(".styleDiv").style('display', 'none')
-        select(".styleDivBody").style('display', 'none')
-        select(".styleDivCloseButton").style('display', 'none')
-        select(".styleDivButton").style('display', 'none')
+        closeWindows();
     })
 }
 
@@ -161,6 +182,7 @@ function updateStyle() {
 
 function createFromXML(){
     console.log("Creating xml")
+    closeWindows();
     select(".adtlangDiv").position(select("#topBar").offsetHeight, 0);
     select(".adtlangDiv").style('display', 'flex')
     select(".adtlangDivBody").style('display', 'flex')
@@ -170,13 +192,28 @@ function createFromXML(){
 
     select(".adtlangDivCloseButton").elt.addEventListener('click', () => {
         // Clean up when clicking out of notification box
-        select(".adtlangDiv").style('display', 'none')
-        select(".adtlangDivBody").style('display', 'none')
-        select(".adtlangDivCloseButton").style('display', 'none')
-        select(".adtlangDivInput").style('display', 'none')
-        select(".adtlangDivButton").style('display', 'none')
+        closeWindows();
     })
 
+}
+
+function closeWindows() {
+    select(".adtlangDiv").style('display', 'none')
+    select(".adtlangDivBody").style('display', 'none')
+    select(".adtlangDivCloseButton").style('display', 'none')
+    select(".adtlangDivInput").style('display', 'none')
+    select(".adtlangDivButton").style('display', 'none')
+
+
+    select(".styleDiv").style('display', 'none')
+    select(".styleDivBody").style('display', 'none')
+    select(".styleDivCloseButton").style('display', 'none')
+    select(".styleDivButton").style('display', 'none')
+
+    select(".aiDiv").style('display', 'none')
+    select(".aiDivBody").style('display', 'none')
+    select(".aiDivCloseButton").style('display', 'none')
+    select(".aiDivButton").style('display', 'none')
 }
 
 
@@ -635,8 +672,8 @@ function isConsentGiven() {
     console.log("[*] In isConsentGiven()");
   
     var message = "Do you consent to your tree being used in scientific research? \n\n" 
-     + "The research is focused on the evaluation of ADT usage. \n We will collect your username, the treename, the token and your tree as a whole.\n" 
-     + "Findings from this research will be published fully anonimized.\n\n"
+        + "The research is focused on the evaluation of ADT usage. \n We will collect your username, the tree name, the token and your tree as a whole.\n"
+        + "Findings from this research will be published fully anonymized.\n\n"
      + "Please note that if you do not consent uploading to the server is NOT possible. You can still download your tree to local storage."
     if(confirm(message) == true) {
       return(true);

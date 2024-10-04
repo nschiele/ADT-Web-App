@@ -109,9 +109,14 @@
                   <li><button class="dropdown-item" type="button" id="jpgBtn">jpg</button></li>
                 </ul> -->
               </span>
+              <span data-bs-toggle="tooltip" data-bs-title="AI">
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="style" onclick="setAI()">
+                  <span data-feather="cpu" class="align-text-bottom"></span>
+                </button>
+              </span>
               <span data-bs-toggle="tooltip" data-bs-title="Style">
                 <button type="button" class="btn btn-sm btn-outline-secondary" id="style" onclick="setStyle()">
-                  <span data-feather="paperclip" class="align-text-bottom"></span>
+                  <span data-feather="edit-3" class="align-text-bottom"></span>
                 </button>
               </span>
                   <span data-bs-toggle="tooltip" data-bs-title="createFromXML">
@@ -183,15 +188,29 @@
 
   <div class="adtlangDiv">
     <div class="adtlangDivBody">
+      <h1> ADTLang </h1>
       <button class="adtlangDivCloseButton">Close</button>
       <textarea class="adtlangDivInput" id="textAreaADTLang"></textarea>
       <button class="adtlangDivButton" id="generateTreeButton" onclick="generateTree()">Generate</button>
     </div>
   </div>
+  <div class="aiDiv">
+    <h1> AI Integration </h1>
+    <p> </p>
+    <div class="aiDivBody">
+      <button class="aiDivCloseButton">Close</button>
+      <h3>Put your Open AI Token below</h3>
+      <p>This is only stored in the browser memory, if you reload the browser, you'll have to reenter the token.</p>
+      <textarea class="aiDivInput" id="textAreaAI"></textarea>
+      <button class="aiDivButton" id="saveAIButton" onclick="setAIKey()">Save AI Token</button>
+    </div>
+  </div>
   <div class="styleDiv">
+    <h1> Set ADT Style </h1>
     <div class="styleDivBody">
       <button class="styleDivCloseButton">Close</button>
-      <input type="range" class="styleRange form-range" min="50" max="550" step="1" id="styleRange">
+      <h3>Node Width</h3>
+      <input type="range" id="widthrange" class="styleRange form-range" min="50" max="550" step="1" id="styleRange">
       <button class="styleDivButton" id="updateStyleButton" onclick="updateStyle()">Update Style</button>
     </div>
   </div>
