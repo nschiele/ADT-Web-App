@@ -899,3 +899,9 @@ function screenshotWalk(node) {
         screenshotWalk(child);
     }
 }
+
+function convertToGraph() {
+    console.log("Convert-knop is aangeklikt!");
+    alert("Conversie gestart!");
+}
+
