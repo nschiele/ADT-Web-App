@@ -900,8 +900,18 @@ function screenshotWalk(node) {
     }
 }
 
+// function convertToGraph() {
+//     console.log("Convert-knop is aangeklikt!");
+//     alert("Conversie gestart!");
+// }
 function convertToGraph() {
     console.log("Convert-knop is aangeklikt!");
     alert("Conversie gestart!");
+
+    downloadADT().then(xml => {
+        console.log("Current tree as XML:");
+        console.log(xml);
+    });
 }
+
 
