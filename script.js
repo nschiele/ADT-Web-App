@@ -945,6 +945,37 @@ function getPaths(node) {
     return result.length ? result : [[label]];
 }
 
+function createDisjunctiveXMLFromPaths(paths) {
+    const root = document.createElement("adtree");
+    const initialNode = document.createElement("node");
+    initialNode.setAttribute("refinement", "disjunctive");
+    const initialLabel = document.createElement("label");
+    initialLabel.textContent = "Initial State (s0)";
+    initialNode.appendChild(initialLabel);
+    root.appendChild(initialNode);
+
+    let stateCounter = 0; // Track state number globally across all paths
+
+    paths.forEach(path => {
+        const reversedPath = [...path].reverse();
+        let currentNode = initialNode;
+
+        reversedPath.forEach(label => {
+            stateCounter += 1;
+            const childNode = document.createElement("node");
+            childNode.setAttribute("refinement", "disjunctive");
+            const childLabel = document.createElement("label");
+            childLabel.textContent = `${label} (s${stateCounter})`;
+            childNode.appendChild(childLabel);
+            currentNode.appendChild(childNode);
+            currentNode = childNode;
+        });
+    });
+
+    return new XMLSerializer().serializeToString(root);
+}
+
+
 async function convertXML(inputXML) {
     console.log("In convertXML");
     
@@ -961,11 +992,12 @@ async function convertXML(inputXML) {
     });
 
     // // Create the disjunctive XML from these paths
-    // const disjunctiveXML = createDisjunctiveXMLFromPaths(paths);
-    // console.log("Generated Disjunctive XML:\n", disjunctiveXML);
+    const disjunctiveXML = createDisjunctiveXMLFromPaths(paths);
+    console.log("Generated Disjunctive XML:\n", disjunctiveXML);
     // return disjunctiveXML;
     return inputXML;
 }
+
 
 async function convertToGraph() {
     console.log("Convert-knop is aangeklikt!");
