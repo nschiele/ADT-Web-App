@@ -905,17 +905,18 @@ function screenshotWalk(node) {
 //     alert("Conversie gestart!");
 // }
 async function convertToGraph() {
-    alert("Conversie gestart!");
     console.log("Convert-knop is aangeklikt!");
 
     try {
-        const xml = await downloadADT();
-        console.log("Current tree as XML:");
-        console.log(xml);
+        console.log("Here");
+        const xmlString = await downloadADT("xml");
+        console.log("XML output from downloadADT():");
+        console.log(xmlString); // ✅ This will print the XML to the browser console
     } catch (error) {
-        console.error("Error while getting XML:", error);
+        console.error("Fout bij conversie:", error);
     }
 }
+
 
 
 
