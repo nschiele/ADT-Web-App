@@ -900,21 +900,71 @@ function screenshotWalk(node) {
     }
 }
 
+function getPaths(node) {
+    // Function to generate all possible paths based on the node's refinement type.
+    if (node.getAttribute("switchRole") === "yes") {
+        return [];
+    }
+
+    const label = node.getElementsByTagName("label")[0]?.textContent || "(no label)";
+    const children = Array.from(node.getElementsByTagName("node"))
+        .filter(child => child.getAttribute("switchRole") !== "yes");
+
+    if (!children.length) {
+        return [[label]];
+    }
+
+    const refinement = node.getAttribute("refinement") || "disjunctive";
+    const childPaths = children.map(child => getPaths(child));
+
+    let result = [];
+    if (refinement === "disjunctive") {
+        // OR node: return all child paths with the current label
+        childPaths.forEach(paths => {
+            result.push(...paths.map(path => [label, ...path]));
+        });
+    }
+    // } else if (refinement === "conjunctive") {
+    //     // AND node: all combinations of child paths
+    //     const combos = cartesianProduct(...childPaths);
+    //     combos.forEach(combo => {
+    //         const perm = permute(combo);
+    //         perm.forEach(p => {
+    //             result.push([label, ...p.flat()]);
+    //         });
+    //     });
+    // } else if (refinement === "sequential") {
+    //     console.log(`[INFO] Sequential refinement at node: '${label}'`);
+    //     const combos = cartesianProduct(...childPaths.reverse());
+    //     combos.forEach(combo => {
+    //         const flat = [].concat(...combo);
+    //         result.push([label, ...flat]);
+    //     });
+    // }
+
+    return result.length ? result : [[label]];
+}
+
 async function convertXML(inputXML) {
     console.log("In convertXML");
-    return inputXML
-    // const parser = new DOMParser();
-    // const xmlDoc = parser.parseFromString(inputXML, "application/xml");
-    // const root = xmlDoc.documentElement;
-    // const topNode = root.getElementsByTagName("node")[0];
+    
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(inputXML, "application/xml");
+    const root = xml.documentElement; 
+    const topNode = root.getElementsByTagName("node")[0];
 
-    // // Get all possible paths from the XML structure
-    // const paths = getPaths(topNode);
+    // Get all possible paths from the XML structure
+    const paths = getPaths(topNode);
+    console.log("All paths:");
+    paths.forEach((path, index) => {
+        console.log(`Path ${index + 1}: ${path.join(" → ")}`);
+    });
 
     // // Create the disjunctive XML from these paths
     // const disjunctiveXML = createDisjunctiveXMLFromPaths(paths);
     // console.log("Generated Disjunctive XML:\n", disjunctiveXML);
     // return disjunctiveXML;
+    return inputXML;
 }
 
 async function convertToGraph() {
