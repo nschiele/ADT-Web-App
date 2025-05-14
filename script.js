@@ -996,8 +996,8 @@ async function convertXML(inputXML) {
     });
 
     // // Create the disjunctive XML from these paths
-    const disjunctiveXML = createDisjunctiveXMLFromPaths(paths);
-    console.log("Generated Disjunctive XML:\n", disjunctiveXML);
+    // const disjunctiveXML = createDisjunctiveXMLFromPaths(paths);
+    // console.log("Generated Disjunctive XML:\n", disjunctiveXML);
     // return disjunctiveXML;
     return inputXML;
 }
