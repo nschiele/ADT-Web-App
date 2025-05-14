@@ -900,22 +900,38 @@ function screenshotWalk(node) {
     }
 }
 
-// function convertToGraph() {
-//     console.log("Convert-knop is aangeklikt!");
-//     alert("Conversie gestart!");
-// }
+async function convertXML(inputXML) {
+    console.log("In convertXML");
+    return inputXML
+    // const parser = new DOMParser();
+    // const xmlDoc = parser.parseFromString(inputXML, "application/xml");
+    // const root = xmlDoc.documentElement;
+    // const topNode = root.getElementsByTagName("node")[0];
+
+    // // Get all possible paths from the XML structure
+    // const paths = getPaths(topNode);
+
+    // // Create the disjunctive XML from these paths
+    // const disjunctiveXML = createDisjunctiveXMLFromPaths(paths);
+    // console.log("Generated Disjunctive XML:\n", disjunctiveXML);
+    // return disjunctiveXML;
+}
+
 async function convertToGraph() {
     console.log("Convert-knop is aangeklikt!");
 
     try {
         console.log("Here");
         const xmlString = await downloadADT("xml");
-        console.log("XML output from downloadADT():");
         console.log(xmlString); // ✅ This will print the XML to the browser console
+        const disjunctiveXML = await convertXML(xmlString);
+        console.log("Generated Disjunctive XML:\n", disjunctiveXML);
     } catch (error) {
         console.error("Fout bij conversie:", error);
     }
 }
+
+
 
 
 
