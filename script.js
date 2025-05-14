@@ -921,9 +921,8 @@ async function convertToGraph() {
     console.log("Convert-knop is aangeklikt!");
 
     try {
-        console.log("Here");
         const xmlString = await downloadADT("xml");
-        console.log(xmlString); // ✅ This will print the XML to the browser console
+        console.log(xmlString);
         const disjunctiveXML = await convertXML(xmlString);
         console.log("Generated Disjunctive XML:\n", disjunctiveXML);
     } catch (error) {
