@@ -904,14 +904,18 @@ function screenshotWalk(node) {
 //     console.log("Convert-knop is aangeklikt!");
 //     alert("Conversie gestart!");
 // }
-function convertToGraph() {
-    console.log("Convert-knop is aangeklikt!");
+async function convertToGraph() {
     alert("Conversie gestart!");
+    console.log("Convert-knop is aangeklikt!");
 
-    downloadADT().then(xml => {
+    try {
+        const xml = await downloadADT();
         console.log("Current tree as XML:");
         console.log(xml);
-    });
+    } catch (error) {
+        console.error("Error while getting XML:", error);
+    }
 }
+
 
 
