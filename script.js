@@ -946,15 +946,16 @@ function getPaths(node) {
 }
 
 function createDisjunctiveXMLFromPaths(paths) {
-    const root = document.createElement("adtree");
-    const initialNode = document.createElement("node");
+    const root = document.createElementNS(null, "adtree");
+    const initialNode = document.createElementNS(null, "node");
     initialNode.setAttribute("refinement", "disjunctive");
-    const initialLabel = document.createElement("label");
+
+    const initialLabel = document.createElementNS(null, "label");
     initialLabel.textContent = "Initial State (s0)";
     initialNode.appendChild(initialLabel);
     root.appendChild(initialNode);
 
-    let stateCounter = 0; // Track state number globally across all paths
+    let stateCounter = 0;
 
     paths.forEach(path => {
         const reversedPath = [...path].reverse();
@@ -962,10 +963,12 @@ function createDisjunctiveXMLFromPaths(paths) {
 
         reversedPath.forEach(label => {
             stateCounter += 1;
-            const childNode = document.createElement("node");
+            const childNode = document.createElementNS(null, "node");
             childNode.setAttribute("refinement", "disjunctive");
-            const childLabel = document.createElement("label");
+
+            const childLabel = document.createElementNS(null, "label");
             childLabel.textContent = `${label} (s${stateCounter})`;
+
             childNode.appendChild(childLabel);
             currentNode.appendChild(childNode);
             currentNode = childNode;
@@ -974,6 +977,7 @@ function createDisjunctiveXMLFromPaths(paths) {
 
     return new XMLSerializer().serializeToString(root);
 }
+
 
 
 async function convertXML(inputXML) {
