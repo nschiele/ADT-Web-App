@@ -907,8 +907,10 @@ function getPaths(node) {
     }
 
     const label = node.getElementsByTagName("label")[0]?.textContent || "(no label)";
-    const children = Array.from(node.getElementsByTagName("node"))
-        .filter(child => child.getAttribute("switchRole") !== "yes");
+    // const children = Array.from(node.getElementsByTagName("node"))
+    //     .filter(child => child.getAttribute("switchRole") !== "yes");
+    const children = Array.from(node.children).filter(child => child.tagName.toLowerCase() === "node" && child.getAttribute("switchRole") !== "yes");
+
 
     if (!children.length) {
         return [[label]];
