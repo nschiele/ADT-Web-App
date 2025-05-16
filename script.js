@@ -959,6 +959,7 @@ function createDisjunctiveXMLFromPaths(paths) {
 
     paths.forEach(path => {
         const reversedPath = [...path].reverse();
+        console.log(reversedPath);
         let currentNode = initialNode;
 
         reversedPath.forEach(label => {
@@ -995,9 +996,9 @@ async function convertXML(inputXML) {
         console.log(`Path ${index + 1}: ${path.join(" → ")}`);
     });
 
-    // // Create the disjunctive XML from these paths
-    // const disjunctiveXML = createDisjunctiveXMLFromPaths(paths);
-    // console.log("Generated Disjunctive XML:\n", disjunctiveXML);
+    // Create the disjunctive XML from these paths
+    const disjunctiveXML = createDisjunctiveXMLFromPaths(paths);
+    console.log("Generated Disjunctive XML:\n", disjunctiveXML);
     // return disjunctiveXML;
     return inputXML;
 }
