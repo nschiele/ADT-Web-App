@@ -979,6 +979,27 @@ function createDisjunctiveXMLFromPaths(paths) {
     return new XMLSerializer().serializeToString(root);
 }
 
+function formatXml(xml) {
+    const PADDING = "  "; // two spaces
+    const reg = /(>)(<)(\/*)/g;
+    let xmlFormatted = '';
+    let pad = 0;
+
+    xml = xml.replace(reg, '$1\r\n$2$3');
+    xml.split('\r\n').forEach((node) => {
+        let indent = 0;
+        if (node.match(/^<\/\w/)) {
+            pad -= 1;
+        } else if (node.match(/^<\w([^>]*[^/])?>.*$/)) {
+            indent = 1;
+        }
+
+        xmlFormatted += PADDING.repeat(pad) + node + '\r\n';
+        pad += indent;
+    });
+
+    return xmlFormatted.trim();
+}
 
 
 async function convertXML(inputXML) {
@@ -998,7 +1019,9 @@ async function convertXML(inputXML) {
 
     // Create the disjunctive XML from these paths
     const disjunctiveXML = createDisjunctiveXMLFromPaths(paths);
-    console.log("Generated Disjunctive XML:\n", disjunctiveXML);
+    const prettyXML = formatXml(disjunctiveXML);
+    console.log("Pretty XML:\n", prettyXML);
+    // console.log("Generated Disjunctive XML:\n", disjunctiveXML);
     // return disjunctiveXML;
     return inputXML;
 }
