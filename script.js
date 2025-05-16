@@ -1048,7 +1048,7 @@ async function convertXML(inputXML) {
     const prettyXML = formatXml(disjunctiveXML);
     console.log("Pretty XML:\n", prettyXML);
     // console.log("Generated Disjunctive XML:\n", disjunctiveXML);
-    return disjunctiveXML;
+    return prettyXML;
     // return inputXML;
 }
 
