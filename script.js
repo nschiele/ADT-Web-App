@@ -1060,7 +1060,7 @@ async function convertToGraph() {
         const xmlString = await downloadADT("xml");
         console.log(xmlString);
         const disjunctiveXML = await convertXML(xmlString);
-        console.log("Generated Disjunctive XML:\n", disjunctiveXML);
+        console.log("PRETTY XML:\n", disjunctiveXML);
         
         // 2. Gebruik build_json om XML naar JSON te parsen (importeer build_json uit json_func.js!)
         const adtJson = await build_json(disjunctiveXML);
