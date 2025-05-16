@@ -979,27 +979,53 @@ function createDisjunctiveXMLFromPaths(paths) {
     return new XMLSerializer().serializeToString(root);
 }
 
-function formatXml(xml) {
-    const PADDING = "  "; // two spaces
-    const reg = /(>)(<)(\/*)/g;
-    let xmlFormatted = '';
-    let pad = 0;
+// function formatXml(xml) {
+//     const PADDING = "  "; // two spaces
+//     const reg = /(>)(<)(\/*)/g;
+//     let xmlFormatted = '';
+//     let pad = 0;
 
-    xml = xml.replace(reg, '$1\r\n$2$3');
-    xml.split('\r\n').forEach((node) => {
-        let indent = 0;
-        if (node.match(/^<\/\w/)) {
-            pad -= 1;
-        } else if (node.match(/^<\w([^>]*[^/])?>.*$/)) {
-            indent = 1;
-        }
+//     xml = xml.replace(reg, '$1\r\n$2$3');
+//     xml.split('\r\n').forEach((node) => {
+//         let indent = 0;
+//         if (node.match(/^<\/\w/)) {
+//             pad -= 1;
+//         } else if (node.match(/^<\w([^>]*[^/])?>.*$/)) {
+//             indent = 1;
+//         }
 
-        xmlFormatted += PADDING.repeat(pad) + node + '\r\n';
-        pad += indent;
-    });
+//         xmlFormatted += PADDING.repeat(pad) + node + '\r\n';
+//         pad += indent;
+//     });
 
-    return xmlFormatted.trim();
+//     return xmlFormatted.trim();
+// }
+function formatXml(xml, indent = '  ') {
+  let formatted = '';
+  const regex = /(>)(<)(\/*)/g;
+  xml = xml.replace(regex, '$1\n$2$3'); // newline tussen tags
+
+  let pad = 0;
+  xml.split('\n').forEach((node) => {
+    let indentLevel = 0;
+    if (node.match(/.+<\/\w[^>]*>$/)) {
+      // Zelfsluitende tag, zelfde indent
+      indentLevel = 0;
+    } else if (node.match(/^<\/\w/)) {
+      // Closing tag, minder indent
+      pad -= 1;
+    } else if (node.match(/^<\w([^>]*[^\/])?>.*$/)) {
+      // Opening tag, meer indent na deze lijn
+      indentLevel = 1;
+    }
+
+    formatted += indent.repeat(pad) + node.trim() + '\n';
+    pad += indentLevel;
+  });
+
+  return formatted.trim();
 }
+
 
 
 async function convertXML(inputXML) {
