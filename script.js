@@ -1048,8 +1048,8 @@ async function convertXML(inputXML) {
     const prettyXML = formatXml(disjunctiveXML);
     console.log("Pretty XML:\n", prettyXML);
     // console.log("Generated Disjunctive XML:\n", disjunctiveXML);
-    // return disjunctiveXML;
-    return inputXML;
+    return disjunctiveXML;
+    // return inputXML;
 }
 
 
@@ -1061,6 +1061,18 @@ async function convertToGraph() {
         console.log(xmlString);
         const disjunctiveXML = await convertXML(xmlString);
         console.log("Generated Disjunctive XML:\n", disjunctiveXML);
+        
+        // 2. Gebruik build_json om XML naar JSON te parsen (importeer build_json uit json_func.js!)
+        const adtJson = await build_json(disjunctiveXML);
+
+        console.log("Gegenereerde ADT JSON:", adtJson);
+
+        // 3. Roep nu je visualisatie functie aan met de JSON, bijvoorbeeld:
+        buildFromMultiset(adtJson);
+
+        // 4. Wis en teken de boom
+        clear();
+        drawLines(root); // neem aan dat root globaal of uit buildFromMultiset komt
     } catch (error) {
         console.error("Fout bij conversie:", error);
     }
