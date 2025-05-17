@@ -19,6 +19,7 @@ let scalar = 1;
 let standardWidth = 300;
 let standardFontSize = 0.875; // 0.875 rem
 let AI_token = "";
+let useArrows = false; 
 
 let CMOverflow = false;
 
@@ -250,13 +251,55 @@ function manAddChild(inputVal) { // Manually add a child, inputVal is a string t
     childTree.root.addClass('NodeActiveAtk')
 }
 
+function drawArrow(x1, y1, x2, y2, arrowLength = 10, arrowAngle = Math.PI / 8) {
+    // Draw a line from (x1, y1) to (x2, y2) with an arrowpoint at the end
+
+    // Line
+    drawingContext.beginPath();
+    drawingContext.moveTo(x1, y1);
+    drawingContext.lineTo(x2, y2);
+    drawingContext.stroke();
+
+    // Arrowpoint
+    const angle = Math.atan2(y2 - y1, x2 - x1);
+
+    const xArrow1 = x2 - arrowLength * Math.cos(angle - arrowAngle);
+    const yArrow1 = y2 - arrowLength * Math.sin(angle - arrowAngle);
+
+    const xArrow2 = x2 - arrowLength * Math.cos(angle + arrowAngle);
+    const yArrow2 = y2 - arrowLength * Math.sin(angle + arrowAngle);
+
+    drawingContext.beginPath();
+    drawingContext.moveTo(x2, y2);
+    drawingContext.lineTo(xArrow1, yArrow1);
+    drawingContext.moveTo(x2, y2);
+    drawingContext.lineTo(xArrow2, yArrow2);
+    drawingContext.stroke();
+}
+
 function drawLines(node) { // Recursively draw all lines between all nodes and their children
     let lastFoundSameTypeChildIndex = null;
     for (let i = 0; i < node.children.length; i++) {
         if (node.children[i] && node.children[i].isDefense != node.isDefense)
             drawingContext.setLineDash([5]);
         // Draw line between root of sub-tree and child i
-        line(node.root.x + node.root.elt.offsetWidth / 2, node.root.y + node.root.elt.offsetHeight, node.children[i].root.x + node.children[i].root.elt.offsetWidth / 2, node.children[i].root.y);
+        // line(node.root.x + node.root.elt.offsetWidth / 2, node.root.y + node.root.elt.offsetHeight, node.children[i].root.x + node.children[i].root.elt.offsetWidth / 2, node.children[i].root.y);
+        if (useArrows) { // With conversion to graph draw arrows
+            drawArrow(
+                node.root.x + node.root.elt.offsetWidth / 2,
+                node.root.y + node.root.elt.offsetHeight,
+                node.children[i].root.x + node.children[i].root.elt.offsetWidth / 2,
+                node.children[i].root.y
+            );
+        } else {
+            line(
+                node.root.x + node.root.elt.offsetWidth / 2,
+                node.root.y + node.root.elt.offsetHeight,
+                node.children[i].root.x + node.children[i].root.elt.offsetWidth / 2,
+                node.children[i].root.y
+            );
+        }
+
         // recursively call drawLines on sub-trees
         drawingContext.setLineDash([]);
         drawLines(node.children[i]);
@@ -1056,8 +1099,7 @@ async function convertXML(inputXML) {
 
 
 async function convertToGraph() {
-    console.log("Convert-knop is aangeklikt!");
-
+    useArrows = true;
     try {
         const xmlString = await downloadADT("xml");
         console.log(xmlString);
@@ -1077,11 +1119,9 @@ async function convertToGraph() {
         drawLines(root); // neem aan dat root globaal of uit buildFromMultiset komt
     } catch (error) {
         console.error("Fout bij conversie:", error);
+    }  finally {
+        useArrows = false; 
     }
 }
-
-
-
-
 
 
