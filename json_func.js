@@ -62,7 +62,7 @@ async function to_json(item, adtree){
 // 0-0-2-1
 // 0-0-2-1-0
 // 0-1
-async function insert(root, label, refinement, swith_role, parameters, depth, lastNode, seen){ // assign code to nodes without building tree example: 0-0-1
+async function insert(root, label, refinement, swith_role, parameters, depth, lastNode, seen,  edgeLabel = null){ // assign code to nodes without building tree example: 0-0-1
     var order = null;
     var node = new Node();
     node.label = label;
@@ -70,6 +70,10 @@ async function insert(root, label, refinement, swith_role, parameters, depth, la
     node.depth = depth;
     node.swith_role = swith_role;
     node.parameters = parameters;
+
+    if (edgeLabel !== null) {
+        node.edgeLabel = edgeLabel;
+    }
 
     if (root == null){
         node.code = "0";
@@ -280,9 +284,17 @@ async function build_json(input_text){
                 swith_role = await find_ref_rol(item, j, r);
                 r = 0;
                 parameters = await find_par(items, i);
-                if (root == null){
-                    root = await insert(root, label, refinement, swith_role, parameters, depth, null, seen);
 
+                const edgeLabelMatch = item.match(/edgeLabel="(.*?)"/);
+                const edgeLabel = edgeLabelMatch ? edgeLabelMatch[1] : null;
+                
+                if (root == null){
+                    root = await insert(root, label, refinement, swith_role, parameters, depth, null, seen, edgeLabel);
+
+                    if (edgeLabel) {
+                        root.edgeLabel = edgeLabel;
+                    }
+                    
                     lastNode = root;
                     seen[0] = root;
                 }
@@ -293,7 +305,10 @@ async function build_json(input_text){
                         k++
                     }
 
-                    lastNode = await insert(root, label, refinement, swith_role, parameters, depth, lastNode, seen);
+                    lastNode = await insert(root, label, refinement, swith_role, parameters, depth, lastNode, seen, edgeLabel);
+                    if (edgeLabel) {
+                        lastNode.edgeLabel = edgeLabel;
+                    }
                     seen[k] = lastNode;
                 }
                 break;
