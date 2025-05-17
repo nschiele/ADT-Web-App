@@ -697,8 +697,14 @@ async function buildFromMultiset(toBuild, parent=null){
     } else {
       if(!(toBuild === null || toBuild === undefined) && Object.keys(toBuild).length-7 != 0){ // This was 6, with 7 it works, because 7 array elements for normal intermediate node
             parent.addChild(toBuild.label, toBuild.swith_role);
-            parent.children[parent.children.length-1].refinementIsAnd = toBuild.refinement;
+            // parent.children[parent.children.length-1].refinementIsAnd = toBuild.refinement;
+            const child = parent.children[parent.children.length - 1];
+            child.refinementIsAnd = toBuild.refinement;
 
+            if (useArrows) {
+                const match = toBuild.label.match(/^(.*)\s+\(s\d+\)$/);
+                child.edgeLabel = match ? match[1].trim() : toBuild.label;
+            }
             // Make defense node the last node in the JSON.
             for (let i = 0; i < (Object.keys(toBuild).length-7); i++){ // Loop through all children
                 buildFromMultiset(toBuild[i], parent.children[parent.children.length-1]);
@@ -707,10 +713,17 @@ async function buildFromMultiset(toBuild, parent=null){
       //Leaf Node
       } else if (!(toBuild == null || toBuild == undefined)){
             parent.addChild(toBuild.label, toBuild.swith_role);
+            const child = parent.children[parent.children.length - 1];
+          
+            if (useArrows) {
+                const match = toBuild.label.match(/^(.*)\s+\(s\d+\)$/);
+                child.edgeLabel = match ? match[1].trim() : toBuild.label;
+            }
         }
     }
     autoFormat()
 }
+
 function isConsentGiven() {
     console.log("[*] In isConsentGiven()");
   
@@ -996,7 +1009,7 @@ function createDisjunctiveXMLFromPaths(paths) {
     initialNode.setAttribute("refinement", "disjunctive");
 
     const initialLabel = document.createElementNS(null, "label");
-    initialLabel.textContent = "Initial State (s0)";
+    initialLabel.textContent = "(s0)";
     initialNode.appendChild(initialLabel);
     root.appendChild(initialNode);
 
@@ -1009,15 +1022,31 @@ function createDisjunctiveXMLFromPaths(paths) {
 
         reversedPath.forEach(label => {
             stateCounter += 1;
+            // Splits label op in text en state
+            const labelText = label;
+            const stateText = `(s${stateCounter})`;
+
             const childNode = document.createElementNS(null, "node");
             childNode.setAttribute("refinement", "disjunctive");
 
-            const childLabel = document.createElementNS(null, "label");
-            childLabel.textContent = `${label} (s${stateCounter})`;
+            const labelElement = document.createElementNS(null, "label");
+            labelElement.textContent = stateText;
 
-            childNode.appendChild(childLabel);
+            // Stel edge label in als attribuut op het kind
+            childNode.setAttribute("edgeLabel", labelText);
+
+            childNode.appendChild(labelElement);
             currentNode.appendChild(childNode);
             currentNode = childNode;
+            // const childNode = document.createElementNS(null, "node");
+            // childNode.setAttribute("refinement", "disjunctive");
+
+            // const childLabel = document.createElementNS(null, "label");
+            // childLabel.textContent = `${label} (s${stateCounter})`;
+
+            // childNode.appendChild(childLabel);
+            // currentNode.appendChild(childNode);
+            // currentNode = childNode;
         });
     });
 
