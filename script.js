@@ -300,6 +300,17 @@ function drawLines(node) { // Recursively draw all lines between all nodes and t
             );
         }
 
+        if (child.edgeLabel && useArrows) {
+            const midX = (x1 + x2) / 2;
+            const midY = (y1 + y2) / 2;
+            drawingContext.save();
+            drawingContext.font = "12px Arial";
+            drawingContext.fillStyle = "black";
+            drawingContext.textAlign = "center";
+            drawingContext.fillText(child.edgeLabel, midX, midY - 5); // above line
+            drawingContext.restore();
+        }
+
         // recursively call drawLines on sub-trees
         drawingContext.setLineDash([]);
         drawLines(node.children[i]);
