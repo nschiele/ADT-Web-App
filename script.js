@@ -280,24 +280,32 @@ function drawArrow(x1, y1, x2, y2, arrowLength = 10, arrowAngle = Math.PI / 8) {
 function drawLines(node) { // Recursively draw all lines between all nodes and their children
     let lastFoundSameTypeChildIndex = null;
     for (let i = 0; i < node.children.length; i++) {
+        const child = node.children[i];
+        
         if (node.children[i] && node.children[i].isDefense != node.isDefense)
             drawingContext.setLineDash([5]);
         // Draw line between root of sub-tree and child i
         // line(node.root.x + node.root.elt.offsetWidth / 2, node.root.y + node.root.elt.offsetHeight, node.children[i].root.x + node.children[i].root.elt.offsetWidth / 2, node.children[i].root.y);
+         const x1 = node.root.x + node.root.elt.offsetWidth / 2;
+        const y1 = node.root.y + node.root.elt.offsetHeight;
+        const x2 = child.root.x + child.root.elt.offsetWidth / 2;
+        const y2 = child.root.y;
         if (useArrows) { // With conversion to graph draw arrows
-            drawArrow(
-                node.root.x + node.root.elt.offsetWidth / 2,
-                node.root.y + node.root.elt.offsetHeight,
-                node.children[i].root.x + node.children[i].root.elt.offsetWidth / 2,
-                node.children[i].root.y
-            );
+            drawArrow(x1, y1, x2, y2);
+            // drawArrow(
+            //     node.root.x + node.root.elt.offsetWidth / 2,
+            //     node.root.y + node.root.elt.offsetHeight,
+            //     node.children[i].root.x + node.children[i].root.elt.offsetWidth / 2,
+            //     node.children[i].root.y
+            // );
         } else {
-            line(
-                node.root.x + node.root.elt.offsetWidth / 2,
-                node.root.y + node.root.elt.offsetHeight,
-                node.children[i].root.x + node.children[i].root.elt.offsetWidth / 2,
-                node.children[i].root.y
-            );
+            line(x1, y1, x2, y2);
+            // line(
+            //     node.root.x + node.root.elt.offsetWidth / 2,
+            //     node.root.y + node.root.elt.offsetHeight,
+            //     node.children[i].root.x + node.children[i].root.elt.offsetWidth / 2,
+            //     node.children[i].root.y
+            // );
         }
 
         if (child.edgeLabel && useArrows) {
@@ -313,18 +321,33 @@ function drawLines(node) { // Recursively draw all lines between all nodes and t
 
         // recursively call drawLines on sub-trees
         drawingContext.setLineDash([]);
-        drawLines(node.children[i]);
+        // drawLines(node.children[i]);
+        drawLines(child);
         if (node.refinementIsAnd)
-            if (node.children[i].isDefense == node.isDefense) {
+            if (child.isDefense == node.isDefense) {
                 if (lastFoundSameTypeChildIndex != null) {
-                    line(node.root.x + node.root.elt.offsetWidth / 2 + ((node.children[lastFoundSameTypeChildIndex].root.x + node.children[lastFoundSameTypeChildIndex].root.elt.offsetWidth / 2) - (node.root.x + node.root.elt.offsetWidth / 2)) * refinementDist, // middle of current node - 1/10th x-distance to left node of current pair
-                        node.root.y + node.root.elt.offsetHeight + (node.children[lastFoundSameTypeChildIndex].root.y - (node.root.y + node.root.elt.offsetHeight)) * refinementDist,  // bottom of current node - 1/10th u-distance to top of left node of current pair
-                        node.root.x + node.root.elt.offsetWidth / 2 + ((node.children[i].root.x + node.children[i].root.elt.offsetWidth / 2) - (node.root.x + node.root.elt.offsetWidth / 2)) * refinementDist,  // middle of current node - 1/10th distance to right node of current pair
-                        node.root.y + node.root.elt.offsetHeight + (node.children[i].root.y - (node.root.y + node.root.elt.offsetHeight)) * refinementDist)  // bottom of current node - 1/10th distance to top of left node of current pair
+                    const lastChild = node.children[lastFoundSameTypeChildIndex];
+                    line(
+                        x1 + ((lastChild.root.x + lastChild.root.elt.offsetWidth / 2 - x1) * refinementDist),
+                        y1 + ((lastChild.root.y - y1) * refinementDist),
+                        x1 + ((x2 - x1) * refinementDist),
+                        y1 + ((y2 - y1) * refinementDist)
+                    );
                 }
-                lastFoundSameTypeChildIndex = i; // Keep track of last found non-CounterMeasure child
+            lastFoundSameTypeChildIndex = i;
             }
-    }
+        }
+    //     if (node.refinementIsAnd)
+    //         if (node.children[i].isDefense == node.isDefense) {
+    //             if (lastFoundSameTypeChildIndex != null) {
+    //                 line(node.root.x + node.root.elt.offsetWidth / 2 + ((node.children[lastFoundSameTypeChildIndex].root.x + node.children[lastFoundSameTypeChildIndex].root.elt.offsetWidth / 2) - (node.root.x + node.root.elt.offsetWidth / 2)) * refinementDist, // middle of current node - 1/10th x-distance to left node of current pair
+    //                     node.root.y + node.root.elt.offsetHeight + (node.children[lastFoundSameTypeChildIndex].root.y - (node.root.y + node.root.elt.offsetHeight)) * refinementDist,  // bottom of current node - 1/10th u-distance to top of left node of current pair
+    //                     node.root.x + node.root.elt.offsetWidth / 2 + ((node.children[i].root.x + node.children[i].root.elt.offsetWidth / 2) - (node.root.x + node.root.elt.offsetWidth / 2)) * refinementDist,  // middle of current node - 1/10th distance to right node of current pair
+    //                     node.root.y + node.root.elt.offsetHeight + (node.children[i].root.y - (node.root.y + node.root.elt.offsetHeight)) * refinementDist)  // bottom of current node - 1/10th distance to top of left node of current pair
+    //             }
+    //             lastFoundSameTypeChildIndex = i; // Keep track of last found non-CounterMeasure child
+    //         }
+    // }
 }
 
 function moveNodes(node, moveX, moveY) { // Moves all nodes in tree
