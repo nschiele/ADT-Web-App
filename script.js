@@ -1170,11 +1170,15 @@ async function convertToGraph() {
         const adtJson = await build_json(disjunctiveXML);
 
         console.log("Gegenereerde ADT JSON:", adtJson);
+        const popup = window.open("popup.html", "ADTGraphPopup", "width=1000,height=700");
+        popup.onload = () => {
+            // Stuur de JSON naar de popup
+            popup.postMessage(JSON.stringify(adtJson), "*");
+        };
+        // buildFromMultiset(adtJson);
 
-        buildFromMultiset(adtJson);
-
-        clear();
-        drawLines(root);
+        // clear();
+        // drawLines(root);
     } catch (error) {
         console.error("Fout bij conversie:", error);
     }  finally {
