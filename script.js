@@ -284,28 +284,16 @@ function drawLines(node) { // Recursively draw all lines between all nodes and t
         
         if (node.children[i] && node.children[i].isDefense != node.isDefense)
             drawingContext.setLineDash([5]);
+        
         // Draw line between root of sub-tree and child i
-        // line(node.root.x + node.root.elt.offsetWidth / 2, node.root.y + node.root.elt.offsetHeight, node.children[i].root.x + node.children[i].root.elt.offsetWidth / 2, node.children[i].root.y);
-         const x1 = node.root.x + node.root.elt.offsetWidth / 2;
+        const x1 = node.root.x + node.root.elt.offsetWidth / 2;
         const y1 = node.root.y + node.root.elt.offsetHeight;
         const x2 = child.root.x + child.root.elt.offsetWidth / 2;
         const y2 = child.root.y;
         if (useArrows) { // With conversion to graph draw arrows
             drawArrow(x1, y1, x2, y2);
-            // drawArrow(
-            //     node.root.x + node.root.elt.offsetWidth / 2,
-            //     node.root.y + node.root.elt.offsetHeight,
-            //     node.children[i].root.x + node.children[i].root.elt.offsetWidth / 2,
-            //     node.children[i].root.y
-            // );
         } else {
             line(x1, y1, x2, y2);
-            // line(
-            //     node.root.x + node.root.elt.offsetWidth / 2,
-            //     node.root.y + node.root.elt.offsetHeight,
-            //     node.children[i].root.x + node.children[i].root.elt.offsetWidth / 2,
-            //     node.children[i].root.y
-            // );
         }
 
         if (child.edgeLabel && useArrows) {
@@ -990,6 +978,35 @@ function screenshotWalk(node) {
     }
 }
 
+function permutations(array) {
+    if (array.length <= 1) return [array];
+
+    const result = [];
+
+    array.forEach((item, index) => {
+        const rest = array.slice(0, index).concat(array.slice(index + 1));
+        const restPerms = permutations(rest);
+        restPerms.forEach(perm => {
+            result.push([item, ...perm]);
+        });
+    });
+
+    return result;
+}
+
+function cartesianProduct(...arrays) {
+    return arrays.reduce((acc, curr) => {
+        const result = [];
+        acc.forEach(a => {
+            curr.forEach(b => {
+                result.push([...a, b]);
+            });
+        });
+        return result;
+    }, [[]]);
+}
+
+
 function getPaths(node) {
     // Function to generate all possible paths based on the node's refinement type.
     if (node.getAttribute("switchRole") === "yes") {
@@ -1015,17 +1032,24 @@ function getPaths(node) {
         childPaths.forEach(paths => {
             result.push(...paths.map(path => [label, ...path]));
         });
-    }
-    // } else if (refinement === "conjunctive") {
-    //     // AND node: all combinations of child paths
-    //     const combos = cartesianProduct(...childPaths);
-    //     combos.forEach(combo => {
-    //         const perm = permute(combo);
-    //         perm.forEach(p => {
-    //             result.push([label, ...p.flat()]);
-    //         });
-    //     });
-    // } else if (refinement === "sequential") {
+    } else if (refinement === "conjunctive") {
+        // AND node: all combinations of child paths
+        const combos = cartesianProduct(...childPaths);
+        for (const combo of combos) {
+            const permuted = permutations(combo);
+            for (const p of permuted) {
+                const flat = p.flat();
+                result.push([label, ...flat]);
+            }
+        }
+        // combos.forEach(combo => {
+        //     const perm = permute(combo);
+        //     perm.forEach(p => {
+        //         result.push([label, ...p.flat()]);
+        //     });
+        // });
+    } 
+    //else if (refinement === "sequential") {
     //     console.log(`[INFO] Sequential refinement at node: '${label}'`);
     //     const combos = cartesianProduct(...childPaths.reverse());
     //     combos.forEach(combo => {
@@ -1087,43 +1111,19 @@ function createDisjunctiveXMLFromPaths(paths) {
     return new XMLSerializer().serializeToString(root);
 }
 
-// function formatXml(xml) {
-//     const PADDING = "  "; // two spaces
-//     const reg = /(>)(<)(\/*)/g;
-//     let xmlFormatted = '';
-//     let pad = 0;
-
-//     xml = xml.replace(reg, '$1\r\n$2$3');
-//     xml.split('\r\n').forEach((node) => {
-//         let indent = 0;
-//         if (node.match(/^<\/\w/)) {
-//             pad -= 1;
-//         } else if (node.match(/^<\w([^>]*[^/])?>.*$/)) {
-//             indent = 1;
-//         }
-
-//         xmlFormatted += PADDING.repeat(pad) + node + '\r\n';
-//         pad += indent;
-//     });
-
-//     return xmlFormatted.trim();
-// }
 function formatXml(xml, indent = '  ') {
   let formatted = '';
   const regex = /(>)(<)(\/*)/g;
-  xml = xml.replace(regex, '$1\n$2$3'); // newline tussen tags
+  xml = xml.replace(regex, '$1\n$2$3'); 
 
   let pad = 0;
   xml.split('\n').forEach((node) => {
     let indentLevel = 0;
     if (node.match(/.+<\/\w[^>]*>$/)) {
-      // Zelfsluitende tag, zelfde indent
       indentLevel = 0;
     } else if (node.match(/^<\/\w/)) {
-      // Closing tag, minder indent
       pad -= 1;
     } else if (node.match(/^<\w([^>]*[^\/])?>.*$/)) {
-      // Opening tag, meer indent na deze lijn
       indentLevel = 1;
     }
 
@@ -1155,9 +1155,7 @@ async function convertXML(inputXML) {
     const disjunctiveXML = createDisjunctiveXMLFromPaths(paths);
     const prettyXML = formatXml(disjunctiveXML);
     console.log("Pretty XML:\n", prettyXML);
-    // console.log("Generated Disjunctive XML:\n", disjunctiveXML);
     return prettyXML;
-    // return inputXML;
 }
 
 
@@ -1169,17 +1167,14 @@ async function convertToGraph() {
         const disjunctiveXML = await convertXML(xmlString);
         console.log("PRETTY XML:\n", disjunctiveXML);
         
-        // 2. Gebruik build_json om XML naar JSON te parsen (importeer build_json uit json_func.js!)
         const adtJson = await build_json(disjunctiveXML);
 
         console.log("Gegenereerde ADT JSON:", adtJson);
 
-        // 3. Roep nu je visualisatie functie aan met de JSON, bijvoorbeeld:
         buildFromMultiset(adtJson);
 
-        // 4. Wis en teken de boom
         clear();
-        drawLines(root); // neem aan dat root globaal of uit buildFromMultiset komt
+        drawLines(root);
     } catch (error) {
         console.error("Fout bij conversie:", error);
     }  finally {
