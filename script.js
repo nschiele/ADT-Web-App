@@ -1,4 +1,4 @@
-let root; // The first node that is always placed.
+gelet root; // The first node that is always placed.
 let canvasElement; // Holds the canvas, can be used anywhere to point directly to the canvas.
 let canvasWidth = 100;
 let canvasHeight = 100;
@@ -737,7 +737,7 @@ async function buildFromMultiset(toBuild, parent=null){
 
             if (useArrows) {
                 const match = toBuild.label.match(/^(.*)\s+\(s\d+\)$/);
-                child.edgeLabel = match ? match[1].trim() : toBuild.label;
+                child.edgeLabel = match ? match[1].trim() : toBuild.edgeLabel;
             }
             // Make defense node the last node in the JSON.
             for (let i = 0; i < (Object.keys(toBuild).length-7); i++){ // Loop through all children
@@ -751,7 +751,7 @@ async function buildFromMultiset(toBuild, parent=null){
           
             if (useArrows) {
                 const match = toBuild.label.match(/^(.*)\s+\(s\d+\)$/);
-                child.edgeLabel = match ? match[1].trim() : toBuild.label;
+                child.edgeLabel = match ? match[1].trim() : toBuild.edgeLabel;
             }
         }
     }
