@@ -52,29 +52,6 @@ async function to_json(item, adtree){
     Object.assign(parent, item);
 }
 
-// async function to_json(item, adtree){
-//     let codes = item.code.split('-');
-//     let parent = adtree;
-
-//     for (let i = 0; i < codes.length; i++) {
-//       let code = codes[i];
-
-//       if (!parent.hasOwnProperty(code)) {
-//         parent[code] = {};
-//       }
-
-//       parent = parent[code];
-//     }
-//     parent.label = item.label;
-//     parent.refinement = item.refinement;
-//     if (item.edgeLabel) {
-//       parent.edgeLabel = item.edgeLabel;
-//     }
-//     if (item.parameters) {
-//       parent.parameters = item.parameters;
-//     }
-   
-// }
 
 
 // test codes in order:
@@ -98,7 +75,7 @@ async function insert(root, label, refinement, swith_role, parameters, depth, la
 
     if (edgeLabel !== null) {
         node.edgeLabel = edgeLabel;
-        console.log("insert, edgelabel:", edgeLabel);
+        // console.log("insert, edgelabel:", edgeLabel);
     }
 
     if (root == null){
@@ -325,7 +302,7 @@ async function build_json(input_text){
 
                 const edgeLabelMatch = item.match(/edgeLabel="(.*?)"/);
                 const edgeLabel = edgeLabelMatch ? edgeLabelMatch[1] : null;
-                console.log("Found edgeLabel:", edgeLabel);
+                // console.log("Found edgeLabel:", edgeLabel);
   
                 
                 if (root == null){
@@ -333,7 +310,7 @@ async function build_json(input_text){
 
                     if (edgeLabel) {
                         root.edgeLabel = edgeLabel;
-                        console.log("root edgeLabel: ", edgeLabel);
+                        // console.log("root edgeLabel: ", edgeLabel);
                     }
                     
                     lastNode = root;
@@ -349,7 +326,7 @@ async function build_json(input_text){
                     lastNode = await insert(root, label, refinement, swith_role, parameters, depth, lastNode, seen, edgeLabel);
                     if (edgeLabel) {
                         lastNode.edgeLabel = edgeLabel;
-                        console.log("lastnode edgeLabel", edgeLabel);
+                        // console.log("lastnode edgeLabel", edgeLabel);
                     }
                     seen[k] = lastNode;
                 }
@@ -365,7 +342,7 @@ async function build_json(input_text){
     seen.forEach(item => {
         to_json(item, json);
       });
-    console.log("NA to_json call edgeLabel for", item.label, ":", item.edgeLabel);
+    // console.log("NA to_json call edgeLabel for", item.label, ":", item.edgeLabel);
     return json;
 }
 
