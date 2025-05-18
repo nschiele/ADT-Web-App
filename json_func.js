@@ -363,7 +363,7 @@ async function build_json(input_text){
     }
 
     seen.forEach(item => {
-        await to_json(item, json);
+        to_json(item, json);
       });
     console.log("NA to_json call edgeLabel for", item.label, ":", item.edgeLabel);
     return json;
