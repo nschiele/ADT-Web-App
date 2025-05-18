@@ -35,23 +35,6 @@ async function getXML(input){
     return xml;
 }
 
-// async function to_json(item, adtree){
-//     let codes = item.code.split('-');
-//     let parent = adtree;
-
-//     for (let i = 0; i < codes.length; i++) {
-//       let code = codes[i];
-
-//       if (!parent.hasOwnProperty(code)) {
-//         parent[code] = {};
-//       }
-
-//       parent = parent[code];
-//     }
-
-//     Object.assign(parent, item);
-// }
-
 async function to_json(item, adtree){
     let codes = item.code.split('-');
     let parent = adtree;
@@ -65,16 +48,33 @@ async function to_json(item, adtree){
 
       parent = parent[code];
     }
-    parent.label = item.label;
-    parent.refinement = item.refinement;
-    if (item.edgeLabel) {
-      parent.edgeLabel = item.edgeLabel;
-    }
-    if (item.parameters) {
-      parent.parameters = item.parameters;
-    }
-   
+
+    Object.assign(parent, item);
 }
+
+// async function to_json(item, adtree){
+//     let codes = item.code.split('-');
+//     let parent = adtree;
+
+//     for (let i = 0; i < codes.length; i++) {
+//       let code = codes[i];
+
+//       if (!parent.hasOwnProperty(code)) {
+//         parent[code] = {};
+//       }
+
+//       parent = parent[code];
+//     }
+//     parent.label = item.label;
+//     parent.refinement = item.refinement;
+//     if (item.edgeLabel) {
+//       parent.edgeLabel = item.edgeLabel;
+//     }
+//     if (item.parameters) {
+//       parent.parameters = item.parameters;
+//     }
+   
+// }
 
 
 // test codes in order:
