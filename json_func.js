@@ -98,6 +98,7 @@ async function insert(root, label, refinement, swith_role, parameters, depth, la
 
     if (edgeLabel !== null) {
         node.edgeLabel = edgeLabel;
+        console.log("insert, edgelabel:", edgeLabel);
     }
 
     if (root == null){
@@ -332,6 +333,7 @@ async function build_json(input_text){
 
                     if (edgeLabel) {
                         root.edgeLabel = edgeLabel;
+                        console.log("root edgeLabel: ", edgeLabel);
                     }
                     
                     lastNode = root;
@@ -347,6 +349,7 @@ async function build_json(input_text){
                     lastNode = await insert(root, label, refinement, swith_role, parameters, depth, lastNode, seen, edgeLabel);
                     if (edgeLabel) {
                         lastNode.edgeLabel = edgeLabel;
+                        console.log("lastnode edgeLabel", edgeLabel);
                     }
                     seen[k] = lastNode;
                 }
@@ -362,6 +365,7 @@ async function build_json(input_text){
     seen.forEach(item => {
         to_json(item, json);
       });
+    console.log("NA to_json call edgeLabel for", item.label, ":", item.edgeLabel);
     return json;
 }
 
