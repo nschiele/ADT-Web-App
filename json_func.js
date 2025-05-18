@@ -117,38 +117,48 @@ async function insert(root, label, refinement, swith_role, parameters, depth, la
     return node;
 }
 
-
-async function find_label(items, i){
-    console.log(items);
-    var label = "";
-    var j = 0;
-    var k = i;
-    var item = items[k];
-    while (item[j] != "l"){
-        if (item[j] == ">"){
-            k++;
-            item = items[k];
-            j = 0;
-        }
-        else{
-            j++;
-            if (item[j] == "l" && item[j+1] == "e"){
-                j++;
-            }
+function find_label(items, i) {
+    for (let k = i; k < items.length; k++) {
+        const match = items[k].match(/<label>(.*?)<\/label>/);
+        if (match) {
+            return match[1];
         }
     }
-    // Retrieve the label
-    while (item[j] != ">"){
-        j++;
-    }
-    j++;
-    while (item[j] != '<'){
-        console.log(item[j]);
-        label += item[j];
-        j++
-    }
-    return label;
+    throw new Error("Label not found after node at line " + i);
 }
+
+
+// async function find_label(items, i){
+//     console.log(items);
+//     var label = "";
+//     var j = 0;
+//     var k = i;
+//     var item = items[k];
+//     while (item[j] != "l"){
+//         if (item[j] == ">"){
+//             k++;
+//             item = items[k];
+//             j = 0;
+//         }
+//         else{
+//             j++;
+//             if (item[j] == "l" && item[j+1] == "e"){
+//                 j++;
+//             }
+//         }
+//     }
+//     // Retrieve the label
+//     while (item[j] != ">"){
+//         j++;
+//     }
+//     j++;
+//     while (item[j] != '<'){
+//         console.log(item[j]);
+//         label += item[j];
+//         j++
+//     }
+//     return label;
+// }
 
 // hc pos todo
 async function find_ref_rol(item, j, r){
@@ -279,7 +289,8 @@ async function build_json(input_text){
                 break; // Adtree tag, skip
             case "n": // Node tag
                 // todo hardcoden van variable locaties wegwerken
-                label = await find_label(items, i);
+                // label = await find_label(items, i);
+                let label = find_label(items, i);
                 refinement = await find_ref_rol(item, j, r);
                 r = 1;
                 swith_role = await find_ref_rol(item, j, r);
