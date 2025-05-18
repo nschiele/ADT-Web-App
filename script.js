@@ -1,4 +1,4 @@
-gelet root; // The first node that is always placed.
+let root; // The first node that is always placed.
 let canvasElement; // Holds the canvas, can be used anywhere to point directly to the canvas.
 let canvasWidth = 100;
 let canvasHeight = 100;
