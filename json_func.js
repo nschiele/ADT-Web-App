@@ -299,6 +299,8 @@ async function build_json(input_text){
 
                 const edgeLabelMatch = item.match(/edgeLabel="(.*?)"/);
                 const edgeLabel = edgeLabelMatch ? edgeLabelMatch[1] : null;
+                console.log("Found edgeLabel:", edgeLabel);
+  
                 
                 if (root == null){
                     root = await insert(root, label, refinement, swith_role, parameters, depth, null, seen, edgeLabel);
