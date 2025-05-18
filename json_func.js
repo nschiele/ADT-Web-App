@@ -119,7 +119,7 @@ async function insert(root, label, refinement, swith_role, parameters, depth, la
 
 
 async function find_label(items, i){
-
+    console.log(items);
     var label = "";
     var j = 0;
     var k = i;
@@ -143,6 +143,7 @@ async function find_label(items, i){
     }
     j++;
     while (item[j] != '<'){
+        console.log(item[j]);
         label += item[j];
         j++
     }
