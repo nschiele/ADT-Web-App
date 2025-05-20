@@ -1074,43 +1074,115 @@ function createDisjunctiveXMLFromPaths(paths) {
 
     let stateCounter = 0;
 
+    // paths.forEach(path => {
+    //     const reversedPath = [...path].reverse();
+    //     console.log(reversedPath);
+    //     let currentNode = initialNode;
+
+    //     reversedPath.forEach(({label, switchRole}) => {
+    //         stateCounter += 1;
+    //         // Splits label op in text en state
+    //         // const labelText = label;
+    //         const stateText = `(s${stateCounter})`;
+
+    //         const childNode = document.createElementNS(null, "node");
+    //         childNode.setAttribute("refinement", "disjunctive");
+    //         if(switchRole) {
+    //             childNode.setAttribute("switchRole", "yes");
+    //         }
+
+    //         const labelElement = document.createElementNS(null, "label");
+    //         labelElement.textContent = stateText;
+
+    //         // Stel edge label in als attribuut op het kind
+    //         childNode.setAttribute("edgeLabel", label);
+
+    //         childNode.appendChild(labelElement);
+    //         currentNode.appendChild(childNode);
+    //         currentNode = childNode;
+    
+    //     });
+    // });
     paths.forEach(path => {
+    // Keer het pad om om van begin naar einde te bouwen
         const reversedPath = [...path].reverse();
-        console.log(reversedPath);
         let currentNode = initialNode;
 
-        reversedPath.forEach(({label, switchRole}) => {
+        for (let i = 0; i < reversedPath.length; i++) {
+            const {label, switchRole} = reversedPath[i];
             stateCounter += 1;
-            // Splits label op in text en state
-            // const labelText = label;
             const stateText = `(s${stateCounter})`;
-
+    
+            // Maak nieuwe node aan
             const childNode = document.createElementNS(null, "node");
             childNode.setAttribute("refinement", "disjunctive");
-            if(switchRole) {
+            if (switchRole) {
                 childNode.setAttribute("switchRole", "yes");
             }
-
+    
             const labelElement = document.createElementNS(null, "label");
             labelElement.textContent = stateText;
-
-            // Stel edge label in als attribuut op het kind
-            childNode.setAttribute("edgeLabel", label);
-
             childNode.appendChild(labelElement);
+    
+            // Stel edge label in
+            childNode.setAttribute("edgeLabel", label);
+    
+            // Voeg kind toe aan huidige node
             currentNode.appendChild(childNode);
-            currentNode = childNode;
-            // const childNode = document.createElementNS(null, "node");
-            // childNode.setAttribute("refinement", "disjunctive");
-
-            // const childLabel = document.createElementNS(null, "label");
-            // childLabel.textContent = `${label} (s${stateCounter})`;
-
-            // childNode.appendChild(childLabel);
-            // currentNode.appendChild(childNode);
-            // currentNode = childNode;
-        });
+    
+            // Als deze node heeft switchRole yes EN er is een volgende node
+            if (switchRole && i < reversedPath.length - 1) {
+                const nextNodeInfo = reversedPath[i + 1];
+                // Maak countermeasure node als kind van volgende node in het pad
+    
+                // Vind het volgende node element dat we net hebben gemaakt (childNode is net gemaakt,
+                // dus het volgende node is nog niet gemaakt in DOM, moet je nog maken)
+                // Dus we moeten dat node van volgende stap ook aanmaken en aan currentNode zetten
+                // en daarna nog een extra child toevoegen met switchRole yes
+    
+                // Maak eerst het volgende node aan (als dat nog niet gebeurd is)
+                stateCounter += 1;
+                const nextStateText = `(s${stateCounter})`;
+    
+                const nextChildNode = document.createElementNS(null, "node");
+                nextChildNode.setAttribute("refinement", "disjunctive");
+                if (nextNodeInfo.switchRole) {
+                    nextChildNode.setAttribute("switchRole", "yes");
+                }
+    
+                const nextLabelElement = document.createElementNS(null, "label");
+                nextLabelElement.textContent = nextStateText;
+                nextChildNode.appendChild(nextLabelElement);
+                nextChildNode.setAttribute("edgeLabel", nextNodeInfo.label);
+    
+                // Voeg next node toe aan current node (de node waar 'childNode' aan hangt)
+                currentNode.appendChild(nextChildNode);
+    
+                // Voeg countermeasure node toe als kind van nextChildNode
+                const cmNode = document.createElementNS(null, "node");
+                cmNode.setAttribute("refinement", "disjunctive");
+                cmNode.setAttribute("switchRole", "yes");
+    
+                const cmLabelElement = document.createElementNS(null, "label");
+                cmLabelElement.textContent = `(countermeasure)`;
+                cmNode.setAttribute("edgeLabel", label);  // label van de countermeasure is de vorige node
+    
+                cmNode.appendChild(cmLabelElement);
+    
+                nextChildNode.appendChild(cmNode);
+    
+                // Nu currentNode verplaatsen naar nextChildNode (volgende stap in keten)
+                currentNode = nextChildNode;
+    
+                // Sla volgende iteratie over want die node is al aangemaakt
+                i++; // increment i om volgende node over te slaan want die is al gemaakt
+            } else {
+                // Verplaats currentNode naar childNode voor volgende iteratie
+                currentNode = childNode;
+            }
+        }
     });
+
 
     return new XMLSerializer().serializeToString(root);
 }
