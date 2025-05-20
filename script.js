@@ -1173,20 +1173,20 @@ async function convertToGraph() {
         buildFromMultiset(adtJson);
         
         setTimeout(() => {
-        const canvas = document.querySelector("canvas");
-        if (!canvas) return console.error("Canvas niet gevonden");
-    
-        const dataURL = canvas.toDataURL("image/png");
-    
-        const popup = window.open("", "_blank", "width=800,height=600");
-        popup.document.write(`
-              <!DOCTYPE html>
-              <html>
-              <head><title>ADT Snapshot</title></head>
-              <body style="margin:0;display:flex;align-items:center;justify-content:center;background:white;">
-                <img src="${dataURL}" style="max-width:100%;max-height:100%;" />
-              </body>
-              </html>
+            const canvas = document.querySelector("canvas");
+            if (!canvas) return console.error("Canvas niet gevonden");
+        
+            const dataURL = canvas.toDataURL("image/png");
+        
+            const popup = window.open("", "_blank", "width=800,height=600");
+            popup.document.write(`
+                  <!DOCTYPE html>
+                  <html>
+                  <head><title>ADT Snapshot</title></head>
+                  <body style="margin:0;display:flex;align-items:center;justify-content:center;background:white;">
+                    <img src="${dataURL}" style="max-width:100%;max-height:100%;" />
+                  </body>
+                  </html>
             `);
         }, 500); // of gebruik requestAnimationFrame als je precieser wilt zijn
         // const popup = window.open("popup.html", "ADTGraphPopup", "width=1000,height=700");
