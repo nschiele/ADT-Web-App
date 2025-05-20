@@ -1173,7 +1173,7 @@ async function convertToGraph() {
         const popup = window.open("popup.html", "ADTGraphPopup", "width=1000,height=700");
         popup.onload = () => {
             // Stuur de JSON naar de popup
-            popup.postMessage(JSON.stringify(adtJson), "*");
+            popup.postMessage(adtJson, "*");
         };
         // buildFromMultiset(adtJson);
 
