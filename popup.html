@@ -17,7 +17,7 @@
 
     window.addEventListener("message", (event) => {
       try {
-        const adtJson = JSON.parse(event.data);
+        const adtJson = event.data;
         console.log("Ontvangen ADT JSON in popup:", adtJson);
         buildFromMultiset(json);
         clear();
