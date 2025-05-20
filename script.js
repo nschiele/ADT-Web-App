@@ -1218,11 +1218,12 @@ function createDisjunctiveXMLFromPaths(paths) {
             // Voeg kind toe aan huidige node
             currentNode.appendChild(childNode);
 
-            // Als deze node heeft switchRole yes EN er is een volgende node
-            if (switchRole && i < reversedPath.length - 1) {
+            // Voeg countermeasure toe alleen als switchRole = yes EN
+            // niet direct onder initialNode (root)
+            if (switchRole && i < reversedPath.length - 1 && currentNode !== initialNode) {
                 const nextNodeInfo = reversedPath[i + 1];
 
-                // Maak eerst het volgende node aan (als dat nog niet gebeurd is)
+                // Maak eerst het volgende node aan
                 stateCounter += 1;
                 const nextStateText = `(s${stateCounter})`;
 
@@ -1246,20 +1247,19 @@ function createDisjunctiveXMLFromPaths(paths) {
                 cmNode.setAttribute("switchRole", "yes");
 
                 const cmLabelElement = document.createElementNS(null, "label");
-                // Hier label naar originele label van de countermeasure zetten:
-                cmLabelElement.textContent = label;  // Label van countermeasure is huidige label, niet state nummer
+                cmLabelElement.textContent = label;  // Gebruik originele label als label
                 cmNode.appendChild(cmLabelElement);
 
-                // Geen edgeLabel voor countermeasure node:
-                // cmNode.setAttribute("edgeLabel", label);  // Optioneel uitzetten
+                // Geen edgeLabel voor countermeasure node
+                // cmNode.setAttribute("edgeLabel", label); // Optioneel uitzetten
 
                 nextChildNode.appendChild(cmNode);
 
-                // Verplaats currentNode naar nextChildNode voor volgende iteratie
+                // Verplaats currentNode naar nextChildNode
                 currentNode = nextChildNode;
 
-                // Sla volgende iteratie over want die node is al aangemaakt
-                i++; // increment i om volgende node over te slaan
+                // Skip volgende node in loop, want die is al gemaakt
+                i++;
             } else {
                 // Verplaats currentNode naar childNode voor volgende iteratie
                 currentNode = childNode;
