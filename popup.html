@@ -16,11 +16,17 @@
     let useArrows = true;
 
     window.addEventListener("message", (event) => {
-      const json = JSON.parse(event.data);
-      buildFromMultiset(json);
-      clear();
-      drawLines(root);
-    });
+      try {
+        const adtJson = JSON.parse(event.data);
+        console.log("Ontvangen ADT JSON in popup:", adtJson);
+        buildFromMultiset(json);
+        clear();
+        drawLines(root);
+      } catch (err) {
+          console.error("Error with processing ADT JSON in popup", err);
+      }
+      
+    }, false );
   </script>
 </body>
 </html>
