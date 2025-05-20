@@ -1079,7 +1079,7 @@ function createDisjunctiveXMLFromPaths(paths) {
         console.log(reversedPath);
         let currentNode = initialNode;
 
-        reversedPath.forEach({label, switchRole} => {
+        reversedPath.forEach(({label, switchRole}) => {
             stateCounter += 1;
             // Splits label op in text en state
             // const labelText = label;
