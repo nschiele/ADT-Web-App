@@ -1009,18 +1009,19 @@ function cartesianProduct(...arrays) {
 
 function getPaths(node) {
     // Function to generate all possible paths based on the node's refinement type.
-    if (node.getAttribute("switchRole") === "yes") {
-        return [];
-    }
+    // if (node.getAttribute("switchRole") === "yes") {
+    //     return [];
+    // }
 
     const label = node.getElementsByTagName("label")[0]?.textContent || "(no label)";
+    const switchRole = node.getAttribute("switchRole") === "yes";
     // const children = Array.from(node.getElementsByTagName("node"))
     //     .filter(child => child.getAttribute("switchRole") !== "yes");
-    const children = Array.from(node.children).filter(child => child.tagName.toLowerCase() === "node" && child.getAttribute("switchRole") !== "yes");
+    const children = Array.from(node.children).filter(child => child.tagName.toLowerCase() === "node");
 
 
     if (!children.length) {
-        return [[label]];
+        return [[{label, switchRole}]];
     }
 
     const refinement = node.getAttribute("refinement") || "disjunctive";
@@ -1030,7 +1031,7 @@ function getPaths(node) {
     if (refinement === "disjunctive") {
         // OR node: return all child paths with the current label
         childPaths.forEach(paths => {
-            result.push(...paths.map(path => [label, ...path]));
+            result.push(...paths.map(path => [{label, switchRole}, ...path]));
         });
     } else if (refinement === "conjunctive") {
         // AND node: all combinations of child paths
@@ -1039,7 +1040,7 @@ function getPaths(node) {
             const permuted = permutations(combo);
             for (const p of permuted) {
                 const flat = p.flat();
-                result.push([label, ...flat]);
+                result.push([{label, switchRole}, ...flat]);
             }
         }
         // combos.forEach(combo => {
@@ -1058,7 +1059,7 @@ function getPaths(node) {
     //     });
     // }
 
-    return result.length ? result : [[label]];
+    return result.length ? result : [[{label, switchRole}]];
 }
 
 function createDisjunctiveXMLFromPaths(paths) {
@@ -1078,20 +1079,23 @@ function createDisjunctiveXMLFromPaths(paths) {
         console.log(reversedPath);
         let currentNode = initialNode;
 
-        reversedPath.forEach(label => {
+        reversedPath.forEach({label, switchRole} => {
             stateCounter += 1;
             // Splits label op in text en state
-            const labelText = label;
+            // const labelText = label;
             const stateText = `(s${stateCounter})`;
 
             const childNode = document.createElementNS(null, "node");
             childNode.setAttribute("refinement", "disjunctive");
+            if(switchRole) {
+                childNode.setAttribute("switchRole", "yes");
+            }
 
             const labelElement = document.createElementNS(null, "label");
             labelElement.textContent = stateText;
 
             // Stel edge label in als attribuut op het kind
-            childNode.setAttribute("edgeLabel", labelText);
+            childNode.setAttribute("edgeLabel", label);
 
             childNode.appendChild(labelElement);
             currentNode.appendChild(childNode);
