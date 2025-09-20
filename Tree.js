@@ -108,7 +108,32 @@ class ADTree {
         }
         else{
             newChild = new ADTree(name);
-        }");
+        }
+        newChild.parent = this;
+        if (defType == null){
+            newChild.isDefense = this.isDefense;
+        } else {
+            newChild.isDefense = defType;
+        }
+        newChild.level = this.level+1;
+        if (newChild.isDefense)
+            newChild.root.addClass('NodeInactiveDef'); // add Def styling
+        else
+            newChild.root.addClass('NodeInactiveAtk'); // add Atk styling
+        this.children.push(newChild);
+        allNodes.push(newChild);
+        this.positionNewChild(newChild)
+        // newChild.root.position(this.root.position().x, this.root.position().y + 200 + this.root.elt.offsetHeight);
+        this.root.elt.focus();
+        clear();
+        drawLines(root);
+    }
+
+    createAtkDefBtn() {
+        this.AtkDefBtn = createButton("");
+        this.AtkDefBtn.parent('canvasContainer');
+        if (this.isDefense) {
+            this.AtkDefBtn.attribute("data-feather", "shield");
         }
         else {
             this.AtkDefBtn.attribute("data-feather", "flag");
