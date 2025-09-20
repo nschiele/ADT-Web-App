@@ -183,15 +183,6 @@ function zoomInFunction(){
 
     changeCoordinates(1.25);
 
-
-/*
-    var myElement = document.getElementById("defaultCanvas0");
-    var scaleIt = 1.25;
-    var centerX = 100;
-    var centerY = 100;
-    scaleAround(myElement, scaleValue, centerX, centerY);
-*/
-
     ////root.dis.adjust_textbox();
 }
 
