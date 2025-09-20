@@ -13,7 +13,7 @@ class Node {
 
 // Function for returning JSON
 function getJson(temp, input) {
-
+                    
     return convert(temp, input);
 }
 
