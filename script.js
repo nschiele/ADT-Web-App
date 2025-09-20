@@ -71,7 +71,6 @@ async function setup() { // Only called once: https://p5js.org/reference/#/p5/se
     // let url = "https://raw.githubusercontent.com/nschiele/ADT-Web-App/main/xml%20examples/fig13.xml";
     // let resp = await fetch(url);
     // var example = await getJson(0, resp); // Call json_junc.js
-    // buildFromMultiset(example);
 
     let warningIcon = document.getElementById('btn-groupwarningIcon');
     warningIcon.addEventListener('click', setupWarningMessages)
