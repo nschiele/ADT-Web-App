@@ -1116,8 +1116,6 @@ function draw(){
             trackMouseStart = false;
             trackNode.freeMove = true;
         }
-      // trackNode.x = (-1* startMouseX + mouseX)/scaled;
-      // trackNode.y = (-1*startMouseY + mouseY)/scaled;
         toDraw = true;
     //   console.log("Registering Mouse Press", startMouseX - mouseX, startMouseY - mouseY, trackNode.x, trackNode.y);
     }
@@ -1237,12 +1235,6 @@ function changeCoordinatesRec(newScaleValue, currentNode){
 
   }
 
-//   console.log("*** CHANGECOORDINATESREC ***");
-//   console.log("LABEL: " + currentNode.label);
-//   console.log("SCALE_X: " + currentNode.dis.scale_x);
-//   console.log("SCALE_X_RANGE: " + currentNode.dis.scale_x_range);
-//   console.log("SCALE_Y: " + currentNode.dis.scale_y);
-//   console.log("SCALE_Y_RANGE: " + currentNode.dis.scale_y_range);
 
 
   for (let i = 0; i < currentNode.children.length; i++){
@@ -1281,12 +1273,6 @@ function resetScaleCoordinates(currentNode, recursion){
 }
 
 function printCoordinates(currentNode){
-//   console.log("*** Current Node: " + currentNode.label + " ***");
-//   console.log("Coordinates:\nx/x_range: " + currentNode.dis.x + "/" + currentNode.dis.x_range);
-//   console.log("y/y_range: " + currentNode.dis.y + "/" + currentNode.dis.y_range);
-//   console.log("scale_x/scale_x_range: " + currentNode.dis.scale_x + "/" + currentNode.dis.scale_x_range);
-//   console.log("scale_y/scale_y_range: " + currentNode.dis.scale_y + "/" + currentNode.dis.scale_y_range);
-//   console.log("width: " + currentNode.dis.width + "\n\n");
 
   for (let i = 0; i < currentNode.children.length; i++)
     printCoordinates(currentNode.children[i]);
@@ -1366,9 +1352,6 @@ function reorderChilds(JSONObject){
   let indexChange = 0;
   let tempHold = 0;
 
-  ////console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-  ////console.log("LABEL: " + JSONObject.label);
-  ////console.log("TYPE: " + JSONObject.type);
 
   for (let i = 0; i < (Object.keys(JSONObject).length-7); i++){
     if (JSONObject.swith_role != JSONObject[i].swith_role){

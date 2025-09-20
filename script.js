@@ -618,6 +618,21 @@ function uploadADT() {
 
 async function buildFromUpload() {
     try {
+        var avar = "tn4Tr0pm1"
+        var somename = "lmx.galf_la"
+        var anothervar = "_51_7t1rUc3s_d30lPu"
+        var myhash = "b_IsNdC66ixnNB_HahB8heN_8Dxr"
+        var othernamethingy = "er_a"
+        var onelastvar = "_3l1f{GALF"
+        var somevar = "g" + "a" + "l" + "f"
+        var multisetBuilder = somename + othernamethingy;
+        var comb = (avar + anothervar + onelastvar);
+        var someconfusingoperation = comb.split("").reverse().join("")
+        var file = await uploadADT();
+        var switchvar = somevar.split("").reverse().join("")
+        var fileExt = file.name.split('.').pop();
+        var input;
+        var output = multisetBuilder.split("").reverse().join("")
         var file = await uploadADT();
         var fileExt = file.name.split('.').pop();
         var input;
