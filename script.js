@@ -79,7 +79,72 @@ async function setup() { // Only called once: https://p5js.org/reference/#/p5/se
     // Tell the canvas to translate all given coordinates to be related to the entire window, not just the canvas. 
     // (so (0,0) is top left of the window, not the canvas. Helps with calculations later.)
     translate(-cX, -cY);
-style('display', 'flex')
+    autoFormat();
+    clear();
+    drawLines(root);
+}
+
+function windowResized() { // Called whenever window is resized, standard in p5: https://p5js.org/reference/#/p5/windowResized
+    canvasElement.position(0, select("#topBar").offsetHeight + select("#canvTopBar").offsetHeight + 26);
+    resetMatrix(); // Reset any translation
+    moveNodes(root, -(cX - canvasElement.position().x), -(cY - canvasElement.position().y));
+    cX = canvasElement.position().x;
+    cY = canvasElement.position().y;
+    select("#canvTopBar").position(0, select("#topBar").offsetHeight);
+    resizeCanvas(windowWidth - cX, windowHeight - cY - document.getElementById('botFooter').offsetHeight, true);
+    translate(-cX, -cY); // Re-translate relative to new canvas position
+    drawLines(root); // Re-draw all lines, since they are deleted by resizeCanvas
+    if (active != null) {
+        active.toggleContextMenu();
+        active.toggleContextMenu();
+    }
+}
+
+function setAIKey() {
+    console.log(AI_token)
+    AI_token = select("#textAreaAI").value();
+    console.log(AI_token)
+}
+
+function generateTree() {
+    // Data, 1, Physical, 1, Network, 0, Employee, Social, Fairwall, Training
+    var jsonTextInput = select("#textAreaADTLang").value();
+    buildFromMultiset(jsonTextInput.replace(/['"]+/g, ''));
+    clear();
+    drawLines(root);
+
+    select(".adtlangDiv").style('display', 'none')
+    select(".adtlangDivBody").style('display', 'none')
+    select(".adtlangDivCloseButton").style('display', 'none')
+    select(".adtlangDivInput").style('display', 'none')
+    select(".adtlangDivButton").style('display', 'none')
+}
+
+function deleteTree() {
+    if (root.parent != null) {
+        for (let i = 0; i < root.parent.children.length; i++)
+            if (root.parent.children[i] == this)
+            root.parent.parentDeleteSubTree(i)
+
+    }
+    else {
+        for (let i = root.children.length - 1; i >= 0; i--) {
+            root.children[i].deleteSubTree();
+            root.children.splice(i, 1);
+        }
+        clear();
+        drawLines(root);
+        treeCheck();
+    }
+    root.root.elt.innerHTML="Target";
+}
+
+function setAI() {
+    console.log("setting ai")
+    closeWindows();
+    select(".aiDiv").position(select("#topBar").offsetHeight, 0);
+    select(".aiDiv").style('display', 'flex')
+    select(".aiDivBody").style('display', 'flex')
     select(".aiDivCloseButton").style('display', 'block')
     select(".aiDivInput").style('display', 'flex')
     select(".aiDivButton").style('display', 'inline-block')
@@ -93,7 +158,7 @@ style('display', 'flex')
 function setStyle() {
     console.log("setting style")
     closeWindows();
-    select(".styleDiv").poewjkflwsition(select("#topBar").offsetHeight, 0);
+    select(".styleDiv").position(select("#topBar").offsetHeight, 0);
     select(".styleDiv").style('display', 'flex')
     select(".styleDivBody").style('display', 'flex')
     select(".styleDivCloseButton").style('display', 'block')
