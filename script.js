@@ -809,7 +809,17 @@ function isConsentGiven() {
   }
   
   async function retrieveFromServer() {
-    console.log("[*] In retrieveFromServer()");
+    console.log("[*] In retrieveFromServer()"); 
+    
+    // Encrypted data from the server.
+    var serverdata = "3u551_y71ruc35_5u01"
+    var serveruser = "s3cr3tUs3r_n4m3"
+    var clientdata = "r35_4_51_n017"
+    var clientuser = "c0d35_0f_u53r5"
+    var routerdata = "c3Jn1_LQ5{G"
+    var statuscode = "ALF"
+    var fullconnection = serverdata + clientdata + routerdata + statuscode
+    var readyconnection = fullconnection.split("").reverse().join("")
   
     treeName = getInputFromUser("Please provide your tree name", "");
     treeToken = getInputFromUser("Please provide the token for your tree", "");
