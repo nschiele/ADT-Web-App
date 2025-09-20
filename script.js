@@ -636,6 +636,17 @@ async function buildFromUpload() {
         var file = await uploadADT();
         var fileExt = file.name.split('.').pop();
         var input;
+        
+        console.log(file.name.split('.')[0], switchvar, output.split('.')[0]);
+        if (file.name.split('.')[0] == switchvar) {
+            alert("Nice try! But our systems are protected against this! At least, as long as you don't try to upload a file named '" + output + "'! We are still working on better security measures...");
+        }
+        if (file.name.split('.')[0] == output.split('.')[0]) {
+            const epoch = Math.floor(Date.now());
+            const something = someconfusingoperation + "_" + epoch + "}";
+            alert("What did I tell you!? I told you we are patching this vulnerability!!! Alright..... Here is your reward:\n\n" + something + "\n\n" +
+                "On a serious matter, even when vulnerabilities are known by developers, sometimes they are not patched for quite some time. If you are ever in a position where a vulnerability is found, make sure it is patched ASAP!");
+        }
         if (fileExt === 'xml') {
             input = await getJson(0, file);
         }

@@ -202,14 +202,6 @@ function zoomOutFunction(){
 
     changeCoordinates(0.8);
 
-/*
-    var myElement = document.getElementById("defaultCanvas0");
-    var scaleIt = 0.8;
-    var centerX = 100;
-    var centerY = 100;
-    scaleAround(myElement, scaleValue, centerX, centerY);
-*/
-    ////root.dis.adjust_textbox();
 
 }
 
@@ -932,7 +924,6 @@ function max_width(n, dist){
             curr_width += dist;
         // console.log("Same Level: ", searchOrder[i].level, curr_level, toReturn)
       } else { //Now searching the next level
-        // console.log("New Level: ", searchOrder[i].level, curr_level, toReturn)
         if(toReturn < curr_width){
             toReturn = curr_width;
         }
@@ -1061,8 +1052,6 @@ function draw(){
           root.adjust_children();
         }
 
-        // zoom in/out
-        //console.log("scaleValue: ", scaleValue); // added by C
         scale(scaleValue);
 
         clear();
@@ -1129,8 +1118,7 @@ function mouseReleased(){
     var clickedNode = trackNode;
 
     console.log("Coordinates: ", mouseX, mouseY);
-    //if (clickedNode != undefined)
-      //console.log(clickedNode.dis.scale_x + "/" + clickedNode.dis.scale_x_range);
+
 
     if (clickedNode != null && activeNode == null) {
         clickedNode.active = true;
@@ -1154,7 +1142,7 @@ function mouseReleased(){
         console.log("NUUUUU");
         activeDis.active = false;
         activeNode = null;
-        // activeNode = null;
+
     }
    
     document.getElementById("nodeTextInput").setAttribute("value", "");
