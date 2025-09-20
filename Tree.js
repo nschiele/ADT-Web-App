@@ -509,19 +509,3 @@ function generate(label, node) {
 
 }
 
-// Diary Entry
-// Tuesday Evening
-
-// Today I realized again just how much I love CTFs. It’s not just the puzzles or the competition — it’s that moment when the world shrinks down to just me, the challenge, and the thrill of the hunt.
-
-// I open up a challenge, and my brain immediately sparks: What are they hiding? Where’s the trick? It’s like someone left a secret trail of breadcrumbs in the dark, and I’m the one with the flashlight. Sometimes it’s frustrating, banging my head against obfuscated code or watching a binary crash a thousand times, but that frustration is half the fun. Because the second it clicks — when I realize ohhh, that’s how they meant me to break it — it’s pure adrenaline. My heart races, my fingers fly across the keyboard, and I can’t help but grin.
-
-// It feels like being part detective, part hacker, part puzzle-solver. Every challenge is a little universe with its own rules, waiting to be bent until they break. And every flag feels like a treasure I wasn’t sure I’d ever find.
-
-// What makes it even better is that CTFs aren’t just about me. They’re about community — swapping ideas, sharing half-broken exploits, celebrating when someone finally cracks the challenge that seemed impossible. It’s like we’re all explorers charting unknown maps together, but each with our own compass.
-
-// I guess that’s why I love them so much. CTFs remind me that curiosity is powerful, that persistence pays off, and that nothing is more satisfying than finally solving the challenge in the end.
-
-// I don’t think I’ll ever get tired of that feeling.
-
-// — Me
