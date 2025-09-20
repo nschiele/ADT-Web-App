@@ -323,25 +323,7 @@
                 params: [
                   {
                     name: 'color',
-                    description:
-                      '<p><a href="#/p5.Color">p5.Color</a> object, color components,\n                                        or CSS color</p>\n',
-                    type: 'p5.Color|Number[]|String'
-                  }
-                ],
-                class: 'p5',
-                module: 'Color'
-              },
-              background: {
-                name: 'background',
-                class: 'p5',
-                module: 'Color',
-                overloads: [
-                  {
-                    params: [
-                      {
-                        name: 'color',
-                        description:
-                          '<p>any value created by the <a href="#/p5/color">color()</a> function</p>\n',
+                    description:ef="#/p5/color">color()</a> function</p>\n',
                         type: 'p5.Color'
                       }
                     ],
@@ -105473,7 +105455,7 @@
             this.vertices = []; //an array containing every vertex for stroke drawing
             this.lineVertices = []; //an array 1 normal per lineVertex with
             //final position representing which direction to
-            //displace for strokeWeight
+            //displace for strokeWe
             //[[0,0,-1,1], [0,1,0,-1] ...];
             this.lineNormals = [];
 

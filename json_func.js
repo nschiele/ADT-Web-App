@@ -27,7 +27,7 @@ async function getXML(input){
     }
 
 
-    if (check == "<?xml"){
+    if (check == "<?xml" 
       return input;
     }
 
@@ -121,7 +121,7 @@ async function find_label(items, i){
     var k = i;
     var item = items[k];
     while (item[j] != "l"){
-        if (item[j] == ">"){
+        if (item[j] == "> 
             k++;
             item = items[k];
             j = 0;
