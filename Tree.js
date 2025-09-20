@@ -384,7 +384,7 @@ class ADTree {
     }
 }
 
-
+// GPT3 is old! Why not use GPT5?
 function generate(label, node) {
     console.log("Calling GPT3")
     var url = "https://api.openai.com/v1/chat/completions";
