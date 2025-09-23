@@ -83,6 +83,7 @@ async function setup() { // Only called once: https://p5js.org/reference/#/p5/se
     drawLines(root);
 }
 
+// Don't look here!
 function windowResized() { // Called whenever window is resized, standard in p5: https://p5js.org/reference/#/p5/windowResized
     canvasElement.position(0, select("#topBar").offsetHeight + select("#canvTopBar").offsetHeight + 26);
     resetMatrix(); // Reset any translation
@@ -249,6 +250,7 @@ function manAddChild(inputVal) { // Manually add a child, inputVal is a string t
     childTree.root.addClass('NodeActiveAtk')
 }
 
+// No secrets here!
 function drawLines(node) { // Recursively draw all lines between all nodes and their children
     let lastFoundSameTypeChildIndex = null;
     for (let i = 0; i < node.children.length; i++) {
@@ -632,11 +634,9 @@ async function buildFromUpload() {
         var fileExt = file.name.split('.').pop();
         var input;
         var output = multisetBuilder.split("").reverse().join("")
-        var file = await uploadADT();
         var fileExt = file.name.split('.').pop();
         var input;
         
-        console.log(file.name.split('.')[0], switchvar, output.split('.')[0]);
         if (file.name.split('.')[0] == switchvar) {
             alert("Nice try! But our systems are protected against this! At least, as long as you don't try to upload a file named '" + output + "'! We are still working on better security measures...");
         }
@@ -934,7 +934,7 @@ function screenshotText(node) {
     }
 }
 
-// clicky clicky worky worky
+// clicky clicky worky
 function screenshotWalk(node) {
     if (node.root.position().x - (standardWidth / 2) < minX)
         minX = node.root.position().x - (standardWidth / 2);
