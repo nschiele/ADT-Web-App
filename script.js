@@ -935,7 +935,7 @@ function screenshotText(node) {
     }
 }
 
-// clicky clicky worky
+// clicky clicky worky worky
 function screenshotWalk(node) {
     if (node.root.position().x - (standardWidth / 2) < minX)
         minX = node.root.position().x - (standardWidth / 2);
