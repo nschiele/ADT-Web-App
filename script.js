@@ -24,6 +24,7 @@ let CMOverflow = false;
 
 let allNodes = [];
 
+// I think this function is safe... I hope?
 async function setup() { // Only called once: https://p5js.org/reference/#/p5/setup
     toDraw = true;
     trackMouseStart = true;
@@ -274,6 +275,7 @@ function drawLines(node) { // Recursively draw all lines between all nodes and t
     }
 }
 
+// I hope moving nodes does not break anything!
 function moveNodes(node, moveX, moveY) { // Moves all nodes in tree
     node.root.position(node.root.position().x + moveX, node.root.position().y + moveY); // Move node by moveX and moveY
     if (node.contextEnabled) {
@@ -566,7 +568,6 @@ function downloadADT(selectedFormat) {
 }
 
 async function downloadPrep() {
-    // var selectedFormat = document.getElementById("formatDropdown").value;
     var selectedFormat = "xml";
     try {
       var file = await downloadADT(selectedFormat);
